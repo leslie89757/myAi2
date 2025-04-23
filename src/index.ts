@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 // 示例路由
 app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Hello from TypeScript API!！！！！！！！！' });
+  res.json({ message: 'Hello from TypeScript API!' });
 });
 
 app.get('/users', (req: Request, res: Response) => {
