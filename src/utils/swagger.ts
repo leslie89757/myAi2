@@ -1,7 +1,7 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
 import { Express } from 'express';
 import path from 'path';
+import redoc from 'redoc-express';
 
 // 检测是否在 Vercel 环境中运行
 const isVercelEnvironment = process.env.VERCEL || process.env.NOW_REGION;
@@ -37,9 +37,7 @@ const options = {
   },
   // 使用绝对路径指定API文件
   apis: [
-    path.resolve(__dirname, '../controllers/*.js'),
-    path.resolve(__dirname, '../routes/*.js'),
-    path.resolve(__dirname, '../models/*.js')
+    path.resolve(__dirname, '../controllers/*.js')
   ]
 };
 
@@ -49,22 +47,39 @@ const specs = swaggerJsdoc(options);
 // 导出Swagger规格
 export const getSwaggerSpecs = () => specs;
 
-// 设置Swagger UI
-export const setupSwagger = (app: Express) => {
-  // 添加CORS头，确保Swagger UI能正确加载资源
-  const swaggerUiOptions = {
-    explorer: true,
-    swaggerOptions: {
-      docExpansion: 'list',
-      filter: true,
-      showRequestDuration: true
-    }
-  };
-  
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, swaggerUiOptions));
+// 设置Redoc
+export const setupApiDocs = (app: Express) => {
+  // 提供OpenAPI规范JSON
   app.get('/api-docs.json', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(specs);
   });
+
+  // 设置Redoc UI
+  app.use('/api-docs', redoc({
+    title: 'ChatGPT API 文档',
+    specUrl: '/api-docs.json',
+    redocOptions: {
+      theme: {
+        colors: {
+          primary: {
+            main: '#3498db'
+          }
+        },
+        typography: {
+          fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`,
+          fontSize: '16px',
+          headings: {
+            fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif`,
+          }
+        }
+      },
+      hideDownloadButton: false,
+      expandResponses: '200,201',
+      jsonSampleExpandLevel: 3,
+      requiredPropsFirst: true,
+      sortPropsAlphabetically: false
+    }
+  }));
 };

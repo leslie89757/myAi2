@@ -15,30 +15,6 @@
       "dest": "dist/index.js"
     },
     {
-      "src": "/api-docs",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/api-docs/(.*)",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/api-docs.json",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/swagger-ui.css",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/swagger-ui-bundle.js",
-      "dest": "dist/index.js"
-    },
-    {
-      "src": "/swagger-ui-standalone-preset.js",
-      "dest": "dist/index.js"
-    },
-    {
       "src": "/health",
       "dest": "dist/index.js"
     },
@@ -48,6 +24,10 @@
     },
     {
       "src": "/simple-test",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/api-docs",
       "dest": "dist/index.js"
     },
     {

@@ -7,7 +7,8 @@ import logger from './utils/logger';
 import { initializeOpenAI } from './utils/openai';
 import { simpleChat } from './controllers/simpleChatController';
 import { streamChat } from './controllers/streamChatController';
-import { setupSwagger, getSwaggerSpecs } from './utils/swagger';
+import { setupApiDocs } from './utils/swagger';
+import { apiKeyAuth, loadApiKeys } from './middleware/auth';
 
 // 加载环境变量
 dotenv.config();
@@ -31,20 +32,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// 设置Swagger文档
-setupSwagger(app);
+// 设置API文档
+setupApiDocs(app);
 
-// 自定义API文档路由
-app.get('/api-docs', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'api-docs.html'));
-});
-
-// API文档JSON数据
-app.get('/api-docs.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.send(getSwaggerSpecs());
-});
+// API 鉴权中间件
+app.use(apiKeyAuth);
 
 // API路由
 app.post('/api/simple-chat', simpleChat);
@@ -84,6 +76,9 @@ app.use((err: any, req: any, res: any, next: any) => {
 // 启动服务器
 const startServer = async () => {
   try {
+    // 加载 API 密钥
+    loadApiKeys();
+    
     // 初始化OpenAI客户端并验证连接
     await initializeOpenAI();
     

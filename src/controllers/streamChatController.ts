@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
-import openai from '../utils/openai';
 import logger from '../utils/logger';
+import { openai } from '../utils/openai';
 import { withRetry } from '../utils/retry';
 
 /**
- * @swagger
+ * @openapi
  * /api/stream-chat:
  *   post:
- *     summary: 流式聊天接口
- *     description: 使用Server-Sent Events (SSE)格式返回ChatGPT的流式响应
  *     tags:
- *       - 聊天
+ *       - 聊天接口
+ *     summary: 流式聊天接口
+ *     description: 使用 Server-Sent Events (SSE) 实时返回 ChatGPT 回复
  *     requestBody:
  *       required: true
  *       content:
@@ -26,12 +26,20 @@ import { withRetry } from '../utils/retry';
  *                 example: "你好，请介绍一下自己"
  *     responses:
  *       200:
- *         description: 成功，开始流式响应
+ *         description: 返回 SSE 流
  *         content:
  *           text/event-stream:
  *             schema:
  *               type: string
- *               example: "data: {\"content\":\"你好！\"}\n\ndata: {\"content\":\"我是一个AI助手\"}\n\ndata: [DONE]"
+ *               description: 包含多个 SSE 事件，每个事件包含一个 JSON 对象，其中 content 字段包含回复的一部分文本
+ *               example: |
+ *                 data: {"content":"你好"}
+ *                 
+ *                 data: {"content":"！我是"}
+ *                 
+ *                 data: {"content":" ChatGPT"}
+ *                 
+ *                 data: [DONE]
  *       400:
  *         description: 请求参数错误
  *         content:
@@ -49,20 +57,19 @@ import { withRetry } from '../utils/retry';
  *             schema:
  *               type: object
  *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
  *                 error:
  *                   type: string
  *                   example: "服务器内部错误"
- *                 details:
- *                   type: string
- *                   example: "错误详情"
+ */
+/**
+ * 处理流式聊天请求
+ * 
+ * @param req Express 请求对象
+ * @param res Express 响应对象
  */
 export const streamChat = async (req: Request, res: Response) => {
   try {
     logger.info('收到流式聊天请求');
-    
     const { message } = req.body;
     
     if (!message || typeof message !== 'string') {
@@ -70,19 +77,16 @@ export const streamChat = async (req: Request, res: Response) => {
       return res.status(400).json({ error: '请提供有效的消息' });
     }
 
-    logger.info(`处理用户消息: ${message}`);
+    logger.info(`用户消息: ${message.substring(0, 100)}${message.length > 100 ? '...' : ''}`);
 
-    // 设置SSE头
+    // 设置SSE头部
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.flushHeaders();
 
     try {
-      // 创建流式聊天完成
-      logger.info('开始流式响应');
-      
-      const stream = await withRetry(() => 
+      const stream = await withRetry(() =>
         openai.chat.completions.create({
           model: 'gpt-4o',
           messages: [{ role: 'user', content: message }],
@@ -94,47 +98,38 @@ export const streamChat = async (req: Request, res: Response) => {
       for await (const chunk of stream) {
         const content = chunk.choices[0]?.delta?.content || '';
         if (content) {
-          // 发送SSE格式的数据
           res.write(`data: ${JSON.stringify({ content })}\n\n`);
-          // 确保数据立即发送
           res.flushHeaders?.();
         }
       }
 
-      // 结束流
+      // 发送结束标记
       res.write('data: [DONE]\n\n');
       res.end();
-      logger.info('流式响应完成');
+      logger.info('流式聊天响应完成');
     } catch (apiError: any) {
-      logger.error(`流式API调用错误 [${apiError.code || apiError.status || '未知'}]: ${apiError.message}`);
+      logger.error(`API调用错误: ${apiError.message}`);
       
-      // 如果已经发送了头信息，则通过SSE发送错误
+      // 如果已经开始发送SSE，则以SSE格式发送错误
       if (res.headersSent) {
-        res.write(`data: ${JSON.stringify({ error: '处理请求时出错，请重试' })}\n\n`);
+        res.write(`data: ${JSON.stringify({ error: '处理请求时出错' })}\n\n`);
+        res.write('data: [DONE]\n\n');
         res.end();
       } else {
-        // 否则返回常规错误响应
-        return res.status(500).json({ 
-          success: false, 
-          error: '调用ChatGPT API时出错',
-          details: apiError.message
-        });
+        // 否则以JSON格式发送错误
+        res.status(500).json({ error: '处理请求时出错' });
       }
     }
   } catch (error: any) {
-    logger.error('处理流式请求时出错:', error);
+    logger.error(`聊天请求失败: ${error.message}`);
     
-    // 如果已经发送了头信息，则通过SSE发送错误
+    // 检查是否已经发送了头部
     if (res.headersSent) {
       res.write(`data: ${JSON.stringify({ error: '服务器内部错误' })}\n\n`);
+      res.write('data: [DONE]\n\n');
       res.end();
     } else {
-      // 否则返回常规错误响应
-      return res.status(500).json({ 
-        success: false, 
-        error: '服务器内部错误',
-        details: error.message
-      });
+      res.status(500).json({ error: '服务器内部错误' });
     }
   }
 };

@@ -13,31 +13,24 @@ if (!process.env.OPENAI_API_KEY) {
 }
 
 // 创建一个具有更好连接参数的OpenAI客户端
-const openai = new OpenAI({
+export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   httpAgent: new https.Agent({
     keepAlive: true,
     timeout: 60000, // 增加超时时间到60秒
     rejectUnauthorized: true
-  }),
-  timeout: 60000, // 客户端整体超时
-  maxRetries: 3, // OpenAI客户端内置的重试次数
+  })
 });
 
-// 导出初始化函数以便在应用启动时确认连接
+// 验证OpenAI API连接
 export const initializeOpenAI = async () => {
   try {
     logger.info('验证OpenAI API连接...');
-    const response = await openai.models.list();
-    logger.info(`OpenAI API连接成功，可用${response.data.length}个模型`);
+    const models = await openai.models.list();
+    logger.info(`OpenAI API连接成功，可用${models.data.length}个模型`);
     return true;
   } catch (error: any) {
-    logger.error('OpenAI API连接验证失败:', error.message);
-    if (error.code === 'ECONNRESET') {
-      logger.error('网络连接被重置，请检查网络连接或防火墙设置');
-    }
-    return false;
+    logger.error(`OpenAI API连接失败: ${error.message}`);
+    throw new Error(`无法连接到OpenAI API: ${error.message}`);
   }
 };
-
-export default openai;

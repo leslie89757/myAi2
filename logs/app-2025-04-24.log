@@ -74,3 +74,10 @@
 [2025-04-24T05:30:40.112Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
 [2025-04-24T05:30:40.112Z] [INFO] GET /api-docs/swagger-ui-init.js
 [2025-04-24T05:30:42.256Z] [INFO] GET /api-docs/favicon-32x32.png
+[2025-04-24T06:33:00.074Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T06:33:01.197Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T06:33:01.199Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T06:33:01.200Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T06:33:14.651Z] [INFO] GET /api-docs/
+[2025-04-24T06:33:17.314Z] [INFO] GET /api-docs.json
+[2025-04-24T06:33:57.784Z] [INFO] GET /api-docs.json
