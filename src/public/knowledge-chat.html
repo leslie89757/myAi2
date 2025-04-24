@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人知识库聊天</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    .container {
+      display: flex;
+      gap: 20px;
+      height: calc(100vh - 100px);
+    }
+    .sidebar {
+      flex: 0 0 300px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    h1, h2 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .upload-section {
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+    .file-input {
+      display: none;
+    }
+    .file-label {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .file-label:hover {
+      background-color: #2980b9;
+    }
+    .selected-file {
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #666;
+    }
+    .upload-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .upload-btn:hover {
+      background-color: #27ae60;
+    }
+    .upload-btn:disabled {
+      background-color: #95a5a6;
+      cursor: not-allowed;
+    }
+    .user-id-section {
+      margin-bottom: 20px;
+    }
+    .user-id-input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-top: 5px;
+    }
+    .knowledge-sources {
+      flex: 1;
+      overflow-y: auto;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      margin-top: auto;
+    }
+    .source-item {
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 0.9em;
+    }
+    .source-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .source-content {
+      color: #666;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .message {
+      margin-bottom: 15px;
+      display: flex;
+    }
+    .user-message {
+      justify-content: flex-end;
+    }
+    .bot-message {
+      justify-content: flex-start;
+    }
+    .message-content {
+      max-width: 70%;
+      padding: 12px 15px;
+      border-radius: 18px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    .user-message .message-content {
+      background-color: #3498db;
+      color: white;
+      border-bottom-right-radius: 5px;
+    }
+    .bot-message .message-content {
+      background-color: #f1f0f0;
+      color: #333;
+      border-bottom-left-radius: 5px;
+    }
+    .chat-input-container {
+      display: flex;
+      padding: 15px;
+      border-top: 1px solid #eee;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 25px;
+      outline: none;
+    }
+    .send-btn {
+      margin-left: 10px;
+      padding: 0 20px;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+    }
+    .send-btn:hover {
+      background-color: #2980b9;
+    }
+    .send-btn:disabled {
+      background-color: #95a5a6;
+      cursor: not-allowed;
+    }
+    .status {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 0.9em;
+    }
+    .status.success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    .status.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    .status.info {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+    .typing-indicator {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: #f1f0f0;
+      border-radius: 18px;
+      margin-bottom: 15px;
+    }
+    .typing-indicator span {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background-color: #999;
+      border-radius: 50%;
+      margin-right: 5px;
+      animation: typing 1s infinite;
+    }
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+      margin-right: 0;
+    }
+    @keyframes typing {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .nav-links a {
+      margin: 0 10px;
+      color: #3498db;
+      text-decoration: none;
+    }
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-links">
+    <a href="/stream-test">流式聊天</a>
+    <a href="/simple-test">简单聊天</a>
+    <a href="/knowledge-chat">知识库聊天</a>
+    <a href="/api-docs">API文档</a>
+  </div>
+  
+  <h1>个人知识库聊天</h1>
+  
+  <div class="container">
+    <div class="sidebar">
+      <div class="user-id-section">
+        <h2>用户ID</h2>
+        <input type="text" id="userId" class="user-id-input" placeholder="输入用户ID" value="user1">
+      </div>
+      
+      <div class="upload-section">
+        <h2>上传文档</h2>
+        <label for="fileInput" class="file-label">选择文件</label>
+        <input type="file" id="fileInput" class="file-input" accept=".pdf,.txt,.doc,.docx">
+        <div id="selectedFile" class="selected-file">未选择文件</div>
+        <input type="text" id="documentName" class="user-id-input" placeholder="文档名称（可选）">
+        <button id="uploadBtn" class="upload-btn" disabled>上传文档</button>
+        <div id="uploadStatus" class="status"></div>
+      </div>
+      
+      <div class="knowledge-sources">
+        <h2>知识来源</h2>
+        <div id="sources"></div>
+      </div>
+    </div>
+    
+    <div class="chat-container">
+      <div id="chatMessages" class="chat-messages"></div>
+      
+      <div class="chat-input-container">
+        <input type="text" id="messageInput" class="chat-input" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMessage()">
+        <button id="sendBtn" class="send-btn">发送</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+
+  <script>
+    // DOM元素
+    const userId = document.getElementById('userId');
+    const fileInput = document.getElementById('fileInput');
+    const selectedFile = document.getElementById('selectedFile');
+    const documentName = document.getElementById('documentName');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const sourcesContainer = document.getElementById('sources');
+    const chatMessages = document.getElementById('chatMessages');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    
+    // 当前会话的知识来源
+    let currentSources = [];
+    
+    // 文件选择事件
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        selectedFile.textContent = `已选择: ${file.name} (${formatFileSize(file.size)})`;
+        uploadBtn.disabled = false;
+        
+        // 如果没有填写文档名称，使用文件名
+        if (!documentName.value) {
+          documentName.value = file.name.split('.')[0];
+        }
+      } else {
+        selectedFile.textContent = '未选择文件';
+        uploadBtn.disabled = true;
+      }
+    });
+    
+    // 上传文档
+    uploadBtn.addEventListener('click', async () => {
+      if (!userId.value) {
+        showStatus('请输入用户ID', 'error');
+        return;
+      }
+      
+      if (!fileInput.files.length) {
+        showStatus('请选择文件', 'error');
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      if (documentName.value) {
+        formData.append('documentName', documentName.value);
+      }
+      
+      showLoading(true);
+      uploadStatus.className = 'status info';
+      uploadStatus.textContent = '上传中...';
+      
+      try {
+        // 将userId作为URL查询参数传递
+        const userIdValue = encodeURIComponent(userId.value);
+        console.log(`开始上传文件: ${file.name}, 大小: ${formatFileSize(file.size)}, 用户ID: ${userIdValue}`);
+        
+        const response = await fetch(`/api/knowledge/upload?userId=${userIdValue}`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        console.log(`服务器响应状态: ${response.status}`);
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`上传失败: ${response.status} ${response.statusText}`, errorText);
+          
+          try {
+            const errorJson = JSON.parse(errorText);
+            
+            // 特殊处理 API 密钥缺失的情况
+            if (errorJson.phase === 'api_validation') {
+              showStatus(`上传失败: OpenAI API 密钥未配置。请联系管理员设置有效的 API 密钥后再试。`, 'error');
+            } else {
+              showStatus(`上传失败: ${errorJson.error || '未知错误'}`, 'error');
+            }
+          } catch (e) {
+            showStatus(`上传失败: ${response.status} ${response.statusText}`, 'error');
+          }
+          showLoading(false);
+          return;
+        }
+        
+        const result = await response.json();
+        console.log('上传成功:', result);
+        
+        showStatus(`文档上传成功: ${result.fileName}`, 'success');
+        // 重置表单
+        fileInput.value = '';
+        selectedFile.textContent = '未选择文件';
+        documentName.value = '';
+        uploadBtn.disabled = true;
+      } catch (error) {
+        console.error('上传错误:', error);
+        showStatus(`上传错误: ${error.message || '连接服务器失败'}`, 'error');
+      } finally {
+        showLoading(false);
+      }
+    });
+    
+    // 发送消息
+    async function sendMessage() {
+      const message = messageInput.value.trim();
+      const userIdValue = userId.value.trim();
+      
+      if (!message) return;
+      if (!userIdValue) {
+        showStatus('请输入用户ID', 'error');
+        return;
+      }
+      
+      // 添加用户消息到聊天界面
+      addMessage(message, 'user');
+      messageInput.value = '';
+      
+      // 显示"正在输入"指示器
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'message bot-message';
+      typingIndicator.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
+      chatMessages.appendChild(typingIndicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      // 清空当前知识来源
+      currentSources = [];
+      sourcesContainer.innerHTML = '';
+      
+      try {
+        // 使用流式API
+        const response = await fetch('/api/knowledge/stream-chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message,
+            userId: userIdValue
+          })
+        });
+        
+        // 移除"正在输入"指示器
+        typingIndicator.remove();
+        
+        if (!response.ok) {
+          const error = await response.json();
+          addMessage(`错误: ${error.error}`, 'bot');
+          return;
+        }
+        
+        // 创建一个新的bot消息元素
+        const botMessageElement = document.createElement('div');
+        botMessageElement.className = 'message bot-message';
+        const botContentElement = document.createElement('div');
+        botContentElement.className = 'message-content';
+        botMessageElement.appendChild(botContentElement);
+        chatMessages.appendChild(botMessageElement);
+        
+        let botResponse = '';
+        
+        // 处理SSE流
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          
+          const chunk = decoder.decode(value);
+          const lines = chunk.split('\n\n');
+          
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const data = line.substring(6);
+              
+              if (data === '[DONE]') {
+                // 流结束
+                break;
+              }
+              
+              try {
+                const parsedData = JSON.parse(data);
+                
+                if (parsedData.type === 'sources') {
+                  // 更新知识来源
+                  currentSources = parsedData.sources;
+                  updateSourcesDisplay();
+                } else if (parsedData.type === 'content') {
+                  // 更新聊天内容
+                  botResponse += parsedData.content;
+                  botContentElement.innerHTML = formatMessage(botResponse);
+                  chatMessages.scrollTop = chatMessages.scrollHeight;
+                } else if (parsedData.type === 'error') {
+                  botContentElement.textContent = `错误: ${parsedData.error}`;
+                }
+              } catch (e) {
+                console.error('解析SSE数据错误:', e);
+              }
+            }
+          }
+        }
+        
+        // 确保滚动到底部
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      } catch (error) {
+        // 移除"正在输入"指示器
+        typingIndicator.remove();
+        
+        addMessage(`发生错误: ${error.message}`, 'bot');
+      }
+    }
+    
+    // 添加消息到聊天界面
+    function addMessage(content, sender) {
+      const messageElement = document.createElement('div');
+      messageElement.className = `message ${sender}-message`;
+      
+      const contentElement = document.createElement('div');
+      contentElement.className = 'message-content';
+      
+      if (sender === 'bot') {
+        contentElement.innerHTML = formatMessage(content);
+      } else {
+        contentElement.textContent = content;
+      }
+      
+      messageElement.appendChild(contentElement);
+      chatMessages.appendChild(messageElement);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // 更新知识来源显示
+    function updateSourcesDisplay() {
+      sourcesContainer.innerHTML = '';
+      
+      if (currentSources.length === 0) {
+        const noSourcesElement = document.createElement('div');
+        noSourcesElement.className = 'source-item';
+        noSourcesElement.textContent = '未找到相关知识';
+        sourcesContainer.appendChild(noSourcesElement);
+        return;
+      }
+      
+      currentSources.forEach((source, index) => {
+        const sourceElement = document.createElement('div');
+        sourceElement.className = 'source-item';
+        
+        const titleElement = document.createElement('div');
+        titleElement.className = 'source-title';
+        titleElement.textContent = source.metadata.fileName || `来源 ${index + 1}`;
+        
+        const contentElement = document.createElement('div');
+        contentElement.className = 'source-content';
+        contentElement.textContent = source.content;
+        
+        sourceElement.appendChild(titleElement);
+        sourceElement.appendChild(contentElement);
+        sourcesContainer.appendChild(sourceElement);
+      });
+    }
+    
+    // 格式化消息（简单的Markdown支持）
+    function formatMessage(text) {
+      // 将换行符转换为<br>
+      let formatted = text.replace(/\n/g, '<br>');
+      
+      // 加粗 **text**
+      formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      
+      // 斜体 *text*
+      formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      
+      // 代码块 ```code```
+      formatted = formatted.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+      
+      // 行内代码 `code`
+      formatted = formatted.replace(/`([^`]+)`/g, '<code>$1</code>');
+      
+      return formatted;
+    }
+    
+    // 显示状态消息
+    function showStatus(message, type) {
+      uploadStatus.className = `status ${type}`;
+      uploadStatus.textContent = message;
+      
+      // 5秒后自动清除成功消息
+      if (type === 'success') {
+        setTimeout(() => {
+          uploadStatus.textContent = '';
+          uploadStatus.className = 'status';
+        }, 5000);
+      }
+    }
+    
+    // 显示/隐藏加载遮罩
+    function showLoading(show) {
+      loadingOverlay.style.display = show ? 'flex' : 'none';
+    }
+    
+    // 格式化文件大小
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+      else return (bytes / 1048576).toFixed(2) + ' MB';
+    }
+    
+    // 绑定发送按钮点击事件
+    sendBtn.addEventListener('click', sendMessage);
+    
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', () => {
+      // 添加欢迎消息
+      addMessage('欢迎使用个人知识库聊天！请上传文档或直接开始聊天。', 'bot');
+    });
+  </script>
+</body>
+</html>

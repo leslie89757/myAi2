@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件上传测试</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+    }
+    .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .nav-links {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    .nav-links a {
+      margin-right: 15px;
+      color: #3498db;
+      text-decoration: none;
+    }
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-links">
+    <a href="/stream-test">流式聊天</a>
+    <a href="/simple-test">简单聊天</a>
+    <a href="/knowledge-chat">知识库聊天</a>
+    <a href="/test-upload">文件上传测试</a>
+    <a href="/api-docs">API文档</a>
+  </div>
+
+  <h1>文件上传测试</h1>
+  
+  <form id="uploadForm">
+    <div class="form-group">
+      <label for="userId">用户ID</label>
+      <input type="text" id="userId" name="userId" value="user1">
+    </div>
+    
+    <div class="form-group">
+      <label for="file">选择文件</label>
+      <input type="file" id="file" name="file">
+    </div>
+    
+    <button type="submit">上传文件</button>
+  </form>
+  
+  <div id="result" class="result" style="display: none;"></div>
+  
+  <h2>请求和响应详情</h2>
+  <div>
+    <h3>请求详情</h3>
+    <pre id="requestDetails"></pre>
+    
+    <h3>响应详情</h3>
+    <pre id="responseDetails"></pre>
+  </div>
+  
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const userId = document.getElementById('userId').value;
+      const fileInput = document.getElementById('file');
+      const resultDiv = document.getElementById('result');
+      const requestDetails = document.getElementById('requestDetails');
+      const responseDetails = document.getElementById('responseDetails');
+      
+      if (!fileInput.files.length) {
+        showResult('请选择文件', 'error');
+        return;
+      }
+      
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      // 记录请求详情
+      requestDetails.textContent = JSON.stringify({
+        endpoint: `/api/test-upload?userId=${userId}`,
+        method: 'POST',
+        file: {
+          name: file.name,
+          type: file.type,
+          size: file.size
+        }
+      }, null, 2);
+      
+      try {
+        const response = await fetch(`/api/test-upload?userId=${userId}`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        const responseText = await response.text();
+        let responseData;
+        
+        try {
+          responseData = JSON.parse(responseText);
+          // 记录响应详情
+          responseDetails.textContent = JSON.stringify({
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries([...response.headers.entries()]),
+            data: responseData
+          }, null, 2);
+          
+          if (response.ok) {
+            showResult(`文件上传成功: ${responseData.file.name}`, 'success');
+          } else {
+            showResult(`上传失败: ${responseData.error || '未知错误'}`, 'error');
+          }
+        } catch (e) {
+          // 响应不是JSON格式
+          responseDetails.textContent = JSON.stringify({
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries([...response.headers.entries()]),
+            rawText: responseText
+          }, null, 2);
+          
+          showResult(`上传失败: 服务器返回了非JSON格式的响应`, 'error');
+        }
+      } catch (error) {
+        responseDetails.textContent = JSON.stringify({
+          error: error.message
+        }, null, 2);
+        
+        showResult(`上传错误: ${error.message}`, 'error');
+      }
+    });
+    
+    function showResult(message, type) {
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = message;
+      resultDiv.className = `result ${type}`;
+      resultDiv.style.display = 'block';
+    }
+  </script>
+</body>
+</html>

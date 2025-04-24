@@ -3,12 +3,22 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import path from 'path';
+import { connectDB } from './config/database';
 import logger from './utils/logger';
+import { setupSwagger } from './utils/swagger';
 import { initializeOpenAI } from './utils/openai';
 import { simpleChat } from './controllers/simpleChatController';
 import { streamChat } from './controllers/streamChatController';
-import { setupApiDocs } from './utils/swagger';
+import { 
+  uploadDocument, 
+  queryKnowledgeBase, 
+  chatWithKnowledgeBase, 
+  streamChatWithKnowledgeBase,
+  deleteUserKnowledgeBase
+} from './controllers/knowledgeBaseController';
 import { apiKeyAuth, loadApiKeys } from './middleware/auth';
+import { upload, handleFileUploadErrors } from './middleware/fileUpload';
+import userRoutes from './routes/userRoutes';
 
 // 加载环境变量
 dotenv.config();
@@ -33,14 +43,49 @@ app.use((req, res, next) => {
 });
 
 // 设置API文档
-setupApiDocs(app);
+setupSwagger(app);
 
-// API 鉴权中间件
+// API鉴权中间件
 app.use(apiKeyAuth);
 
 // API路由
 app.post('/api/simple-chat', simpleChat);
 app.post('/api/stream-chat', streamChat);
+
+// 知识库相关路由
+app.post('/api/knowledge/upload', upload, handleFileUploadErrors, uploadDocument);
+app.post('/api/knowledge/query', queryKnowledgeBase);
+app.post('/api/knowledge/chat', chatWithKnowledgeBase);
+app.post('/api/knowledge/stream-chat', streamChatWithKnowledgeBase);
+app.delete('/api/knowledge/delete', deleteUserKnowledgeBase);
+
+// 用户路由
+app.use('/api/users', userRoutes);
+
+// 测试文件上传的简单端点
+app.post('/api/test-upload', upload, (req, res) => {
+  try {
+    if (!req.file) {
+      logger.error('测试上传失败: 未提供文件');
+      return res.status(400).json({ error: '未提供文件' });
+    }
+    
+    logger.info(`测试上传成功: ${req.file.originalname}, 路径: ${req.file.path}`);
+    return res.status(200).json({ 
+      success: true, 
+      message: '文件上传成功', 
+      file: {
+        name: req.file.originalname,
+        path: req.file.path,
+        size: req.file.size,
+        mimetype: req.file.mimetype
+      }
+    });
+  } catch (error: any) {
+    logger.error(`测试上传错误: ${error.message}`);
+    return res.status(500).json({ error: `上传失败: ${error.message}` });
+  }
+});
 
 // 页面路由
 app.get('/stream-test', (req, res) => {
@@ -51,10 +96,23 @@ app.get('/simple-test', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'simple-test.html'));
 });
 
+app.get('/knowledge-chat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'knowledge-chat.html'));
+});
+
+app.get('/test-upload', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'test-upload.html'));
+});
+
 // 健康检查端点
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+
+// API文档路由
+// 注意: 这个路由已由 setupSwagger 函数自动设置
+// Swagger UI 可以在 /api-docs 访问
+// OpenAPI JSON 规范可以在 /api-docs.json 访问
 
 // 默认路由
 app.get('/', (req, res) => {
@@ -73,9 +131,14 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.status(500).json({ error: '服务器内部错误' });
 });
 
+// 数据库连接在 ./config/database.ts 中实现
+
 // 启动服务器
 const startServer = async () => {
   try {
+    // 连接到数据库
+    await connectDB();
+    
     // 加载 API 密钥
     loadApiKeys();
     

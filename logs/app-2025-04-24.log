@@ -81,3 +81,819 @@
 [2025-04-24T06:33:14.651Z] [INFO] GET /api-docs/
 [2025-04-24T06:33:17.314Z] [INFO] GET /api-docs.json
 [2025-04-24T06:33:57.784Z] [INFO] GET /api-docs.json
+[2025-04-24T07:54:26.728Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T07:54:26.729Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T07:54:28.277Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T07:54:28.280Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T07:54:28.281Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T07:54:43.948Z] [INFO] GET /api-docs/
+[2025-04-24T07:54:43.956Z] [WARN] 404 Not Found: GET /api-docs/
+[2025-04-24T07:55:02.500Z] [INFO] GET /stream-test
+[2025-04-24T07:55:02.501Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T07:57:07.668Z] [INFO] GET /api-docs/
+[2025-04-24T07:57:07.677Z] [WARN] 404 Not Found: GET /api-docs/
+[2025-04-24T07:59:05.691Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T07:59:05.692Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T07:59:06.670Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T07:59:33.179Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T07:59:33.180Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T07:59:34.725Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T07:59:34.726Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T07:59:34.726Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T07:59:44.644Z] [INFO] GET /api-docs/
+[2025-04-24T08:17:30.284Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T08:17:30.287Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T08:17:34.064Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T08:17:34.069Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T08:17:34.070Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T08:17:49.546Z] [INFO] GET /knowledge-chat
+[2025-04-24T08:17:49.570Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:18:03.644Z] [INFO] POST /api/knowledge/upload
+[2025-04-24T08:18:03.646Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:18:03.653Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1
+[2025-04-24T08:18:03.798Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:18:03.799Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:29:58.273Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T08:29:58.275Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T08:30:00.154Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T08:30:00.155Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T08:30:00.156Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T08:41:58.913Z] [INFO] GET /knowledge-chat
+[2025-04-24T08:41:58.917Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:42:09.699Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T08:42:09.701Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:42:09.707Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T08:42:09.715Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1
+[2025-04-24T08:42:09.866Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:42:09.867Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:50:20.708Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T08:50:20.709Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T08:50:22.512Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T08:50:22.514Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T08:50:22.514Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T08:50:54.403Z] [INFO] GET /test-upload
+[2025-04-24T08:50:54.411Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:51:04.286Z] [INFO] POST /api/test-upload?userId=user1
+[2025-04-24T08:51:04.288Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:51:04.291Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T08:51:04.294Z] [INFO] 测试上传成功: é¡¾æ¯å¼º-ç®å.pdf, 路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745484664292-609231500.pdf
+[2025-04-24T08:51:11.420Z] [INFO] GET /knowledge-chat
+[2025-04-24T08:51:11.421Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:51:17.161Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T08:51:17.161Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:51:17.164Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T08:51:17.169Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745484677164-97943166.pdf
+[2025-04-24T08:51:17.304Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T08:51:17.305Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:51:17.305Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:53:56.856Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T08:53:56.856Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T08:53:58.228Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T08:53:58.230Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T08:53:58.230Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T08:54:19.943Z] [INFO] GET /api-docs/
+[2025-04-24T08:54:30.198Z] [INFO] GET /knowledge-chat
+[2025-04-24T08:54:30.202Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:54:43.683Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T08:54:43.684Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T08:54:43.690Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T08:54:43.692Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745484883690-863474133.pdf
+[2025-04-24T08:54:43.815Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T08:54:43.816Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:54:43.816Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T08:56:07.598Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T08:56:07.599Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T08:56:09.078Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T08:56:09.082Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T08:56:09.083Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:00:03.703Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:00:03.704Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:00:05.682Z] [ERROR] OpenAI API连接验证失败: 401 Incorrect API key provided: sk-temp-***********ting. You can find your API key at https://platform.openai.com/account/api-keys.
+[2025-04-24T09:00:05.685Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:00:05.685Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:02:40.157Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:02:40.158Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:02:41.235Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:02:41.237Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:02:41.237Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:02:47.952Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:02:47.953Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:02:58.858Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:02:58.859Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:02:58.862Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:02:58.865Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745485378863-694258694.pdf
+[2025-04-24T09:02:59.018Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:02:59.019Z] [ERROR] 文档向量化错误: (0 , openai_1.validateApiKey) is not a function, 文件: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:03:53.844Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:03:53.845Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:03:55.354Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:03:55.355Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:03:55.355Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:05:04.051Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:05:04.052Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:05:05.530Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:05:05.533Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:05:05.534Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:05:44.095Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:05:44.099Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:05:51.150Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:05:51.151Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:05:51.158Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:05:51.163Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745485551160-326782241.pdf
+[2025-04-24T09:05:51.364Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:05:51.366Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:05:51.367Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:05:51.369Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:05:51.369Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:05:51.370Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 964
+[2025-04-24T09:05:51.370Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:05:51.370Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:05:53.372Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 964
+[2025-04-24T09:05:53.373Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:05:53.374Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:05:57.375Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 964
+[2025-04-24T09:05:57.376Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:05:57.376Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:05:57.377Z] [ERROR] 块 #1/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:05:57.377Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:05:57.377Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 340
+[2025-04-24T09:05:57.378Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:05:57.378Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:05:59.379Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 340
+[2025-04-24T09:05:59.380Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:05:59.381Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:06:03.382Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 340
+[2025-04-24T09:06:03.383Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:03.383Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:06:03.384Z] [ERROR] 块 #2/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:03.384Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:06:03.384Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 960
+[2025-04-24T09:06:03.384Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:03.384Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:06:05.384Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 960
+[2025-04-24T09:06:05.386Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:05.386Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:06:09.387Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 960
+[2025-04-24T09:06:09.388Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:09.389Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:06:09.389Z] [ERROR] 块 #3/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:09.389Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:06:09.389Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 485
+[2025-04-24T09:06:09.389Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:09.390Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:06:11.391Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 485
+[2025-04-24T09:06:11.392Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:11.393Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:06:15.396Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 485
+[2025-04-24T09:06:15.399Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:15.399Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:06:15.399Z] [ERROR] 块 #4/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:15.399Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:06:15.399Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 105
+[2025-04-24T09:06:15.400Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:15.400Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:06:17.401Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 105
+[2025-04-24T09:06:17.403Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:17.403Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:06:21.404Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 105
+[2025-04-24T09:06:21.405Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:21.406Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:06:21.406Z] [ERROR] 块 #5/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:06:21.406Z] [INFO] 文档处理完成: 成功处理 0/5 个块，用户ID: user1
+[2025-04-24T09:06:21.406Z] [ERROR] 添加文档失败: 所有块处理失败，无法添加文档, 用户ID: user1
+[2025-04-24T09:06:21.407Z] [ERROR] 文档向量化错误: 添加文档失败: 所有块处理失败，无法添加文档, 文件: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:09:11.461Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:09:11.462Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:09:13.294Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:09:13.295Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:09:13.295Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:09:44.982Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:09:44.990Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:09:49.945Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:09:49.946Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:09:49.951Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:09:49.954Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745485789951-382167148.pdf
+[2025-04-24T09:09:50.099Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:09:50.100Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:09:50.100Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:09:50.102Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:09:50.102Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:09:50.102Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 964
+[2025-04-24T09:09:50.102Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:09:50.102Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:09:52.104Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 964
+[2025-04-24T09:09:52.105Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:09:52.105Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:09:56.107Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 964
+[2025-04-24T09:09:56.110Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:09:56.110Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:09:56.110Z] [ERROR] 块 #1/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:09:56.110Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:09:56.110Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 340
+[2025-04-24T09:09:56.111Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:09:56.111Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:09:58.113Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 340
+[2025-04-24T09:09:58.114Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:09:58.114Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:10:02.116Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 340
+[2025-04-24T09:10:02.117Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:02.118Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:10:02.118Z] [ERROR] 块 #2/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:02.118Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:10:02.118Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 960
+[2025-04-24T09:10:02.118Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:02.119Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:10:04.120Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 960
+[2025-04-24T09:10:04.121Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:04.122Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:10:08.123Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 960
+[2025-04-24T09:10:08.124Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:08.125Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:10:08.125Z] [ERROR] 块 #3/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:08.125Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:10:08.126Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 485
+[2025-04-24T09:10:08.126Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:08.127Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:10:10.128Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 485
+[2025-04-24T09:10:10.130Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:10.131Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:10:14.133Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 485
+[2025-04-24T09:10:14.134Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:14.134Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:10:14.134Z] [ERROR] 块 #4/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:14.135Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:10:14.135Z] [INFO] 尝试获取嵌入向量 (尝试 1/3)，文本长度: 105
+[2025-04-24T09:10:14.135Z] [ERROR] 获取嵌入向量失败 (尝试 1/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:14.135Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:10:16.141Z] [INFO] 尝试获取嵌入向量 (尝试 2/3)，文本长度: 105
+[2025-04-24T09:10:16.167Z] [ERROR] 获取嵌入向量失败 (尝试 2/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:16.182Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:10:20.186Z] [INFO] 尝试获取嵌入向量 (尝试 3/3)，文本长度: 105
+[2025-04-24T09:10:20.188Z] [ERROR] 获取嵌入向量失败 (尝试 3/3): Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:20.188Z] [ERROR] 获取嵌入向量失败，已达到最大重试次数 (3)
+[2025-04-24T09:10:20.189Z] [ERROR] 块 #5/5 获取嵌入向量失败: 获取嵌入向量失败: Cannot read properties of undefined (reading 'embeddings')
+[2025-04-24T09:10:20.189Z] [INFO] 文档处理完成: 成功处理 0/5 个块，用户ID: user1
+[2025-04-24T09:10:20.189Z] [ERROR] 添加文档失败: 所有块处理失败，无法添加文档, 用户ID: user1
+[2025-04-24T09:10:20.190Z] [ERROR] 文档向量化错误: 添加文档失败: 所有块处理失败，无法添加文档, 文件: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:11:09.272Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:11:09.273Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:11:11.246Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:11:11.250Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:11:11.251Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:11:40.918Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:11:40.920Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:11:45.407Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:11:45.407Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:11:45.411Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:11:45.413Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745485905411-205339264.pdf
+[2025-04-24T09:11:45.562Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:11:45.563Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:11:45.564Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:11:45.565Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:11:45.565Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:11:45.566Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T09:11:45.566Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:11:45.568Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485905565-0.json
+[2025-04-24T09:11:45.568Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:11:45.568Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T09:11:45.569Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:11:45.569Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485905568-1.json
+[2025-04-24T09:11:45.569Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:11:45.569Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T09:11:45.569Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:11:45.570Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485905569-2.json
+[2025-04-24T09:11:45.570Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:11:45.570Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T09:11:45.570Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:11:45.571Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485905570-3.json
+[2025-04-24T09:11:45.571Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:11:45.571Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T09:11:45.571Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:11:45.571Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485905571-4.json
+[2025-04-24T09:11:45.571Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T09:11:45.571Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:12:00.836Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:12:00.838Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:12:00.840Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:12:00.841Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745485920840-523418060.pdf
+[2025-04-24T09:12:00.916Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:12:00.917Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:12:00.918Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:12:00.919Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:12:00.919Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:12:00.919Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T09:12:00.919Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:12:00.921Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485920919-0.json
+[2025-04-24T09:12:00.921Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:12:00.921Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T09:12:00.921Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:12:00.922Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485920921-1.json
+[2025-04-24T09:12:00.922Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:12:00.922Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T09:12:00.924Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:12:00.925Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485920922-2.json
+[2025-04-24T09:12:00.926Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:12:00.926Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T09:12:00.927Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:12:00.929Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485920926-3.json
+[2025-04-24T09:12:00.929Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:12:00.929Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T09:12:00.930Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:12:00.932Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745485920929-4.json
+[2025-04-24T09:12:00.932Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T09:12:00.932Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:12:16.249Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T09:12:16.250Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:12:16.252Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:12:16.253Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:12:16.253Z] [INFO] 生成嵌入向量，文本长度: 11
+[2025-04-24T09:12:16.254Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:12:16.279Z] [ERROR] 流式知识库聊天错误: (0 , openai_2.withRetry) is not a function
+[2025-04-24T09:14:01.240Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:14:01.241Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:14:03.387Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:14:03.390Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:14:03.391Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:14:09.437Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:14:09.438Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:14:15.321Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:14:15.322Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:14:15.326Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:14:15.331Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745486055327-137377644.pdf
+[2025-04-24T09:14:15.488Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:14:15.489Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:14:15.490Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:14:15.490Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:14:15.490Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:14:15.491Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T09:14:15.491Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:14:15.491Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745486055491-0.json
+[2025-04-24T09:14:15.491Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:14:15.492Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T09:14:15.492Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:14:15.492Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745486055492-1.json
+[2025-04-24T09:14:15.493Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:14:15.493Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T09:14:15.493Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:14:15.494Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745486055493-2.json
+[2025-04-24T09:14:15.494Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:14:15.494Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T09:14:15.494Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:14:15.495Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745486055494-3.json
+[2025-04-24T09:14:15.495Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:14:15.495Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T09:14:15.495Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:14:15.496Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745486055495-4.json
+[2025-04-24T09:14:15.496Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T09:14:15.496Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:14:25.193Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T09:14:25.193Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:14:25.194Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:14:25.194Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:14:25.195Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T09:14:25.195Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:14:25.205Z] [ERROR] API调用失败 (尝试 1/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:14:25.205Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:14:27.206Z] [ERROR] API调用失败 (尝试 2/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:14:27.207Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:14:31.208Z] [ERROR] API调用失败 (尝试 3/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:14:31.210Z] [ERROR] 流式知识库聊天错误: Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:44:56.921Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:44:56.922Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:44:59.238Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:44:59.242Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:44:59.242Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:45:24.472Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:45:24.473Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:45:36.436Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:45:36.438Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:45:45.110Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:45:45.110Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:45:45.113Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:45:45.116Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745487945113-919834556.pdf
+[2025-04-24T09:45:45.266Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:45:45.267Z] [ERROR] 文档向量化错误: (0 , openai_1.validateApiKey) is not a function, 文件: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:47:20.836Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:47:20.837Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:47:22.049Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:47:22.052Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:47:22.052Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:47:49.195Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:47:49.196Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:47:53.504Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:47:53.505Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:47:53.508Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:47:53.510Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745488073508-869479043.pdf
+[2025-04-24T09:47:53.646Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:47:53.647Z] [INFO] 成功初始化Chroma向量存储，用户ID: user1, 集合: user-user1
+[2025-04-24T09:47:53.647Z] [INFO] 成功初始化Chroma向量存储，用户ID: user1, 集合: user-user1
+[2025-04-24T09:47:53.648Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:47:55.352Z] [ERROR] 添加文档失败: Chroma getOrCreateCollection error: ChromaConnectionError: Failed to connect to chromadb. Make sure your server is running and try again. If you are running from a browser, make sure that your chromadb instance is configured to allow requests from the current origin using the CHROMA_SERVER_CORS_ALLOW_ORIGINS environment variable., 用户ID: user1
+[2025-04-24T09:47:55.353Z] [ERROR] 文档向量化错误: 添加文档失败: Chroma getOrCreateCollection error: ChromaConnectionError: Failed to connect to chromadb. Make sure your server is running and try again. If you are running from a browser, make sure that your chromadb instance is configured to allow requests from the current origin using the CHROMA_SERVER_CORS_ALLOW_ORIGINS environment variable., 文件: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:49:38.424Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:49:38.425Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:49:39.755Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:49:39.757Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:49:39.758Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:50:34.374Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:50:34.375Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:50:40.076Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:50:40.078Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:50:40.082Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:50:40.086Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745488240083-902930113.pdf
+[2025-04-24T09:50:40.281Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:50:40.283Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:50:40.284Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:50:40.286Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:50:40.286Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:50:40.306Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T09:50:40.307Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:50:40.307Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488240286-0.json
+[2025-04-24T09:50:40.308Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:50:40.308Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T09:50:40.308Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:50:40.309Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488240308-1.json
+[2025-04-24T09:50:40.310Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:50:40.310Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T09:50:40.310Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:50:40.311Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488240310-2.json
+[2025-04-24T09:50:40.312Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:50:40.312Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T09:50:40.312Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:50:40.314Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488240312-3.json
+[2025-04-24T09:50:40.314Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:50:40.314Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T09:50:40.315Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:50:40.316Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488240314-4.json
+[2025-04-24T09:50:40.316Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T09:50:40.317Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:50:57.265Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T09:50:57.266Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:50:57.268Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:50:57.269Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:50:57.270Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T09:50:57.270Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:50:57.291Z] [ERROR] API调用失败 (尝试 1/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:50:57.291Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:50:59.292Z] [ERROR] API调用失败 (尝试 2/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:50:59.293Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:51:03.294Z] [ERROR] API调用失败 (尝试 3/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:51:03.295Z] [ERROR] 流式知识库聊天错误: Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:52:10.102Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:52:10.102Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:52:12.198Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:52:12.199Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:52:12.199Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:57:25.422Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:57:25.427Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:57:31.317Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:57:31.318Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:57:31.323Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:57:31.327Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745488651323-912132565.pdf
+[2025-04-24T09:57:31.475Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:57:31.476Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:57:31.480Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:57:31.484Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:57:31.485Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:57:31.486Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T09:57:31.486Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:57:31.487Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488651485-0.json
+[2025-04-24T09:57:31.487Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:57:31.487Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T09:57:31.488Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:57:31.488Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488651487-1.json
+[2025-04-24T09:57:31.488Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:57:31.488Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T09:57:31.489Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:57:31.490Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488651488-2.json
+[2025-04-24T09:57:31.490Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:57:31.490Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T09:57:31.490Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:57:31.490Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488651490-3.json
+[2025-04-24T09:57:31.490Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:57:31.490Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T09:57:31.491Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:57:31.491Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488651490-4.json
+[2025-04-24T09:57:31.491Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T09:57:31.491Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:57:42.010Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T09:57:42.010Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:57:42.012Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:57:42.012Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:57:42.013Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T09:57:42.013Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:57:42.038Z] [ERROR] API调用失败 (尝试 1/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:57:42.038Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T09:57:44.041Z] [ERROR] API调用失败 (尝试 2/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:57:44.046Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T09:57:48.047Z] [ERROR] API调用失败 (尝试 3/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:57:48.048Z] [ERROR] 流式知识库聊天错误: Cannot read properties of undefined (reading 'chat')
+[2025-04-24T09:59:02.814Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T09:59:02.815Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T09:59:04.979Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T09:59:04.981Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T09:59:04.982Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T09:59:08.963Z] [INFO] GET /knowledge-chat
+[2025-04-24T09:59:08.971Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:59:13.746Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T09:59:13.746Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:59:13.750Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T09:59:13.753Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745488753750-268728177.pdf
+[2025-04-24T09:59:13.857Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T09:59:13.857Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:59:13.858Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:59:13.858Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T09:59:13.858Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T09:59:13.858Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T09:59:13.859Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:59:13.860Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488753858-0.json
+[2025-04-24T09:59:13.860Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T09:59:13.860Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T09:59:13.861Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:59:13.861Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488753860-1.json
+[2025-04-24T09:59:13.861Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T09:59:13.861Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T09:59:13.861Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:59:13.862Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488753861-2.json
+[2025-04-24T09:59:13.862Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T09:59:13.862Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T09:59:13.862Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:59:13.863Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488753862-3.json
+[2025-04-24T09:59:13.863Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T09:59:13.863Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T09:59:13.863Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:59:13.864Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488753863-4.json
+[2025-04-24T09:59:13.864Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T09:59:13.864Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T09:59:24.810Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T09:59:24.810Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T09:59:24.811Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:59:24.812Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T09:59:24.812Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T09:59:24.813Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T09:59:24.837Z] [ERROR] 流式知识库聊天错误: (0 , openai_1.getOpenAIClient) is not a function
+[2025-04-24T10:00:19.218Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T10:00:19.219Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T10:00:21.155Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T10:00:21.158Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T10:00:21.158Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T10:00:36.460Z] [INFO] GET /knowledge-chat
+[2025-04-24T10:00:36.461Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:00:53.740Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:00:53.741Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:00:53.744Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:00:53.745Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:00:53.746Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T10:00:53.752Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:00:53.779Z] [ERROR] API调用失败 (尝试 1/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T10:00:53.779Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T10:00:55.780Z] [ERROR] API调用失败 (尝试 2/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T10:00:55.781Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T10:00:59.783Z] [ERROR] API调用失败 (尝试 3/3): Cannot read properties of undefined (reading 'chat')
+[2025-04-24T10:00:59.784Z] [ERROR] 流式知识库聊天错误: Cannot read properties of undefined (reading 'chat')
+[2025-04-24T10:02:09.569Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T10:02:09.570Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T10:02:11.354Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T10:02:11.356Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T10:02:11.357Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T10:02:27.909Z] [INFO] GET /knowledge-chat
+[2025-04-24T10:02:27.910Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:02:34.351Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T10:02:34.352Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:02:34.357Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T10:02:34.360Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745488954358-527184046.pdf
+[2025-04-24T10:02:34.505Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T10:02:34.506Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:02:34.506Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:02:34.507Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T10:02:34.507Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T10:02:34.507Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T10:02:34.507Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:02:34.508Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488954507-0.json
+[2025-04-24T10:02:34.508Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T10:02:34.508Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T10:02:34.509Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:02:34.509Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488954508-1.json
+[2025-04-24T10:02:34.509Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T10:02:34.509Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T10:02:34.510Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:02:34.510Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488954509-2.json
+[2025-04-24T10:02:34.510Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T10:02:34.510Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T10:02:34.511Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:02:34.512Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488954510-3.json
+[2025-04-24T10:02:34.512Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T10:02:34.512Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T10:02:34.513Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:02:34.513Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745488954512-4.json
+[2025-04-24T10:02:34.513Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T10:02:34.513Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T10:02:40.605Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:02:40.606Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:02:40.607Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:02:40.607Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:02:40.608Z] [INFO] 生成嵌入向量，文本长度: 3
+[2025-04-24T10:02:40.608Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:02:50.714Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:02:50.716Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:02:50.717Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:02:50.717Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:02:50.718Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T10:02:50.718Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:03:11.155Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:03:11.155Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:03:11.156Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:03:11.156Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:03:11.157Z] [INFO] 生成嵌入向量，文本长度: 12
+[2025-04-24T10:03:11.157Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:03:30.556Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:03:30.558Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:03:30.559Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:03:30.560Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:03:30.560Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T10:03:30.560Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:03:46.287Z] [INFO] GET /api-docs/
+[2025-04-24T10:03:54.473Z] [INFO] GET /knowledge-chat
+[2025-04-24T10:03:54.475Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:03:56.035Z] [INFO] GET /simple-test
+[2025-04-24T10:03:56.036Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:04:00.384Z] [INFO] GET /stream-test
+[2025-04-24T10:04:00.385Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:04:20.824Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T10:04:20.825Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:04:20.827Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T10:04:20.828Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745489060827-676508725.pdf
+[2025-04-24T10:04:20.879Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T10:04:20.880Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:20.880Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:20.880Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T10:04:20.880Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T10:04:20.880Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T10:04:20.881Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:20.881Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489060880-0.json
+[2025-04-24T10:04:20.881Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T10:04:20.881Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T10:04:20.882Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:20.883Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489060881-1.json
+[2025-04-24T10:04:20.883Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T10:04:20.883Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T10:04:20.883Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:20.884Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489060883-2.json
+[2025-04-24T10:04:20.884Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T10:04:20.884Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T10:04:20.884Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:20.885Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489060884-3.json
+[2025-04-24T10:04:20.885Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T10:04:20.885Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T10:04:20.885Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:20.886Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489060885-4.json
+[2025-04-24T10:04:20.886Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T10:04:20.886Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T10:04:32.946Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:04:32.947Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:04:32.948Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:32.949Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:32.949Z] [INFO] 生成嵌入向量，文本长度: 6
+[2025-04-24T10:04:32.949Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:38.408Z] [INFO] GET /knowledge-chat
+[2025-04-24T10:04:38.409Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:04:43.288Z] [INFO] POST /api/knowledge/upload?userId=user1
+[2025-04-24T10:04:43.289Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:04:43.292Z] [INFO] 文件将上传到目录: /Users/guzhenqiang/myAi2/uploads/user1
+[2025-04-24T10:04:43.298Z] [INFO] 处理文件: 顾振强-简历, 用户ID: user1, 文件路径: /Users/guzhenqiang/myAi2/uploads/user1/file-1745489083292-224996218.pdf
+[2025-04-24T10:04:43.342Z] [INFO] 文件解析成功: 顾振强-简历, 内容长度: 2481
+[2025-04-24T10:04:43.342Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:43.343Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:43.343Z] [INFO] 文档已分割为 5 个块，用户ID: user1
+[2025-04-24T10:04:43.343Z] [INFO] 处理块 #1/5 (长度: 964)
+[2025-04-24T10:04:43.343Z] [INFO] 生成嵌入向量，文本长度: 964
+[2025-04-24T10:04:43.343Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:43.344Z] [INFO] 成功保存块 #1/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489083343-0.json
+[2025-04-24T10:04:43.344Z] [INFO] 处理块 #2/5 (长度: 340)
+[2025-04-24T10:04:43.344Z] [INFO] 生成嵌入向量，文本长度: 340
+[2025-04-24T10:04:43.344Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:43.345Z] [INFO] 成功保存块 #2/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489083344-1.json
+[2025-04-24T10:04:43.345Z] [INFO] 处理块 #3/5 (长度: 960)
+[2025-04-24T10:04:43.345Z] [INFO] 生成嵌入向量，文本长度: 960
+[2025-04-24T10:04:43.346Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:43.347Z] [INFO] 成功保存块 #3/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489083345-2.json
+[2025-04-24T10:04:43.347Z] [INFO] 处理块 #4/5 (长度: 485)
+[2025-04-24T10:04:43.347Z] [INFO] 生成嵌入向量，文本长度: 485
+[2025-04-24T10:04:43.347Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:43.348Z] [INFO] 成功保存块 #4/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489083347-3.json
+[2025-04-24T10:04:43.348Z] [INFO] 处理块 #5/5 (长度: 105)
+[2025-04-24T10:04:43.349Z] [INFO] 生成嵌入向量，文本长度: 105
+[2025-04-24T10:04:43.349Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:04:43.350Z] [INFO] 成功保存块 #5/5 到文件: /Users/guzhenqiang/myAi2/data/embeddings/user1/1745489083349-4.json
+[2025-04-24T10:04:43.350Z] [INFO] 文档处理完成: 成功处理 5/5 个块，用户ID: user1
+[2025-04-24T10:04:43.350Z] [INFO] 文档向量化成功: 顾振强-简历, 用户ID: user1
+[2025-04-24T10:04:52.266Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:04:52.267Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:04:52.270Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:52.270Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:04:52.271Z] [INFO] 生成嵌入向量，文本长度: 8
+[2025-04-24T10:04:52.271Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T10:05:02.108Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T10:05:02.109Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T10:05:02.110Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:05:02.110Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T10:05:02.110Z] [INFO] 生成嵌入向量，文本长度: 9
+[2025-04-24T10:05:02.111Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T11:28:18.899Z] [INFO] POST /api/knowledge/stream-chat
+[2025-04-24T11:28:18.908Z] [WARN] API 鉴权已禁用，因为没有配置 API 密钥
+[2025-04-24T11:28:18.921Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T11:28:18.924Z] [INFO] 成功加载用户 user1 的向量存储
+[2025-04-24T11:28:18.925Z] [INFO] 生成嵌入向量，文本长度: 7
+[2025-04-24T11:28:18.942Z] [INFO] 成功生成伪嵌入向量，维度: 1536
+[2025-04-24T11:29:06.787Z] [ERROR] API调用失败 (尝试 1/3): Connection error.
+[2025-04-24T11:29:06.789Z] [INFO] 等待 2000ms 后重试...
+[2025-04-24T11:29:12.136Z] [ERROR] API调用失败 (尝试 2/3): Connection error.
+[2025-04-24T11:29:12.137Z] [INFO] 等待 4000ms 后重试...
+[2025-04-24T11:29:19.458Z] [ERROR] API调用失败 (尝试 3/3): Connection error.
+[2025-04-24T11:29:19.461Z] [ERROR] 流式知识库聊天错误: Connection error.
+[2025-04-24T11:35:24.410Z] [WARN] 未配置 API_KEYS 环境变量，API 将不受保护
+[2025-04-24T11:35:24.411Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T11:36:00.875Z] [ERROR] OpenAI API连接验证失败: Connection error.
+[2025-04-24T11:36:00.884Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T11:36:00.884Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T11:36:58.889Z] [INFO] GET /api-docs/
+[2025-04-24T11:36:59.091Z] [INFO] GET /api-docs/swagger-ui.css
+[2025-04-24T11:36:59.234Z] [INFO] GET /api-docs/swagger-ui-bundle.js
+[2025-04-24T11:36:59.236Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
+[2025-04-24T11:36:59.513Z] [INFO] GET /api-docs/swagger-ui-init.js
+[2025-04-24T11:37:02.052Z] [INFO] GET /api-docs/favicon-32x32.png
+[2025-04-24T11:48:07.244Z] [INFO] GET /api-docs/
+[2025-04-24T11:48:07.662Z] [INFO] GET /api-docs/swagger-ui.css
+[2025-04-24T11:48:07.844Z] [INFO] GET /api-docs/swagger-ui-bundle.js
+[2025-04-24T11:48:07.853Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
+[2025-04-24T11:48:07.860Z] [INFO] GET /api-docs/swagger-ui-init.js
+[2025-04-24T11:48:09.585Z] [INFO] GET /api-docs/favicon-32x32.png
+[2025-04-24T11:55:54.163Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T11:56:19.784Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T11:56:27.406Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T11:57:23.198Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T11:57:39.236Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T11:58:01.079Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T11:58:11.092Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T12:00:21.854Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T12:00:38.073Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T12:00:40.056Z] [DEBUG] Executing (default): SELECT 1+1 AS result
+[2025-04-24T12:00:40.058Z] [INFO] 成功连接到 PostgreSQL 数据库
+[2025-04-24T12:00:40.059Z] [DEBUG] Executing (default): SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users'
+[2025-04-24T12:00:40.069Z] [DEBUG] Executing (default): SELECT t.typname enum_name, array_agg(e.enumlabel ORDER BY enumsortorder) enum_value FROM pg_type t JOIN pg_enum e ON t.oid = e.enumtypid JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE n.nspname = 'public' AND t.typname='enum_users_role' GROUP BY 1
+[2025-04-24T12:00:40.090Z] [DEBUG] Executing (default): DO 'BEGIN CREATE TYPE "public"."enum_users_role" AS ENUM(''user'', ''admin''); EXCEPTION WHEN duplicate_object THEN null; END';
+[2025-04-24T12:00:40.101Z] [DEBUG] Executing (default): WITH ranges AS (  SELECT pg_range.rngtypid, pg_type.typname AS rngtypname,         pg_type.typarray AS rngtyparray, pg_range.rngsubtype    FROM pg_range LEFT OUTER JOIN pg_type ON pg_type.oid = pg_range.rngtypid)SELECT pg_type.typname, pg_type.typtype, pg_type.oid, pg_type.typarray,       ranges.rngtypname, ranges.rngtypid, ranges.rngtyparray  FROM pg_type LEFT OUTER JOIN ranges ON pg_type.oid = ranges.rngsubtype WHERE (pg_type.typtype IN('b', 'e'));
+[2025-04-24T12:00:40.104Z] [DEBUG] Executing (default): SELECT pk.constraint_type as "Constraint",c.column_name as "Field", c.column_default as "Default",c.is_nullable as "Null", (CASE WHEN c.udt_name = 'hstore' THEN c.udt_name ELSE c.data_type END) || (CASE WHEN c.character_maximum_length IS NOT NULL THEN '(' || c.character_maximum_length || ')' ELSE '' END) as "Type", (SELECT array_agg(e.enumlabel) FROM pg_catalog.pg_type t JOIN pg_catalog.pg_enum e ON t.oid=e.enumtypid WHERE t.typname=c.udt_name) AS "special", (SELECT pgd.description FROM pg_catalog.pg_statio_all_tables AS st INNER JOIN pg_catalog.pg_description pgd on (pgd.objoid=st.relid) WHERE c.ordinal_position=pgd.objsubid AND c.table_name=st.relname) AS "Comment" FROM information_schema.columns c LEFT JOIN (SELECT tc.table_schema, tc.table_name, cu.column_name, tc.constraint_type FROM information_schema.TABLE_CONSTRAINTS tc JOIN information_schema.KEY_COLUMN_USAGE  cu ON tc.table_schema=cu.table_schema and tc.table_name=cu.table_name and tc.constraint_name=cu.constraint_name and tc.constraint_type='PRIMARY KEY') pk ON pk.table_schema=c.table_schema AND pk.table_name=c.table_name AND pk.column_name=c.column_name WHERE c.table_name = 'users' AND c.table_schema = 'public'
+[2025-04-24T12:00:40.108Z] [DEBUG] Executing (default): SELECT DISTINCT tc.constraint_name as constraint_name, tc.constraint_schema as constraint_schema, tc.constraint_catalog as constraint_catalog, tc.table_name as table_name,tc.table_schema as table_schema,tc.table_catalog as table_catalog,tc.initially_deferred as initially_deferred,tc.is_deferrable as is_deferrable,kcu.column_name as column_name,ccu.table_schema  AS referenced_table_schema,ccu.table_catalog  AS referenced_table_catalog,ccu.table_name  AS referenced_table_name,ccu.column_name AS referenced_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = 'users' AND tc.table_catalog = 'chatgpt_api'
+[2025-04-24T12:00:40.130Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "username" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "username" DROP DEFAULT;ALTER TABLE "users"  ADD UNIQUE ("username");ALTER TABLE "users" ALTER COLUMN "username" TYPE VARCHAR(50)  ;
+[2025-04-24T12:00:40.134Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "email" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "email" DROP DEFAULT;ALTER TABLE "users"  ADD UNIQUE ("email");ALTER TABLE "users" ALTER COLUMN "email" TYPE VARCHAR(100)  ;
+[2025-04-24T12:00:40.135Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "password" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "password" DROP DEFAULT;ALTER TABLE "users" ALTER COLUMN "password" TYPE VARCHAR(100);
+[2025-04-24T12:00:40.135Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "role" DROP NOT NULL;ALTER TABLE "users" ALTER COLUMN "role" SET DEFAULT 'user';DO 'BEGIN CREATE TYPE "public"."enum_users_role" AS ENUM(''user'', ''admin''); EXCEPTION WHEN duplicate_object THEN null; END';ALTER TABLE "users" ALTER COLUMN "role" TYPE "public"."enum_users_role" USING ("role"::"public"."enum_users_role");
+[2025-04-24T12:00:40.144Z] [ERROR] PostgreSQL 数据库连接失败: default for column "role" cannot be cast automatically to type enum_users_role
+[2025-04-24T12:00:40.144Z] [ERROR] 服务器启动失败: default for column "role" cannot be cast automatically to type enum_users_role
+[2025-04-24T12:00:46.869Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T12:00:47.886Z] [DEBUG] Executing (default): SELECT 1+1 AS result
+[2025-04-24T12:00:47.887Z] [INFO] 成功连接到 PostgreSQL 数据库
+[2025-04-24T12:00:47.888Z] [DEBUG] Executing (default): SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users'
+[2025-04-24T12:00:47.894Z] [DEBUG] Executing (default): SELECT t.typname enum_name, array_agg(e.enumlabel ORDER BY enumsortorder) enum_value FROM pg_type t JOIN pg_enum e ON t.oid = e.enumtypid JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace WHERE n.nspname = 'public' AND t.typname='enum_users_role' GROUP BY 1
+[2025-04-24T12:00:47.898Z] [DEBUG] Executing (default): SELECT pk.constraint_type as "Constraint",c.column_name as "Field", c.column_default as "Default",c.is_nullable as "Null", (CASE WHEN c.udt_name = 'hstore' THEN c.udt_name ELSE c.data_type END) || (CASE WHEN c.character_maximum_length IS NOT NULL THEN '(' || c.character_maximum_length || ')' ELSE '' END) as "Type", (SELECT array_agg(e.enumlabel) FROM pg_catalog.pg_type t JOIN pg_catalog.pg_enum e ON t.oid=e.enumtypid WHERE t.typname=c.udt_name) AS "special", (SELECT pgd.description FROM pg_catalog.pg_statio_all_tables AS st INNER JOIN pg_catalog.pg_description pgd on (pgd.objoid=st.relid) WHERE c.ordinal_position=pgd.objsubid AND c.table_name=st.relname) AS "Comment" FROM information_schema.columns c LEFT JOIN (SELECT tc.table_schema, tc.table_name, cu.column_name, tc.constraint_type FROM information_schema.TABLE_CONSTRAINTS tc JOIN information_schema.KEY_COLUMN_USAGE  cu ON tc.table_schema=cu.table_schema and tc.table_name=cu.table_name and tc.constraint_name=cu.constraint_name and tc.constraint_type='PRIMARY KEY') pk ON pk.table_schema=c.table_schema AND pk.table_name=c.table_name AND pk.column_name=c.column_name WHERE c.table_name = 'users' AND c.table_schema = 'public'
+[2025-04-24T12:00:47.905Z] [DEBUG] Executing (default): SELECT DISTINCT tc.constraint_name as constraint_name, tc.constraint_schema as constraint_schema, tc.constraint_catalog as constraint_catalog, tc.table_name as table_name,tc.table_schema as table_schema,tc.table_catalog as table_catalog,tc.initially_deferred as initially_deferred,tc.is_deferrable as is_deferrable,kcu.column_name as column_name,ccu.table_schema  AS referenced_table_schema,ccu.table_catalog  AS referenced_table_catalog,ccu.table_name  AS referenced_table_name,ccu.column_name AS referenced_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = 'users' AND tc.table_catalog = 'chatgpt_api'
+[2025-04-24T12:00:47.922Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "username" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "username" DROP DEFAULT;ALTER TABLE "users"  ADD UNIQUE ("username");ALTER TABLE "users" ALTER COLUMN "username" TYPE VARCHAR(50)  ;
+[2025-04-24T12:00:47.924Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "email" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "email" DROP DEFAULT;ALTER TABLE "users"  ADD UNIQUE ("email");ALTER TABLE "users" ALTER COLUMN "email" TYPE VARCHAR(100)  ;
+[2025-04-24T12:00:47.925Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "password" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "password" DROP DEFAULT;ALTER TABLE "users" ALTER COLUMN "password" TYPE VARCHAR(100);
+[2025-04-24T12:00:47.927Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "role" DROP NOT NULL;ALTER TABLE "users" ALTER COLUMN "role" SET DEFAULT 'user';DO 'BEGIN CREATE TYPE "public"."enum_users_role" AS ENUM(''user'', ''admin''); EXCEPTION WHEN duplicate_object THEN null; END';ALTER TABLE "users" ALTER COLUMN "role" TYPE "public"."enum_users_role" USING ("role"::"public"."enum_users_role");
+[2025-04-24T12:00:47.935Z] [ERROR] PostgreSQL 数据库连接失败: default for column "role" cannot be cast automatically to type enum_users_role
+[2025-04-24T12:00:47.935Z] [ERROR] 服务器启动失败: default for column "role" cannot be cast automatically to type enum_users_role
+[2025-04-24T12:01:00.554Z] [INFO] 加载环境变量文件: /Users/guzhenqiang/myAi2/.env
+[2025-04-24T12:01:01.680Z] [DEBUG] Executing (default): SELECT 1+1 AS result
+[2025-04-24T12:01:01.681Z] [INFO] 成功连接到 PostgreSQL 数据库
+[2025-04-24T12:01:01.682Z] [DEBUG] Executing (default): SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'users'
+[2025-04-24T12:01:01.690Z] [DEBUG] Executing (default): SELECT pk.constraint_type as "Constraint",c.column_name as "Field", c.column_default as "Default",c.is_nullable as "Null", (CASE WHEN c.udt_name = 'hstore' THEN c.udt_name ELSE c.data_type END) || (CASE WHEN c.character_maximum_length IS NOT NULL THEN '(' || c.character_maximum_length || ')' ELSE '' END) as "Type", (SELECT array_agg(e.enumlabel) FROM pg_catalog.pg_type t JOIN pg_catalog.pg_enum e ON t.oid=e.enumtypid WHERE t.typname=c.udt_name) AS "special", (SELECT pgd.description FROM pg_catalog.pg_statio_all_tables AS st INNER JOIN pg_catalog.pg_description pgd on (pgd.objoid=st.relid) WHERE c.ordinal_position=pgd.objsubid AND c.table_name=st.relname) AS "Comment" FROM information_schema.columns c LEFT JOIN (SELECT tc.table_schema, tc.table_name, cu.column_name, tc.constraint_type FROM information_schema.TABLE_CONSTRAINTS tc JOIN information_schema.KEY_COLUMN_USAGE  cu ON tc.table_schema=cu.table_schema and tc.table_name=cu.table_name and tc.constraint_name=cu.constraint_name and tc.constraint_type='PRIMARY KEY') pk ON pk.table_schema=c.table_schema AND pk.table_name=c.table_name AND pk.column_name=c.column_name WHERE c.table_name = 'users' AND c.table_schema = 'public'
+[2025-04-24T12:01:01.697Z] [DEBUG] Executing (default): SELECT DISTINCT tc.constraint_name as constraint_name, tc.constraint_schema as constraint_schema, tc.constraint_catalog as constraint_catalog, tc.table_name as table_name,tc.table_schema as table_schema,tc.table_catalog as table_catalog,tc.initially_deferred as initially_deferred,tc.is_deferrable as is_deferrable,kcu.column_name as column_name,ccu.table_schema  AS referenced_table_schema,ccu.table_catalog  AS referenced_table_catalog,ccu.table_name  AS referenced_table_name,ccu.column_name AS referenced_column_name FROM information_schema.table_constraints AS tc JOIN information_schema.key_column_usage AS kcu ON tc.constraint_name = kcu.constraint_name JOIN information_schema.constraint_column_usage AS ccu ON ccu.constraint_name = tc.constraint_name WHERE constraint_type = 'FOREIGN KEY' AND tc.table_name = 'users' AND tc.table_catalog = 'chatgpt_api'
+[2025-04-24T12:01:01.727Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "username" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "username" DROP DEFAULT;ALTER TABLE "users"  ADD UNIQUE ("username");ALTER TABLE "users" ALTER COLUMN "username" TYPE VARCHAR(50)  ;
+[2025-04-24T12:01:01.730Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "email" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "email" DROP DEFAULT;ALTER TABLE "users"  ADD UNIQUE ("email");ALTER TABLE "users" ALTER COLUMN "email" TYPE VARCHAR(100)  ;
+[2025-04-24T12:01:01.732Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "password" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "password" DROP DEFAULT;ALTER TABLE "users" ALTER COLUMN "password" TYPE VARCHAR(100);
+[2025-04-24T12:01:01.732Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "role" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "role" SET DEFAULT 'user';ALTER TABLE "users" ALTER COLUMN "role" TYPE VARCHAR(10);
+[2025-04-24T12:01:01.754Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "apiKey" DROP NOT NULL;ALTER TABLE "users" ALTER COLUMN "apiKey" DROP DEFAULT;ALTER TABLE "users"  ADD UNIQUE ("apiKey");ALTER TABLE "users" ALTER COLUMN "apiKey" TYPE VARCHAR(255) ;
+[2025-04-24T12:01:01.756Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "apiKeyUsage" DROP NOT NULL;ALTER TABLE "users" ALTER COLUMN "apiKeyUsage" SET DEFAULT 0;ALTER TABLE "users" ALTER COLUMN "apiKeyUsage" TYPE INTEGER;
+[2025-04-24T12:01:01.757Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "apiKeyLimit" DROP NOT NULL;ALTER TABLE "users" ALTER COLUMN "apiKeyLimit" SET DEFAULT 100;ALTER TABLE "users" ALTER COLUMN "apiKeyLimit" TYPE INTEGER;
+[2025-04-24T12:01:01.757Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "lastLoginAt" DROP NOT NULL;ALTER TABLE "users" ALTER COLUMN "lastLoginAt" DROP DEFAULT;ALTER TABLE "users" ALTER COLUMN "lastLoginAt" TYPE TIMESTAMP WITH TIME ZONE;
+[2025-04-24T12:01:01.760Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "isActive" DROP NOT NULL;ALTER TABLE "users" ALTER COLUMN "isActive" SET DEFAULT true;ALTER TABLE "users" ALTER COLUMN "isActive" TYPE BOOLEAN;
+[2025-04-24T12:01:01.761Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "createdAt" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "createdAt" DROP DEFAULT;ALTER TABLE "users" ALTER COLUMN "createdAt" TYPE TIMESTAMP WITH TIME ZONE;
+[2025-04-24T12:01:01.761Z] [DEBUG] Executing (default): ALTER TABLE "users" ALTER COLUMN "updatedAt" SET NOT NULL;ALTER TABLE "users" ALTER COLUMN "updatedAt" DROP DEFAULT;ALTER TABLE "users" ALTER COLUMN "updatedAt" TYPE TIMESTAMP WITH TIME ZONE;
+[2025-04-24T12:01:01.761Z] [DEBUG] Executing (default): SELECT i.relname AS name, ix.indisprimary AS primary, ix.indisunique AS unique, ix.indkey AS indkey, array_agg(a.attnum) as column_indexes, array_agg(a.attname) AS column_names, pg_get_indexdef(ix.indexrelid) AS definition FROM pg_class t, pg_class i, pg_index ix, pg_attribute a WHERE t.oid = ix.indrelid AND i.oid = ix.indexrelid AND a.attrelid = t.oid AND t.relkind = 'r' and t.relname = 'users' GROUP BY i.relname, ix.indexrelid, ix.indisprimary, ix.indisunique, ix.indkey ORDER BY i.relname;
+[2025-04-24T12:01:01.766Z] [INFO] 数据库模型同步完成
+[2025-04-24T12:01:01.766Z] [INFO] 已加载 API 密钥: test_user
+[2025-04-24T12:01:01.766Z] [INFO] 共加载 1 个 API 密钥
+[2025-04-24T12:01:01.766Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T12:01:55.294Z] [ERROR] OpenAI API连接验证失败: Connection error.
+[2025-04-24T12:01:55.302Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T12:01:55.303Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T12:04:41.642Z] [INFO] GET /api-docs/
+[2025-04-24T12:04:41.830Z] [INFO] GET /api-docs/swagger-ui.css
+[2025-04-24T12:04:42.036Z] [INFO] GET /api-docs/swagger-ui-bundle.js
+[2025-04-24T12:04:42.049Z] [INFO] GET /api-docs/swagger-ui-init.js
+[2025-04-24T12:04:42.054Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
+[2025-04-24T12:04:43.740Z] [INFO] GET /api-docs/favicon-32x32.png
+[2025-04-24T12:05:13.605Z] [INFO] GET /knowledge-chat
+[2025-04-24T12:05:13.614Z] [WARN] API 请求被拒绝: 缺少 API 密钥 [::1]
