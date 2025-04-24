@@ -7,13 +7,13 @@ import logger from './utils/logger';
 import { initializeOpenAI } from './utils/openai';
 import { simpleChat } from './controllers/simpleChatController';
 import { streamChat } from './controllers/streamChatController';
-import { setupSwagger } from './utils/swagger';
+import { setupSwagger, getSwaggerSpecs } from './utils/swagger';
 
 // 加载环境变量
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // 中间件
 app.use(cors());
@@ -34,6 +34,18 @@ app.use((req, res, next) => {
 // 设置Swagger文档
 setupSwagger(app);
 
+// 自定义API文档路由
+app.get('/api-docs', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'api-docs.html'));
+});
+
+// API文档JSON数据
+app.get('/api-docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.send(getSwaggerSpecs());
+});
+
 // API路由
 app.post('/api/simple-chat', simpleChat);
 app.post('/api/stream-chat', streamChat);
@@ -41,6 +53,10 @@ app.post('/api/stream-chat', streamChat);
 // 页面路由
 app.get('/stream-test', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'stream-test.html'));
+});
+
+app.get('/simple-test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'simple-test.html'));
 });
 
 // 健康检查端点
@@ -51,6 +67,12 @@ app.get('/health', (req, res) => {
 // 默认路由
 app.get('/', (req, res) => {
   res.redirect('/stream-test');
+});
+
+// 404处理
+app.use((req, res, next) => {
+  logger.warn(`404 Not Found: ${req.method} ${req.url}`);
+  res.status(404).json({ error: '请求的资源不存在' });
 });
 
 // 错误处理中间件

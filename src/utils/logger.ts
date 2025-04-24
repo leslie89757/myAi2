@@ -3,14 +3,24 @@ import fs from 'fs';
 import path from 'path';
 import { format } from 'util';
 
-// 确保日志目录存在
-const logDir = path.join(process.cwd(), 'logs');
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
+// 检测是否在 Vercel 环境中运行
+const isVercelEnvironment = process.env.VERCEL || process.env.NOW_REGION;
 
-// 日志文件路径
-const logFile = path.join(logDir, `app-${new Date().toISOString().split('T')[0]}.log`);
+// 日志目录和文件路径
+let logDir: string;
+let logFile: string;
+
+// 只有在非 Vercel 环境中才创建日志目录和文件
+if (!isVercelEnvironment) {
+  // 确保日志目录存在
+  logDir = path.join(process.cwd(), 'logs');
+  if (!fs.existsSync(logDir)) {
+    fs.mkdirSync(logDir);
+  }
+
+  // 日志文件路径
+  logFile = path.join(logDir, `app-${new Date().toISOString().split('T')[0]}.log`);
+}
 
 // 日志级别
 enum LogLevel {
@@ -37,8 +47,14 @@ function log(level: LogLevel, message: string, ...args: any[]) {
   const formattedMessage = args.length ? format(message, ...args) : message;
   const logEntry = `[${timestamp}] [${level}] ${formattedMessage}`;
   
-  // 写入文件
-  fs.appendFileSync(logFile, logEntry + '\n');
+  // 只有在非 Vercel 环境中才写入文件
+  if (!isVercelEnvironment && logFile) {
+    try {
+      fs.appendFileSync(logFile, logEntry + '\n');
+    } catch (error) {
+      console.error('无法写入日志文件:', error);
+    }
+  }
   
   // 控制台输出（带颜色）
   console.log(`${colors[level]}[${timestamp}] [${level}]${colors.reset} ${formattedMessage}`);
@@ -51,5 +67,5 @@ export default {
   error: (message: string, ...args: any[]) => log(LogLevel.ERROR, message, ...args),
   
   // 获取日志文件路径
-  getLogFilePath: () => logFile
+  getLogFilePath: () => isVercelEnvironment ? null : logFile
 };

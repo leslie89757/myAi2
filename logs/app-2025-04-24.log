@@ -51,3 +51,26 @@
 [2025-04-24T03:45:22.530Z] [INFO] 收到简单聊天请求
 [2025-04-24T03:45:22.530Z] [INFO] 处理用户消息: nihao
 [2025-04-24T03:45:23.690Z] [INFO] 收到ChatGPT回复
+[2025-04-24T05:27:09.639Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T05:27:11.220Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T05:29:45.500Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T05:29:46.742Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T05:29:46.745Z] [INFO] 服务器启动在 http://localhost:3001
+[2025-04-24T05:29:46.746Z] [INFO] API文档可在 http://localhost:3001/api-docs 访问
+[2025-04-24T05:30:03.773Z] [INFO] GET /favicon.ico
+[2025-04-24T05:30:03.776Z] [WARN] 404 Not Found: GET /favicon.ico
+[2025-04-24T05:30:22.033Z] [INFO] POST /api/chat
+[2025-04-24T05:30:22.034Z] [WARN] 404 Not Found: POST /api/chat
+[2025-04-24T05:30:25.410Z] [INFO] GET /stream-test
+[2025-04-24T05:30:29.629Z] [INFO] POST /api/stream-chat
+[2025-04-24T05:30:29.631Z] [INFO] 收到流式聊天请求
+[2025-04-24T05:30:29.632Z] [INFO] 处理用户消息: 你好
+[2025-04-24T05:30:29.632Z] [INFO] 开始流式响应
+[2025-04-24T05:30:30.607Z] [INFO] 流式响应完成
+[2025-04-24T05:30:39.272Z] [INFO] GET /api-docs
+[2025-04-24T05:30:39.396Z] [INFO] GET /api-docs/
+[2025-04-24T05:30:39.814Z] [INFO] GET /api-docs/swagger-ui.css
+[2025-04-24T05:30:39.927Z] [INFO] GET /api-docs/swagger-ui-bundle.js
+[2025-04-24T05:30:40.112Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
+[2025-04-24T05:30:40.112Z] [INFO] GET /api-docs/swagger-ui-init.js
+[2025-04-24T05:30:42.256Z] [INFO] GET /api-docs/favicon-32x32.png
