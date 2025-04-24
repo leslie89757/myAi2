@@ -37,3 +37,17 @@
 [2025-04-24T03:35:06.923Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
 [2025-04-24T03:35:06.926Z] [INFO] GET /api-docs/swagger-ui-init.js
 [2025-04-24T03:35:09.299Z] [INFO] GET /api-docs/favicon-32x32.png
+[2025-04-24T03:44:06.115Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T03:44:07.359Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T03:44:07.361Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-24T03:44:07.361Z] [INFO] API文档可在 http://localhost:3000/api-docs 访问
+[2025-04-24T03:44:18.128Z] [INFO] GET /api-docs/
+[2025-04-24T03:44:18.454Z] [INFO] GET /api-docs/swagger-ui.css
+[2025-04-24T03:44:18.480Z] [INFO] GET /api-docs/swagger-ui-bundle.js
+[2025-04-24T03:44:18.482Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
+[2025-04-24T03:44:18.568Z] [INFO] GET /api-docs/swagger-ui-init.js
+[2025-04-24T03:44:57.233Z] [INFO] POST /api/chat
+[2025-04-24T03:45:22.527Z] [INFO] POST /api/simple-chat
+[2025-04-24T03:45:22.530Z] [INFO] 收到简单聊天请求
+[2025-04-24T03:45:22.530Z] [INFO] 处理用户消息: nihao
+[2025-04-24T03:45:23.690Z] [INFO] 收到ChatGPT回复
