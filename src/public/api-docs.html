@@ -1,67 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChatGPT API 文档</title>
-  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui.css">
   <style>
-    html {
-      box-sizing: border-box;
-      overflow: -moz-scrollbars-vertical;
-      overflow-y: scroll;
-    }
-    
-    *,
-    *:before,
-    *:after {
-      box-sizing: inherit;
-    }
-    
     body {
-      margin: 0;
-      background: #fafafa;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
     }
-    
-    .swagger-ui .topbar {
-      background-color: #1b1b1b;
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
     }
-    
-    .swagger-ui .info .title {
-      color: #3b4151;
+    h2 {
+      color: #3498db;
+      margin-top: 30px;
+    }
+    h3 {
+      color: #2980b9;
+      margin-top: 25px;
+    }
+    .endpoint {
+      background-color: #f8f9fa;
+      border-left: 4px solid #3498db;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .method {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .post {
+      background-color: #49cc90;
+      color: white;
+    }
+    .get {
+      background-color: #61affe;
+      color: white;
+    }
+    .path {
+      font-family: monospace;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    code {
+      font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .description {
+      margin: 10px 0;
     }
   </style>
 </head>
 <body>
-  <div id="swagger-ui"></div>
-  
-  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-bundle.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.9.0/swagger-ui-standalone-preset.js"></script>
-  <script>
-    window.onload = function() {
-      // 获取当前域名作为基础URL
-      const baseUrl = window.location.protocol + '//' + window.location.host;
-      
-      // 初始化Swagger UI
-      window.ui = SwaggerUIBundle({
-        url: baseUrl + "/api-docs.json",
-        dom_id: '#swagger-ui',
-        deepLinking: true,
-        presets: [
-          SwaggerUIBundle.presets.apis,
-          SwaggerUIStandalonePreset
-        ],
-        plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
-        ],
-        layout: "StandaloneLayout",
-        docExpansion: 'list',
-        defaultModelsExpandDepth: 1,
-        defaultModelExpandDepth: 1,
-        showExtensions: true,
-        showCommonExtensions: true
-      });
-    };
-  </script>
+  <h1>ChatGPT API 文档</h1>
+  <p>版本: 1.0.0</p>
+  <p>此 API 提供了与 ChatGPT 交互的能力，包括流式和非流式两种接口。</p>
+
+  <h2>API 端点</h2>
+
+  <div class="endpoint">
+    <div>
+      <span class="method post">POST</span>
+      <span class="path">/api/simple-chat</span>
+    </div>
+    <div class="description">
+      <p>非流式聊天接口，一次性返回完整的 ChatGPT 回复。</p>
+    </div>
+    <h3>请求参数</h3>
+    <table>
+      <tr>
+        <th>参数名</th>
+        <th>类型</th>
+        <th>必填</th>
+        <th>描述</th>
+      </tr>
+      <tr>
+        <td>message</td>
+        <td>string</td>
+        <td>是</td>
+        <td>用户发送的消息内容</td>
+      </tr>
+    </table>
+    <h3>请求示例</h3>
+    <pre><code>{
+  "message": "你好，请介绍一下自己"
+}</code></pre>
+    <h3>响应示例</h3>
+    <pre><code>{
+  "reply": "你好！我是 ChatGPT，一个由 OpenAI 训练的大型语言模型。我可以回答问题、提供信息、进行对话，以及帮助完成各种文本相关的任务。我的知识库截止到我的训练数据结束的时间点，所以关于之后发生的事件我可能无法提供信息。有什么我可以帮助你的吗？"
+}</code></pre>
+  </div>
+
+  <div class="endpoint">
+    <div>
+      <span class="method post">POST</span>
+      <span class="path">/api/stream-chat</span>
+    </div>
+    <div class="description">
+      <p>流式聊天接口，使用 Server-Sent Events (SSE) 实时返回 ChatGPT 回复。</p>
+    </div>
+    <h3>请求参数</h3>
+    <table>
+      <tr>
+        <th>参数名</th>
+        <th>类型</th>
+        <th>必填</th>
+        <th>描述</th>
+      </tr>
+      <tr>
+        <td>message</td>
+        <td>string</td>
+        <td>是</td>
+        <td>用户发送的消息内容</td>
+      </tr>
+    </table>
+    <h3>请求示例</h3>
+    <pre><code>{
+  "message": "你好，请介绍一下自己"
+}</code></pre>
+    <h3>响应格式</h3>
+    <p>响应以 SSE 格式返回，每个事件包含一个 JSON 对象，其中 content 字段包含回复的一部分文本。最后一个事件为 [DONE] 表示流结束。</p>
+    <h3>响应示例</h3>
+    <pre><code>data: {"content":"你好"}
+
+data: {"content":"！我是"}
+
+data: {"content":" ChatGPT"}
+
+data: {"content":"，一个由"}
+
+data: {"content":" OpenAI"}
+
+data: {"content":" 训练的大型语言模型。"}
+
+data: [DONE]</code></pre>
+  </div>
+
+  <h2>测试页面</h2>
+  <p>本 API 提供了两个测试页面，方便您直接在浏览器中测试 API 功能：</p>
+  <ul>
+    <li><a href="/simple-test">简单聊天测试页面</a> - 测试非流式接口</li>
+    <li><a href="/stream-test">流式聊天测试页面</a> - 测试流式接口（带打字机效果）</li>
+  </ul>
+
+  <h2>健康检查</h2>
+  <div class="endpoint">
+    <div>
+      <span class="method get">GET</span>
+      <span class="path">/health</span>
+    </div>
+    <div class="description">
+      <p>检查 API 服务是否正常运行。</p>
+    </div>
+    <h3>响应示例</h3>
+    <pre><code>{
+  "status": "ok"
+}</code></pre>
+  </div>
+
+  <footer style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; color: #777;">
+    <p> 2025 ChatGPT API </p>
+  </footer>
 </body>
 </html>
