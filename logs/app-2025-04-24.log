@@ -1,0 +1,39 @@
+[2025-04-24T03:08:26.573Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T03:08:27.639Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T03:08:27.641Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-24T03:09:32.909Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T03:09:33.683Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T03:09:33.685Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-24T03:16:33.922Z] [INFO] 收到简单聊天请求
+[2025-04-24T03:16:33.925Z] [INFO] 处理用户消息: 你好，请介绍一下自己
+[2025-04-24T03:16:35.718Z] [INFO] 收到ChatGPT回复
+[2025-04-24T03:22:19.668Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T03:22:21.978Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T03:22:21.981Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-24T03:22:54.231Z] [INFO] POST /api/chat
+[2025-04-24T03:29:20.742Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T03:29:22.353Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T03:29:22.356Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-24T03:29:45.180Z] [INFO] POST /api/chat
+[2025-04-24T03:30:21.044Z] [INFO] GET /stream-test
+[2025-04-24T03:30:25.081Z] [INFO] POST /api/stream-chat
+[2025-04-24T03:30:25.083Z] [INFO] 收到流式聊天请求
+[2025-04-24T03:30:25.084Z] [INFO] 处理用户消息: 你好
+[2025-04-24T03:30:25.084Z] [INFO] 开始流式响应
+[2025-04-24T03:30:26.246Z] [INFO] 流式响应完成
+[2025-04-24T03:30:39.449Z] [INFO] POST /api/stream-chat
+[2025-04-24T03:30:39.451Z] [INFO] 收到流式聊天请求
+[2025-04-24T03:30:39.452Z] [INFO] 处理用户消息: 给我一份AI的市场报告
+[2025-04-24T03:30:39.452Z] [INFO] 开始流式响应
+[2025-04-24T03:30:49.200Z] [INFO] 流式响应完成
+[2025-04-24T03:34:50.765Z] [INFO] 验证OpenAI API连接...
+[2025-04-24T03:34:52.445Z] [INFO] OpenAI API连接成功，可用73个模型
+[2025-04-24T03:34:52.447Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-24T03:34:52.447Z] [INFO] API文档可在 http://localhost:3000/api-docs 访问
+[2025-04-24T03:35:06.527Z] [INFO] GET /api-docs
+[2025-04-24T03:35:06.572Z] [INFO] GET /api-docs/
+[2025-04-24T03:35:06.830Z] [INFO] GET /api-docs/swagger-ui.css
+[2025-04-24T03:35:06.887Z] [INFO] GET /api-docs/swagger-ui-bundle.js
+[2025-04-24T03:35:06.923Z] [INFO] GET /api-docs/swagger-ui-standalone-preset.js
+[2025-04-24T03:35:06.926Z] [INFO] GET /api-docs/swagger-ui-init.js
+[2025-04-24T03:35:09.299Z] [INFO] GET /api-docs/favicon-32x32.png

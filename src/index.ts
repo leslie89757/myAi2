@@ -1,18 +1,78 @@
-// src/index.ts
-import express, { Request, Response } from 'express';
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import dotenv from 'dotenv';
+import path from 'path';
+import logger from './utils/logger';
+import { initializeOpenAI } from './utils/openai';
+import { simpleChat } from './controllers/simpleChatController';
+import { streamChat } from './controllers/streamChatController';
+import { setupSwagger } from './utils/swagger';
+
+// 加载环境变量
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 示例路由
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Hello from TypeScript API!' });
+// 中间件
+app.use(cors());
+app.use(helmet({
+  contentSecurityPolicy: false // 禁用CSP以允许内联脚本
+}));
+app.use(express.json());
+
+// 静态文件服务
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 请求日志中间件
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
 });
 
-app.get('/users', (req: Request, res: Response) => {
-  res.json([{ id: 1, name: 'Alice' }, { id: 2, name: 'Bob' }]);
+// 设置Swagger文档
+setupSwagger(app);
+
+// API路由
+app.post('/api/simple-chat', simpleChat);
+app.post('/api/stream-chat', streamChat);
+
+// 页面路由
+app.get('/stream-test', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'stream-test.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+// 健康检查端点
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
+
+// 默认路由
+app.get('/', (req, res) => {
+  res.redirect('/stream-test');
+});
+
+// 错误处理中间件
+app.use((err: any, req: any, res: any, next: any) => {
+  logger.error(`服务器错误: ${err.message}`);
+  res.status(500).json({ error: '服务器内部错误' });
+});
+
+// 启动服务器
+const startServer = async () => {
+  try {
+    // 初始化OpenAI客户端并验证连接
+    await initializeOpenAI();
+    
+    app.listen(PORT, () => {
+      logger.info(`服务器启动在 http://localhost:${PORT}`);
+      logger.info(`API文档可在 http://localhost:${PORT}/api-docs 访问`);
+    });
+  } catch (error: any) {
+    logger.error('服务器启动失败:', error.message);
+    process.exit(1);
+  }
+};
+
+startServer();

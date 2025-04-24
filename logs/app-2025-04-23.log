@@ -1,0 +1,146 @@
+[2025-04-23T14:15:40.033Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-23T14:15:55.648Z] [INFO] POST /api/chat
+[2025-04-23T14:15:55.649Z] [INFO] 收到聊天请求: {"ip":"::1","headers":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0"}
+[2025-04-23T14:15:55.649Z] [DEBUG] 处理聊天消息: [{"role":"user","content":"你好"}]
+[2025-04-23T14:15:55.649Z] [INFO] 开始流式响应
+[2025-04-23T14:17:21.697Z] [ERROR] 流式聊天错误: APIConnectionError: Connection error.
+    at OpenAI.makeRequest (/Users/guzhenqiang/myAi2/node_modules/openai/src/core.ts:507:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  [stack]: [Getter/Setter],
+  [message]: 'Connection error.',
+  status: undefined,
+  headers: undefined,
+  request_id: undefined,
+  error: undefined,
+  code: undefined,
+  param: undefined,
+  type: undefined,
+  cause: FetchError: request to https://api.openai.com/v1/chat/completions failed, reason: Client network socket disconnected before secure TLS connection was established
+      at ClientRequest.<anonymous> (/Users/guzhenqiang/myAi2/node_modules/node-fetch/lib/index.js:1501:11)
+      at ClientRequest.emit (node:events:507:28)
+      at ClientRequest.emit (node:domain:489:12)
+      at emitErrorEvent (node:_http_client:104:11)
+      at TLSSocket.socketErrorListener (node:_http_client:518:5)
+      at TLSSocket.emit (node:events:519:35)
+      at TLSSocket.emit (node:domain:489:12)
+      at emitErrorNT (node:internal/streams/destroy:170:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    message: 'request to https://api.openai.com/v1/chat/completions failed, reason: Client network socket disconnected before secure TLS connection was established',
+    type: 'system',
+    errno: 'ECONNRESET',
+    code: 'ECONNRESET',
+    [stack]: [Getter/Setter],
+    name: 'FetchError'
+  }
+}
+[2025-04-23T14:19:30.887Z] [INFO] 初始化OpenAI客户端
+[2025-04-23T14:19:30.890Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-23T14:19:59.186Z] [INFO] POST /api/chat
+[2025-04-23T14:19:59.187Z] [INFO] 收到聊天请求: {"ip":"::1","headers":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0"}
+[2025-04-23T14:19:59.187Z] [DEBUG] 处理聊天消息: [{"role":"user","content":"你好"}]
+[2025-04-23T14:19:59.187Z] [INFO] 开始流式响应
+[2025-04-23T14:21:44.795Z] [WARN] 操作失败，2次重试后重新尝试: Connection error.
+[2025-04-23T14:23:22.972Z] [WARN] 操作失败，1次重试后重新尝试: Connection error.
+[2025-04-23T14:24:55.992Z] [ERROR] 流处理错误: APIConnectionError: Connection error.
+    at OpenAI.makeRequest (/Users/guzhenqiang/myAi2/node_modules/openai/src/core.ts:507:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  [stack]: [Getter/Setter],
+  [message]: 'Connection error.',
+  status: undefined,
+  headers: undefined,
+  request_id: undefined,
+  error: undefined,
+  code: undefined,
+  param: undefined,
+  type: undefined,
+  cause: FetchError: request to https://api.openai.com/v1/chat/completions failed, reason: Client network socket disconnected before secure TLS connection was established
+      at ClientRequest.<anonymous> (/Users/guzhenqiang/myAi2/node_modules/node-fetch/lib/index.js:1501:11)
+      at ClientRequest.emit (node:events:507:28)
+      at ClientRequest.emit (node:domain:489:12)
+      at emitErrorEvent (node:_http_client:104:11)
+      at TLSSocket.socketErrorListener (node:_http_client:518:5)
+      at TLSSocket.emit (node:events:507:28)
+      at TLSSocket.emit (node:domain:489:12)
+      at emitErrorNT (node:internal/streams/destroy:170:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    message: 'request to https://api.openai.com/v1/chat/completions failed, reason: Client network socket disconnected before secure TLS connection was established',
+    type: 'system',
+    errno: 'ECONNRESET',
+    code: 'ECONNRESET',
+    [stack]: [Getter/Setter],
+    name: 'FetchError'
+  }
+}
+[2025-04-23T14:41:22.467Z] [INFO] 初始化OpenAI客户端
+[2025-04-23T14:41:22.471Z] [INFO] 服务器启动在 http://localhost:3000
+[2025-04-23T14:41:59.057Z] [INFO] POST /api/chat
+[2025-04-23T14:41:59.058Z] [INFO] 收到聊天请求: {"ip":"::1","headers":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36 Edg/134.0.0.0"}
+[2025-04-23T14:41:59.058Z] [DEBUG] 处理聊天消息: [{"role":"user","content":"你好"}]
+[2025-04-23T14:41:59.059Z] [INFO] 开始流式响应
+[2025-04-23T14:42:25.551Z] [INFO] GET /simple-test
+[2025-04-23T14:42:29.695Z] [INFO] POST /api/simple-chat
+[2025-04-23T14:42:29.697Z] [INFO] 收到简单聊天请求
+[2025-04-23T14:42:29.698Z] [INFO] 处理用户消息: 你好
+[2025-04-23T14:43:49.033Z] [WARN] 操作失败，2次重试后重新尝试: Connection error.
+[2025-04-23T14:44:09.808Z] [WARN] 请求失败，尝试重试: Connection error.
+[2025-04-23T14:45:27.657Z] [WARN] 操作失败，1次重试后重新尝试: Connection error.
+[2025-04-23T14:45:45.855Z] [WARN] 请求失败，尝试重试: Connection error.
+[2025-04-23T14:46:23.133Z] [ERROR] 流处理错误: APIConnectionError: Connection error.
+    at OpenAI.makeRequest (/Users/guzhenqiang/myAi2/node_modules/openai/src/core.ts:507:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  [stack]: [Getter/Setter],
+  [message]: 'Connection error.',
+  status: undefined,
+  headers: undefined,
+  request_id: undefined,
+  error: undefined,
+  code: undefined,
+  param: undefined,
+  type: undefined,
+  cause: FetchError: request to https://api.openai.com/v1/chat/completions failed, reason: Client network socket disconnected before secure TLS connection was established
+      at ClientRequest.<anonymous> (/Users/guzhenqiang/myAi2/node_modules/node-fetch/lib/index.js:1501:11)
+      at ClientRequest.emit (node:events:507:28)
+      at ClientRequest.emit (node:domain:489:12)
+      at emitErrorEvent (node:_http_client:104:11)
+      at TLSSocket.socketErrorListener (node:_http_client:518:5)
+      at TLSSocket.emit (node:events:507:28)
+      at TLSSocket.emit (node:domain:489:12)
+      at emitErrorNT (node:internal/streams/destroy:170:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    message: 'request to https://api.openai.com/v1/chat/completions failed, reason: Client network socket disconnected before secure TLS connection was established',
+    type: 'system',
+    errno: 'ECONNRESET',
+    code: 'ECONNRESET',
+    [stack]: [Getter/Setter],
+    name: 'FetchError'
+  }
+}
+[2025-04-23T14:46:28.874Z] [ERROR] API调用错误: APIConnectionError: Connection error.
+    at OpenAI.makeRequest (/Users/guzhenqiang/myAi2/node_modules/openai/src/core.ts:507:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  status: undefined,
+  headers: undefined,
+  request_id: undefined,
+  error: undefined,
+  code: undefined,
+  param: undefined,
+  type: undefined,
+  cause: FetchError: request to https://api.openai.com/v1/chat/completions failed, reason: Client network socket disconnected before secure TLS connection was established
+      at ClientRequest.<anonymous> (/Users/guzhenqiang/myAi2/node_modules/node-fetch/lib/index.js:1501:11)
+      at ClientRequest.emit (node:events:507:28)
+      at ClientRequest.emit (node:domain:489:12)
+      at emitErrorEvent (node:_http_client:104:11)
+      at TLSSocket.socketErrorListener (node:_http_client:518:5)
+      at TLSSocket.emit (node:events:507:28)
+      at TLSSocket.emit (node:domain:489:12)
+      at emitErrorNT (node:internal/streams/destroy:170:8)
+      at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+      at processTicksAndRejections (node:internal/process/task_queues:90:21) {
+    type: 'system',
+    errno: 'ECONNRESET',
+    code: 'ECONNRESET'
+  }
+}

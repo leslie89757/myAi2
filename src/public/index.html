@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatGPT Stream Test</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .message {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+        .user-message {
+            background-color: #e1f5fe;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .assistant-message {
+            background-color: #f1f1f1;
+            align-self: flex-start;
+        }
+        .input-area {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+            background-color: white;
+        }
+        #user-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 16px;
+        }
+        #send-button {
+            margin-left: 10px;
+            padding: 12px 20px;
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #send-button:hover {
+            background-color: #0073e6;
+        }
+        .typing-indicator {
+            display: none;
+            padding: 10px 15px;
+            background-color: #f1f1f1;
+            border-radius: 18px;
+            max-width: 80px;
+            margin-bottom: 15px;
+        }
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #999;
+            margin-right: 5px;
+            animation: wave 1.3s linear infinite;
+        }
+        .dot:nth-child(2) {
+            animation-delay: -1.1s;
+        }
+        .dot:nth-child(3) {
+            animation-delay: -0.9s;
+        }
+        @keyframes wave {
+            0%, 60%, 100% {
+                transform: initial;
+            }
+            30% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>ChatGPT Stream Test</h1>
+    <div class="chat-container">
+        <div class="messages" id="messages">
+            <!-- Messages will be added here -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="user-input" placeholder="Type your message here..." autocomplete="off">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const messagesContainer = document.getElementById('messages');
+            const userInput = document.getElementById('user-input');
+            const sendButton = document.getElementById('send-button');
+            
+            // Chat history
+            const chatHistory = [];
+            
+            // Function to add a message to the UI
+            function addMessage(content, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'assistant-message'}`;
+                messageDiv.textContent = content;
+                messagesContainer.appendChild(messageDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Add to chat history
+                chatHistory.push({
+                    role: isUser ? 'user' : 'assistant',
+                    content: content
+                });
+            }
+            
+            // Function to add typing indicator
+            function showTypingIndicator() {
+                const indicator = document.createElement('div');
+                indicator.className = 'typing-indicator';
+                indicator.id = 'typing-indicator';
+                indicator.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+                messagesContainer.appendChild(indicator);
+                indicator.style.display = 'block';
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+            
+            // Function to remove typing indicator
+            function hideTypingIndicator() {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+            
+            // Function to send message and handle streaming response
+            async function sendMessage() {
+                const userMessage = userInput.value.trim();
+                if (!userMessage) return;
+                
+                // Add user message to UI
+                addMessage(userMessage, true);
+                userInput.value = '';
+                
+                // Prepare messages for API
+                const messages = [...chatHistory];
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                try {
+                    // Send request to backend
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ messages }),
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    
+                    // Create a reader for the stream
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let assistantResponse = '';
+                    
+                    // Hide typing indicator and create assistant message element
+                    hideTypingIndicator();
+                    const assistantMessageDiv = document.createElement('div');
+                    assistantMessageDiv.className = 'message assistant-message';
+                    messagesContainer.appendChild(assistantMessageDiv);
+                    
+                    // Process the stream
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        
+                        // Decode the chunk
+                        const chunk = decoder.decode(value, { stream: true });
+                        const lines = chunk.split('\n\n');
+                        
+                        for (const line of lines) {
+                            if (line.startsWith('data: ')) {
+                                const data = line.substring(6);
+                                
+                                if (data === '[DONE]') {
+                                    // Stream completed
+                                    break;
+                                }
+                                
+                                try {
+                                    const parsed = JSON.parse(data);
+                                    if (parsed.content) {
+                                        assistantResponse += parsed.content;
+                                        assistantMessageDiv.textContent = assistantResponse;
+                                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                                    }
+                                } catch (e) {
+                                    console.error('Error parsing JSON:', e);
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Add the complete response to chat history
+                    if (assistantResponse) {
+                        chatHistory.push({
+                            role: 'assistant',
+                            content: assistantResponse
+                        });
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    hideTypingIndicator();
+                    addMessage('An error occurred. Please try again.', false);
+                }
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
