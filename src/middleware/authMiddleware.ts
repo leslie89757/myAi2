@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import User, { UserRole } from '../models/User';
+import { User, UserRole } from '../generated/prisma';
+import { UserService } from '../services/userService';
 import logger from '../utils/logger';
 
 // 扩展 Request 接口以包含用户信息
@@ -27,7 +28,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
     
     // 查找用户
-    const user = await User.findByPk(decoded.id);
+    const user = await UserService.findById(decoded.id);
     if (!user || !user.isActive) {
       return res.status(401).json({ error: '用户不存在或已被禁用' });
     }
@@ -69,7 +70,7 @@ export const authenticateApiKey = async (req: AuthRequest, res: Response, next: 
     }
 
     // 查找拥有该 API 密钥的用户
-    const user = await User.findOne({ where: { apiKey, isActive: true } });
+    const user = await UserService.findByApiKey(apiKey);
     if (!user) {
       return res.status(401).json({ error: '无效的 API 密钥' });
     }
@@ -80,8 +81,7 @@ export const authenticateApiKey = async (req: AuthRequest, res: Response, next: 
     }
 
     // 增加 API 使用次数
-    user.apiKeyUsage = (user.apiKeyUsage || 0) + 1;
-    await user.save();
+    await UserService.incrementApiUsage(user.id);
 
     // 将用户信息附加到请求对象
     req.user = user;

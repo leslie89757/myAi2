@@ -57,7 +57,7 @@ export class VectorStore {
     
     // 创建OpenAI客户端
     this.openai = openai;
-    this.embeddingModel = 'text-embedding-ada-002';
+    this.embeddingModel = 'text-embedding-3-small';
     
     // 创建文本分割器
     this.textSplitter = new RecursiveCharacterTextSplitter({
@@ -117,25 +117,46 @@ export class VectorStore {
     try {
       logger.info(`生成嵌入向量，文本长度: ${text.length}`);
       
-      // 由于 OpenAI API 调用存在问题，我们使用一个简单的哈希函数生成伪向量
-      // 这不是真正的语义向量，但可以让系统继续工作
-      // 在实际生产环境中，应该使用真正的嵌入 API
-      const vector: number[] = [];
-      const seed = text.length;
-      
-      // 生成一个 1536 维的伪随机向量
-      for (let i = 0; i < 1536; i++) {
-        // 使用简单的伪随机数生成算法
-        const hash = Math.sin(seed * i) * 10000;
-        vector.push(hash - Math.floor(hash));
+      try {
+        // 使用 OpenAI API 生成真正的嵌入向量
+        const response = await this.openai.embeddings.create({
+          model: this.embeddingModel,
+          input: text
+        });
+        
+        // 根据 OpenAI API 的最新响应结构获取嵌入向量
+        if (response && response.data && response.data.length > 0) {
+          const embedding = response.data[0].embedding;
+          if (embedding && Array.isArray(embedding)) {
+            logger.info(`成功生成 OpenAI 嵌入向量，维度: ${embedding.length}`);
+            return embedding;
+          }
+        }
+        
+        // 如果响应结构不符合预期，抛出错误
+        throw new Error('无法从 OpenAI API 响应中提取嵌入向量');
+      } catch (apiError: any) {
+        // 如果 OpenAI API 调用失败，使用伪随机向量作为后备
+        logger.warn(`OpenAI 嵌入 API 调用失败: ${apiError.message}，切换到伪向量模式`);
+        
+        // 生成伪随机向量
+        const vector: number[] = [];
+        const seed = text.length;
+        
+        // 生成一个 1536 维的伪随机向量
+        for (let i = 0; i < 1536; i++) {
+          // 使用简单的伪随机数生成算法
+          const hash = Math.sin(seed * i) * 10000;
+          vector.push(hash - Math.floor(hash));
+        }
+        
+        // 归一化向量
+        const magnitude = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
+        const normalizedVector = vector.map(val => val / magnitude);
+        
+        logger.info(`成功生成伪嵌入向量，维度: ${normalizedVector.length}`);
+        return normalizedVector;
       }
-      
-      // 归一化向量
-      const magnitude = Math.sqrt(vector.reduce((sum, val) => sum + val * val, 0));
-      const normalizedVector = vector.map(val => val / magnitude);
-      
-      logger.info(`成功生成伪嵌入向量，维度: ${normalizedVector.length}`);
-      return normalizedVector;
     } catch (error: any) {
       logger.error(`生成嵌入向量失败: ${error.message}`);
       throw new Error(`生成嵌入向量失败: ${error.message}`);

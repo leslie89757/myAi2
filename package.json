@@ -1,7 +1,7 @@
 {
-  "name": "demo-ts-api",
+  "name": "myai-backend",
   "version": "1.0.0",
-  "description": "A TypeScript Node.js API deployed on Vercel",
+  "description": "A TypeScript Node.js API for MyAI knowledge base and chat system",
   "main": "dist/index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
@@ -16,6 +16,7 @@
   "dependencies": {
     "@langchain/community": "^0.3.41",
     "@langchain/openai": "^0.5.6",
+    "@prisma/client": "^6.6.0",
     "@types/express": "^4.17.17",
     "bcrypt": "^5.1.1",
     "chromadb": "^2.2.1",
@@ -31,8 +32,6 @@
     "pdf-parse": "^1.1.1",
     "pg": "^8.15.5",
     "redoc-express": "^2.1.0",
-    "sequelize": "^6.37.7",
-    "sequelize-typescript": "^2.1.6",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "ts-node": "^10.9.2",
@@ -50,7 +49,8 @@
     "@types/pg": "^8.11.14",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prisma": "^6.6.0"
   },
   "engines": {
     "node": ">=18.x"

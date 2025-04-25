@@ -3,22 +3,12 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 import path from 'path';
-import { connectDB } from './config/database';
+import prisma from './lib/prisma';
 import logger from './utils/logger';
 import { setupSwagger } from './utils/swagger';
 import { initializeOpenAI } from './utils/openai';
-import { simpleChat } from './controllers/simpleChatController';
-import { streamChat } from './controllers/streamChatController';
-import { 
-  uploadDocument, 
-  queryKnowledgeBase, 
-  chatWithKnowledgeBase, 
-  streamChatWithKnowledgeBase,
-  deleteUserKnowledgeBase
-} from './controllers/knowledgeBaseController';
-import { apiKeyAuth, loadApiKeys } from './middleware/auth';
-import { upload, handleFileUploadErrors } from './middleware/fileUpload';
-import userRoutes from './routes/userRoutes';
+import apiRouter from './api';
+import { loadApiKeys } from './api/middleware/auth';
 
 // 加载环境变量
 dotenv.config();
@@ -45,25 +35,11 @@ app.use((req, res, next) => {
 // 设置API文档
 setupSwagger(app);
 
-// API鉴权中间件
-app.use(apiKeyAuth);
-
-// API路由
-app.post('/api/simple-chat', simpleChat);
-app.post('/api/stream-chat', streamChat);
-
-// 知识库相关路由
-app.post('/api/knowledge/upload', upload, handleFileUploadErrors, uploadDocument);
-app.post('/api/knowledge/query', queryKnowledgeBase);
-app.post('/api/knowledge/chat', chatWithKnowledgeBase);
-app.post('/api/knowledge/stream-chat', streamChatWithKnowledgeBase);
-app.delete('/api/knowledge/delete', deleteUserKnowledgeBase);
-
-// 用户路由
-app.use('/api/users', userRoutes);
+// 集中的API路由
+app.use('/api', apiRouter);
 
 // 测试文件上传的简单端点
-app.post('/api/test-upload', upload, (req, res) => {
+app.post('/api/test-upload', (req: any, res: any) => {
   try {
     if (!req.file) {
       logger.error('测试上传失败: 未提供文件');
@@ -137,7 +113,8 @@ app.use((err: any, req: any, res: any, next: any) => {
 const startServer = async () => {
   try {
     // 连接到数据库
-    await connectDB();
+    await prisma.$connect();
+    logger.info('成功连接到 PostgreSQL 数据库');
     
     // 加载 API 密钥
     loadApiKeys();

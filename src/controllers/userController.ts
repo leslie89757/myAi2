@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import User, { UserRole } from '../models/User';
+import { UserRole } from '../generated/prisma';
+import { UserService } from '../services/userService';
 import logger from '../utils/logger';
 import { AuthRequest } from '../middleware/authMiddleware';
-import { Op } from 'sequelize';
 
 /**
  * 用户注册
@@ -77,14 +77,7 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     // 检查用户名和邮箱是否已存在
-    const existingUser = await User.findOne({ 
-      where: {
-        [Op.or]: [
-          { username },
-          { email }
-        ]
-      }
-    });
+    const existingUser = await UserService.findByUsernameOrEmail(username) || await UserService.findByUsernameOrEmail(email);
 
     if (existingUser) {
       if (existingUser.username === username) {
@@ -96,21 +89,15 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     // 创建新用户
-    const user = new User({
+    const user = await UserService.createUser({
       username,
       email,
       password,
-      role: UserRole.USER,
-      apiKeyUsage: 0,
-      apiKeyLimit: 100,
-      isActive: true
+      role: 'user'
     });
 
-    // 保存用户
-    await user.save();
-
     // 生成认证令牌
-    const token = user.generateAuthToken();
+    const token = UserService.generateAuthToken(user);
 
     // 返回用户信息（不包含密码）
     const userResponse = {
@@ -201,14 +188,7 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     // 查找用户（支持用户名或邮箱登录）
-    const user = await User.findOne({
-      where: {
-        [Op.or]: [
-          { username: login },
-          { email: login.toLowerCase() }
-        ]
-      }
-    });
+    const user = await UserService.findByUsernameOrEmail(login);
 
     if (!user) {
       return res.status(401).json({ error: '用户不存在' });
@@ -220,17 +200,18 @@ export const loginUser = async (req: Request, res: Response) => {
     }
 
     // 验证密码
-    const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await UserService.comparePassword(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ error: '密码错误' });
     }
 
     // 更新最后登录时间
-    user.lastLoginAt = new Date();
-    await user.save();
+    await UserService.updateUser(user.id, {
+      lastLoginAt: new Date()
+    });
 
     // 生成认证令牌
-    const token = user.generateAuthToken();
+    const token = UserService.generateAuthToken(user);
 
     // 返回用户信息（不包含密码）
     const userResponse = {
@@ -386,29 +367,26 @@ export const updateCurrentUser = async (req: AuthRequest, res: Response) => {
 
     const { username, email, currentPassword, newPassword } = req.body;
     const user = req.user;
+    const userData: any = {};
 
     // 检查是否要更新用户名
     if (username && username !== user.username) {
       // 检查用户名是否已存在
-      const existingUser = await User.findOne({ 
-        where: { username } 
-      });
-      if (existingUser) {
+      const existingUser = await UserService.findByUsernameOrEmail(username);
+      if (existingUser && existingUser.id !== user.id) {
         return res.status(409).json({ error: '用户名已存在' });
       }
-      user.username = username;
+      userData.username = username;
     }
 
     // 检查是否要更新邮箱
     if (email && email !== user.email) {
       // 检查邮箱是否已存在
-      const existingUser = await User.findOne({ 
-        where: { email: email.toLowerCase() } 
-      });
-      if (existingUser) {
+      const existingUser = await UserService.findByUsernameOrEmail(email.toLowerCase());
+      if (existingUser && existingUser.id !== user.id) {
         return res.status(409).json({ error: '邮箱已被注册' });
       }
-      user.email = email.toLowerCase();
+      userData.email = email.toLowerCase();
     }
 
     // 检查是否要更新密码
@@ -418,17 +396,17 @@ export const updateCurrentUser = async (req: AuthRequest, res: Response) => {
       }
 
       // 验证当前密码
-      const isPasswordValid = await user.comparePassword(currentPassword);
+      const isPasswordValid = await UserService.comparePassword(currentPassword, user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ error: '当前密码错误' });
       }
 
       // 更新密码
-      user.password = newPassword;
+      userData.password = newPassword;
     }
 
     // 保存更新
-    await user.save();
+    const updatedUser = await UserService.updateUser(user.id, userData);
 
     // 返回更新后的用户信息（不包含密码）
     const userResponse = {
@@ -486,13 +464,7 @@ export const generateApiKey = async (req: AuthRequest, res: Response) => {
     }
 
     // 生成 API 密钥
-    const apiKey = await req.user.generateApiKey();
-    
-    // 重置 API 使用计数
-    req.user.apiKeyUsage = 0;
-    
-    // 保存用户
-    await req.user.save();
+    const apiKey = await UserService.generateApiKey(req.user.id);
 
     logger.info(`用户 ${req.user.username} 生成了新的 API 密钥`);
     res.status(200).json({
