@@ -104,20 +104,248 @@ app.all('*', (req, res) => {
   
   // 如果是API JSON规格请求
   if (req.path === '/api-docs.json') {
+    // 提供完整的API文档
     return res.status(200).json({
-      openapi: '3.0.0',
-      info: {
-        title: 'MyAI API',
-        version: '1.0.0',
-        description: 'MyAI后端 API文档'
+      "openapi": "3.0.0",
+      "info": {
+        "title": "MyAI Backend API",
+        "version": "1.0.0",
+        "description": "MyAI后端 API文档",
+        "contact": {
+          "name": "开发团队"
+        }
       },
-      paths: {
-        '/health': {
-          get: {
-            summary: '健康检查',
-            responses: {
-              '200': {
-                description: '服务正常运行'
+      "servers": [
+        {
+          "url": "https://myai-backend.vercel.app",
+          "description": "生产服务器"
+        }
+      ],
+      "components": {
+        "securitySchemes": {
+          "apiKeyAuth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "X-API-Key",
+            "description": "API密钥认证，在请求头中添加：X-API-Key: {apiKey}"
+          }
+        },
+        "schemas": {
+          "ChatMessage": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "enum": ["system", "user", "assistant"],
+                "description": "消息角色"
+              },
+              "content": {
+                "type": "string",
+                "description": "消息内容"
+              }
+            }
+          },
+          "Error": {
+            "type": "object",
+            "properties": {
+              "error": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "security": [
+        { "apiKeyAuth": [] }
+      ],
+      "paths": {
+        "/health": {
+          "get": {
+            "summary": "健康检查",
+            "tags": ["System"],
+            "security": [],
+            "responses": {
+              "200": {
+                "description": "服务正常运行",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "example": "ok"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/chat/simple": {
+          "post": {
+            "summary": "简单非流式对话",
+            "tags": ["Chat"],
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["messages"],
+                    "properties": {
+                      "messages": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ChatMessage"
+                        }
+                      },
+                      "model": {
+                        "type": "string",
+                        "default": "gpt-3.5-turbo"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "请求成功",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "$ref": "#/components/schemas/ChatMessage"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "未授权",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/chat/stream": {
+          "post": {
+            "summary": "流式对话",
+            "tags": ["Chat"],
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["messages"],
+                    "properties": {
+                      "messages": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/ChatMessage"
+                        }
+                      },
+                      "model": {
+                        "type": "string",
+                        "default": "gpt-3.5-turbo"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "流式响应",
+                "content": {
+                  "text/event-stream": {
+                    "schema": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "未授权",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "/api/knowledge/query": {
+          "post": {
+            "summary": "知识库查询",
+            "tags": ["Knowledge"],
+            "requestBody": {
+              "required": true,
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "required": ["query"],
+                    "properties": {
+                      "query": {
+                        "type": "string",
+                        "description": "查询内容"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "responses": {
+              "200": {
+                "description": "请求成功",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "answer": {
+                          "type": "string"
+                        },
+                        "sources": {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "401": {
+                "description": "未授权",
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
               }
             }
           }
