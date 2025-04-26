@@ -69,22 +69,34 @@ export const authenticateApiKey = async (req: AuthRequest, res: Response, next: 
       return res.status(401).json({ error: '未提供 API 密钥' });
     }
 
-    // 查找拥有该 API 密钥的用户
-    const user = await UserService.findByApiKey(apiKey);
-    if (!user) {
+    // 从环境变量中加载预定义的 API 密钥
+    const apiKeysStr = process.env.API_KEYS;
+    if (!apiKeysStr) {
+      logger.warn('未配置 API_KEYS 环境变量，无法验证 API 密钥');
+      return res.status(401).json({ error: '服务器未配置 API 密钥' });
+    }
+
+    // 验证 API 密钥
+    const keyPairs = apiKeysStr.split(',');
+    let isValidKey = false;
+    let userName = '';
+
+    for (const pair of keyPairs) {
+      const [key, name] = pair.trim().split(':');
+      if (key && key === apiKey) {
+        isValidKey = true;
+        userName = name || 'unknown';
+        break;
+      }
+    }
+
+    if (!isValidKey) {
+      logger.warn(`无效的 API 密钥尝试: ${apiKey}`);
       return res.status(401).json({ error: '无效的 API 密钥' });
     }
 
-    // 检查 API 使用限制
-    if (user.apiKeyUsage && user.apiKeyLimit && user.apiKeyUsage >= user.apiKeyLimit) {
-      return res.status(429).json({ error: 'API 使用次数已达上限' });
-    }
-
-    // 增加 API 使用次数
-    await UserService.incrementApiUsage(user.id);
-
     // 将用户信息附加到请求对象
-    req.user = user;
+    req.user = { id: apiKey, name: userName } as any;
     next();
   } catch (error: any) {
     logger.error(`API 密钥认证错误: ${error.message}`);

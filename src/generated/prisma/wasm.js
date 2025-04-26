@@ -132,6 +132,67 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  userId: 'userId',
+  adminId: 'adminId',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  sessionId: 'sessionId',
+  role: 'role',
+  content: 'content',
+  tokens: 'tokens',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AdminScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  username: 'username',
+  password: 'password',
+  apiKey: 'apiKey',
+  role: 'role',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SystemConfigScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  value: 'value',
+  description: 'description',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SystemPromptScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  content: 'content',
+  type: 'type',
+  isDefault: 'isDefault',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -152,7 +213,13 @@ exports.UserRole = exports.$Enums.UserRole = {
 };
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Session: 'Session',
+  ChatMessage: 'ChatMessage',
+  Admin: 'Admin',
+  SystemConfig: 'SystemConfig',
+  SystemPrompt: 'SystemPrompt',
+  RefreshToken: 'RefreshToken'
 };
 
 /**

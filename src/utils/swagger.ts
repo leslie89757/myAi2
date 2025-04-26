@@ -33,12 +33,36 @@ const options = {
         name: '开发团队'
       }
     },
-    servers: [getServerUrl()]
+    servers: [getServerUrl()],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'JWT认证，在请求头中添加：Authorization: Bearer {token}'
+        },
+        apiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'X-API-Key',
+          description: 'API密钥认证，在请求头中添加：X-API-Key: {apiKey}'
+        }
+      }
+    },
+    security: [
+      { bearerAuth: [] },
+      { apiKeyAuth: [] }
+    ]
   },
   // 使用绝对路径指定API文件
   apis: [
     path.resolve(__dirname, '../controllers/*.js'),
-    path.resolve(__dirname, '../controllers/*.ts')
+    path.resolve(__dirname, '../controllers/*.ts'),
+    path.resolve(__dirname, '../api/controllers/*.js'),
+    path.resolve(__dirname, '../api/controllers/*.ts'),
+    path.resolve(__dirname, '../api/routes/*.js'),
+    path.resolve(__dirname, '../api/routes/*.ts')
   ]
 };
 

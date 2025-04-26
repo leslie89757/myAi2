@@ -2,17 +2,17 @@ import { Request, Response } from 'express';
 import { UserRole } from '../generated/prisma';
 import { UserService } from '../services/userService';
 import logger from '../utils/logger';
-import { AuthRequest } from '../middleware/authMiddleware';
+import { DualAuthRequest } from '../api/middleware/dualAuthMiddleware';
 
 /**
- * 用户注册
+ * 用户注册 (传统方式，新应用应使用 /api/auth/login)
  * @openapi
  * /api/users/register:
  *   post:
  *     tags:
  *       - 用户管理
- *     summary: 用户注册
- *     description: 创建新用户账号
+ *     summary: 用户注册 (传统方式)
+ *     description: 创建新用户账号。注意：新应用推荐使用 JWT 认证系统。
  *     requestBody:
  *       required: true
  *       content:
@@ -121,14 +121,14 @@ export const registerUser = async (req: Request, res: Response) => {
 };
 
 /**
- * 用户登录
+ * 用户登录 (传统方式，新应用应使用 /api/auth/login)
  * @openapi
  * /api/users/login:
  *   post:
  *     tags:
  *       - 用户管理
- *     summary: 用户登录
- *     description: 使用用户名/邮箱和密码登录
+ *     summary: 用户登录 (传统方式)
+ *     description: 使用用户名/邮箱和密码登录。注意：新应用推荐使用 JWT 认证系统的 /api/auth/login 接口。
  *     requestBody:
  *       required: true
  *       content:
@@ -245,6 +245,7 @@ export const loginUser = async (req: Request, res: Response) => {
  *     description: 获取已认证用户的个人信息
  *     security:
  *       - bearerAuth: []
+ *       - apiKeyAuth: []
  *     responses:
  *       200:
  *         description: 成功获取用户信息
@@ -275,7 +276,7 @@ export const loginUser = async (req: Request, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const getCurrentUser = async (req: AuthRequest, res: Response) => {
+export const getCurrentUser = async (req: DualAuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -309,6 +310,7 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
  *     description: 更新已认证用户的个人信息
  *     security:
  *       - bearerAuth: []
+ *       - apiKeyAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -359,7 +361,7 @@ export const getCurrentUser = async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const updateCurrentUser = async (req: AuthRequest, res: Response) => {
+export const updateCurrentUser = async (req: DualAuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -396,7 +398,11 @@ export const updateCurrentUser = async (req: AuthRequest, res: Response) => {
       }
 
       // 验证当前密码
-      const isPasswordValid = await UserService.comparePassword(currentPassword, user.password);
+      if (!req.user?.password) {
+        return res.status(401).json({ error: '无法验证密码' });
+      }
+      
+      const isPasswordValid = await UserService.comparePassword(currentPassword, req.user.password);
       if (!isPasswordValid) {
         return res.status(401).json({ error: '当前密码错误' });
       }
@@ -438,6 +444,7 @@ export const updateCurrentUser = async (req: AuthRequest, res: Response) => {
  *     description: 为当前用户生成新的 API 密钥
  *     security:
  *       - bearerAuth: []
+ *       - apiKeyAuth: []
  *     responses:
  *       200:
  *         description: API 密钥生成成功
@@ -457,7 +464,7 @@ export const updateCurrentUser = async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const generateApiKey = async (req: AuthRequest, res: Response) => {
+export const generateApiKey = async (req: DualAuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -489,6 +496,7 @@ export const generateApiKey = async (req: AuthRequest, res: Response) => {
  *     description: 获取当前用户的 API 使用统计
  *     security:
  *       - bearerAuth: []
+ *       - apiKeyAuth: []
  *     responses:
  *       200:
  *         description: 成功获取 API 使用情况
@@ -510,7 +518,7 @@ export const generateApiKey = async (req: AuthRequest, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const getApiUsage = async (req: AuthRequest, res: Response) => {
+export const getApiUsage = async (req: DualAuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });

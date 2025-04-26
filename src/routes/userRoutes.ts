@@ -7,7 +7,7 @@ import {
   generateApiKey,
   getApiUsage
 } from '../controllers/userController';
-import { authenticate } from '../middleware/authMiddleware';
+import { dualAuthMiddleware, jwtAuthMiddleware } from '../api/middleware/dualAuthMiddleware';
 
 const router = express.Router();
 
@@ -15,10 +15,10 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 
-// 需要认证的路由
-router.get('/me', authenticate, getCurrentUser);
-router.put('/me', authenticate, updateCurrentUser);
-router.post('/api-key', authenticate, generateApiKey);
-router.get('/api-usage', authenticate, getApiUsage);
+// 需要认证的路由 - 使用JWT认证保护用户特定操作
+router.get('/me', jwtAuthMiddleware, getCurrentUser);
+router.put('/me', jwtAuthMiddleware, updateCurrentUser);
+router.post('/api-key', jwtAuthMiddleware, generateApiKey);
+router.get('/api-usage', jwtAuthMiddleware, getApiUsage);
 
 export default router;

@@ -17,16 +17,94 @@ enum UserRole {
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  username     String    @unique @db.VarChar(50)
-  email        String    @unique @db.VarChar(100)
-  password     String    @db.VarChar(100)
-  role         UserRole  @default(user)
-  apiKey       String?   @unique @db.VarChar(255)
-  apiKeyUsage  Int       @default(0)
-  apiKeyLimit  Int       @default(100)
+  id           Int           @id @default(autoincrement())
+  username     String        @unique @db.VarChar(50)
+  email        String        @unique @db.VarChar(100)
+  password     String        @db.VarChar(100)
+  role         UserRole      @default(user)
+  apiKey       String?       @unique @db.VarChar(255)
+  apiKeyUsage  Int           @default(0)
+  apiKeyLimit  Int           @default(100)
   lastLoginAt  DateTime?
-  isActive     Boolean   @default(true)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  isActive     Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  sessions     Session[]     // 用户的会话列表
+  refreshTokens RefreshToken[] // 用户的刷新令牌
+}
+
+model Session {
+  id          String        @id @default(uuid())
+  title       String        @db.VarChar(255)
+  description String?       @db.Text
+  userId      Int
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adminId     Int?
+  admin       Admin?        @relation(fields: [adminId], references: [id], onDelete: SetNull)
+  isActive    Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  messages    ChatMessage[] // 会话中的消息列表
+
+  @@index([userId])
+  @@index([adminId])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  role      String   @db.VarChar(50) // 'user' 或 'assistant'
+  content   String   @db.Text
+  tokens    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sessionId])
+}
+
+model Admin {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  username  String
+  password  String
+  apiKey    String?   @unique
+  role      String    @default("admin") // user 或 admin
+  status    String    @default("active") // active, blocked
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model SystemConfig {
+  id          Int       @id @default(autoincrement())
+  key         String    @unique
+  value       String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SystemPrompt {
+  id        Int       @id @default(autoincrement())
+  name      String
+  content   String    @db.Text
+  type      String
+  isDefault Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@unique([name, type])
+}
+
+model RefreshToken {
+  id        Int       @id @default(autoincrement())
+  token     String    @unique @db.VarChar(512)
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@index([userId])
 }

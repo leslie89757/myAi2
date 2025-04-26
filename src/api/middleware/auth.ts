@@ -27,7 +27,7 @@ export const loadApiKeys = (): void => {
       const [key, name] = pair.trim().split(':');
       if (key && name) {
         apiKeys[key] = { name, isActive: true };
-        logger.info(`已加载 API 密钥: ${name}`);
+        logger.info(`已加载 API 密钥: ${key} (用户: ${name})`);
       }
     });
     logger.info(`共加载 ${Object.keys(apiKeys).length} 个 API 密钥`);

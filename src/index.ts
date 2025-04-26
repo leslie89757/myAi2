@@ -9,6 +9,7 @@ import { setupSwagger } from './utils/swagger';
 import { initializeOpenAI } from './utils/openai';
 import apiRouter from './api';
 import { loadApiKeys } from './api/middleware/auth';
+import adminRoutes from './admin/routes/adminRoutes';
 
 // 加载环境变量
 dotenv.config();
@@ -37,6 +38,9 @@ setupSwagger(app);
 
 // 集中的API路由
 app.use('/api', apiRouter);
+
+// 管理后台API路由
+app.use('/api/admin', adminRoutes);
 
 // 测试文件上传的简单端点
 app.post('/api/test-upload', (req: any, res: any) => {

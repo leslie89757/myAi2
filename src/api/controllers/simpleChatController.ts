@@ -1,7 +1,8 @@
-import { Request, Response } from 'express';
-import { openai } from '../../utils/openai';
+import { Response } from 'express';
+import { openaiDirectClient } from '../../utils/openaiDirectClient';
 import logger from '../../utils/logger';
 import { withRetry } from '../../utils/retry';
+import { DualAuthRequest } from '../middleware/dualAuthMiddleware';
 
 /**
  * @openapi
@@ -80,7 +81,11 @@ import { withRetry } from '../../utils/retry';
  *                   type: string
  *                   example: "错误详情"
  */
-export const simpleChat = async (req: Request, res: Response) => {
+export const simpleChat = async (req: DualAuthRequest, res: Response) => {
+  // 验证用户是否已认证
+  if (!req.user) {
+    return res.status(401).json({ error: '未认证', message: '请提供有效的认证令牌或API密钥' });
+  }
   try {
     logger.info('收到简单聊天请求');
     const { message } = req.body;
@@ -94,7 +99,7 @@ export const simpleChat = async (req: Request, res: Response) => {
 
     try {
       // 创建一个简单的非流式聊天完成，使用改进的重试机制
-      const completion = await withRetry(() => openai.chat.completions.create({
+      const completion = await withRetry(() => openaiDirectClient.chat.completions.create({
         model: 'gpt-4o',
         messages: [{ role: 'user', content: message }],
         stream: false
