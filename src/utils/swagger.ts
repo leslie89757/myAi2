@@ -10,7 +10,7 @@ const isVercelEnvironment = process.env.VERCEL || process.env.NOW_REGION;
 const getServerUrl = () => {
   if (isVercelEnvironment) {
     return { 
-      url: '/', 
+      url: 'https://myai-backend.vercel.app', 
       description: '生产服务器'
     };
   }
@@ -88,7 +88,17 @@ export function setupSwagger(app: Express) {
     swaggerOptions: {
       docExpansion: 'list',
       filter: true,
-      showRequestDuration: true
+      showRequestDuration: true,
+      persistAuthorization: true
     }
   }));
+
+  // 防止404错误
+  app.get('/api-docs/', (req, res) => {
+    res.redirect('/api-docs');
+  });
+
+  app.get('/api-docs/index.html', (req, res) => {
+    res.redirect('/api-docs');
+  });
 }

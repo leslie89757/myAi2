@@ -31,6 +31,14 @@
       "dest": "dist/index.js"
     },
     {
+      "src": "/api-docs/(.*)",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/api-docs.json",
+      "dest": "dist/index.js"
+    },
+    {
       "src": "/(.*\\.(js|css|html|svg|jpg|jpeg|png|ico))",
       "dest": "dist/public/$1"
     },
@@ -40,6 +48,7 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
+    "NODE_ENV": "production",
+    "VERCEL": "true"
   }
 }
