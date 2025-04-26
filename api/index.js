@@ -17,11 +17,13 @@ app.use(express.json());
 
 // API密钥验证中间件
 const apiKeyAuth = (req, res, next) => {
-  // 如果是健康检查或API文档，跳过验证
+  // 如果是健康检查、API文档或静态页面，跳过验证
   if (req.path === '/health' || 
       req.path === '/api-docs' || 
       req.path === '/api-docs.json' || 
       req.path.startsWith('/api-docs/') || 
+      req.path === '/knowledge-chat' || 
+      req.path.startsWith('/public/') || 
       req.path === '/') {
     return next();
   }
