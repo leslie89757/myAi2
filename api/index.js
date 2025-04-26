@@ -77,6 +77,26 @@ app.all('*', (req, res) => {
     return res.status(200).json({ status: 'ok' });
   }
   
+  // 知识库聊天页面
+  if (req.path === '/knowledge-chat') {
+    return res.sendFile(path.join(__dirname, '../dist/public/knowledge-chat.html'));
+  }
+  
+  // 简单聊天测试页面
+  if (req.path === '/simple-test') {
+    return res.sendFile(path.join(__dirname, '../dist/public/simple-test.html'));
+  }
+  
+  // 流式聊天测试页面
+  if (req.path === '/stream-test') {
+    return res.sendFile(path.join(__dirname, '../dist/public/stream-test.html'));
+  }
+  
+  // 文件上传测试页面
+  if (req.path === '/test-upload') {
+    return res.sendFile(path.join(__dirname, '../dist/public/test-upload.html'));
+  }
+  
   // 如果是API文档请求
   if (req.path === '/api-docs' || req.path === '/api-docs/') {
     return res.sendFile(path.join(__dirname, '../dist/public/api-docs.html'));
