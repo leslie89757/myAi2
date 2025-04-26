@@ -20,6 +20,7 @@ const apiKeyAuth = (req, res, next) => {
   // 如果是健康检查或API文档，跳过验证
   if (req.path === '/health' || 
       req.path === '/api-docs' || 
+      req.path === '/api-docs.json' || 
       req.path.startsWith('/api-docs/') || 
       req.path === '/') {
     return next();
