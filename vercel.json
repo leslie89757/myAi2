@@ -27,6 +27,14 @@
       "dest": "dist/index.js"
     },
     {
+      "src": "/knowledge-chat",
+      "dest": "dist/index.js"
+    },
+    {
+      "src": "/test-upload",
+      "dest": "dist/index.js"
+    },
+    {
       "src": "/api-docs",
       "dest": "dist/index.js"
     },
