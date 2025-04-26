@@ -28,10 +28,9 @@ const getApiKey = () => {
   logger.info(`环境变量状态: OPENAI_API_KEY=${apiKey ? '已设置' : '未设置'}`);
   
   if (!apiKey) {
-    // 尝试直接使用您Python代码中的API密钥
-    const hardcodedKey = "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";
-    logger.warn('环境变量中未设置OPENAI_API_KEY，将使用确认有效的硬编码密钥');
-    return hardcodedKey;
+    // 不再使用硬编码密钥，这是一个安全风险
+    logger.error('环境变量中未设置OPENAI_API_KEY，请在.env文件中设置有效的API密钥');
+    throw new Error('未设置OPENAI_API_KEY环境变量');
   }
   
   return apiKey;
