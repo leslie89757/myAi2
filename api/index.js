@@ -4,6 +4,7 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
+const fs = require('fs');
 
 // 获取环境变量
 const API_KEYS = process.env.API_KEYS || 'test_key:test_user';
@@ -104,7 +105,39 @@ app.all('*', (req, res) => {
   
   // 如果是API JSON规格请求
   if (req.path === '/api-docs.json') {
-    // 提供完整的API文档
+    try {
+      // 动态导入已编译的swagger规范
+      const swaggerSpecsPath = path.join(__dirname, '../dist/utils/swagger.js');
+      
+      // 检查文件是否存在
+      if (fs.existsSync(swaggerSpecsPath)) {
+        // 清除缓存，确保导入最新版本
+        delete require.cache[require.resolve(swaggerSpecsPath)];
+        
+        // 导入swagger模块
+        const swagger = require(swaggerSpecsPath);
+        
+        // 获取完整的swagger规范
+        const fullSpecs = swagger.getSwaggerSpecs ? swagger.getSwaggerSpecs() : null;
+        
+        // 如果成功获取规范，返回完整文档
+        if (fullSpecs) {
+          // 更新服务器URL为生产环境
+          if (fullSpecs.servers && fullSpecs.servers.length > 0) {
+            fullSpecs.servers[0].url = 'https://myai-backend.vercel.app';
+          }
+          
+          return res.status(200).json(fullSpecs);
+        }
+      }
+      
+      // 如果动态导入失败，默认使用硬编码的API文档
+      console.log('动态导入swagger规范失败，使用预定义文档');
+    } catch (error) {
+      console.error('动态导入swagger规范时出错:', error);
+    }
+    
+    // 无论是否出错，都返回默认API文档
     return res.status(200).json({
       "openapi": "3.0.0",
       "info": {
