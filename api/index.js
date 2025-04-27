@@ -2305,6 +2305,117 @@ app.all('*', (req, res) => {
     }
   }
   
+  // 会话API端点处理
+  if (req.path.startsWith('/api/sessions')) {
+    try {
+      Logger.info(`处理会话请求: ${req.method} ${req.path}`);
+      
+      // 检查认证
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: '未授权' });
+      }
+      
+      // 获取所有会话列表
+      if (req.path === '/api/sessions' && req.method === 'GET') {
+        return res.json([
+          {
+            id: "test-session-1",
+            title: "测试会话1",
+            description: "这是一个测试会话，用于演示API功能",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            isActive: true
+          },
+          {
+            id: "test-session-2",
+            title: "测试会话2",
+            description: "这是另一个测试会话",
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            isActive: true
+          }
+        ]);
+      }
+      
+      // 创建新会话
+      if (req.path === '/api/sessions' && req.method === 'POST') {
+        const { title, description } = req.body;
+        
+        if (!title) {
+          return res.status(400).json({ error: '会话标题为必填项' });
+        }
+        
+        return res.json({
+          id: `test-session-${Date.now()}`,
+          title,
+          description: description || '',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          isActive: true
+        });
+      }
+      
+      // 获取单个会话详情 /api/sessions/:id
+      if (req.path.match(/^\/api\/sessions\/[\w-]+$/) && req.method === 'GET') {
+        const sessionId = req.path.split('/').pop();
+        
+        return res.json({
+          id: sessionId,
+          title: "测试会话详情",
+          description: "这是一个测试会话详情，用于演示API功能",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          isActive: true,
+          messages: [
+            {
+              id: "msg-1",
+              role: "user",
+              content: "你好，这是一条测试消息",
+              createdAt: new Date().toISOString()
+            },
+            {
+              id: "msg-2",
+              role: "assistant",
+              content: "您好！我是AI助手，很高兴为您服务。请问有什么我可以帮助您的吗？",
+              createdAt: new Date(Date.now() - 1000).toISOString()
+            }
+          ]
+        });
+      }
+      
+      // 更新会话 /api/sessions/:id
+      if (req.path.match(/^\/api\/sessions\/[\w-]+$/) && req.method === 'PUT') {
+        const sessionId = req.path.split('/').pop();
+        const { title, description, isActive } = req.body;
+        
+        return res.json({
+          id: sessionId,
+          title: title || "更新后的测试会话",
+          description: description || "这是一个更新后的测试会话",
+          isActive: isActive !== undefined ? isActive : true,
+          updatedAt: new Date().toISOString()
+        });
+      }
+      
+      // 删除会话 /api/sessions/:id
+      if (req.path.match(/^\/api\/sessions\/[\w-]+$/) && req.method === 'DELETE') {
+        const sessionId = req.path.split('/').pop();
+        
+        return res.json({
+          success: true,
+          message: `会话 ${sessionId} 已成功删除`
+        });
+      }
+    } catch (error) {
+      Logger.error(`处理会话请求失败: ${error.message}`);
+      return res.status(500).json({
+        error: `处理会话请求失败: ${error.message}`,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+  
   // 处理其他API路径
   if (req.path.startsWith('/api/') && 
       !req.path.startsWith('/api/auth/') && 
@@ -2335,7 +2446,8 @@ app.all('*', (req, res) => {
       '/api/chat/simple',
       '/api/chat/stream',
       '/api/knowledge/query',
-      '/api/auth/validate'
+      '/api/auth/validate',
+      '/api/sessions'
     ],
     auth: {
       required: true,
