@@ -3,6 +3,10 @@ import jwt from 'jsonwebtoken';
 import { User, UserRole } from '../../generated/prisma';
 import { UserService } from '../../services/userService';
 import logger from '../../utils/logger';
+import { PrismaClient } from '../../generated/prisma';
+
+// 初始化Prisma客户端
+const prisma = new PrismaClient();
 
 // 扩展 Request 接口以包含用户信息
 export interface AuthRequest extends Request {
@@ -22,6 +26,16 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const token = authHeader.split(' ')[1];
     if (!token) {
       return res.status(401).json({ error: '无效的认证令牌格式' });
+    }
+
+    // 检查令牌是否在黑名单中
+    const blacklistedToken = await prisma.blacklistedToken.findUnique({
+      where: { token }
+    });
+
+    if (blacklistedToken) {
+      logger.warn(`尝试使用已被列入黑名单的令牌`);
+      return res.status(401).json({ error: '令牌已失效，请重新登录' });
     }
 
     // 验证 token
