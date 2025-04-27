@@ -2203,6 +2203,108 @@ app.all('*', (req, res) => {
     }
   }
   
+  // 刷新令牌API
+  if (req.path === '/api/auth/refresh') {
+    if (req.method === 'POST') {
+      try {
+        Logger.info(`处理刷新令牌请求: ${req.path}`);
+        
+        // 从头部提取刷新令牌
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return res.status(401).json({ error: '未提供刷新令牌' });
+        }
+        
+        const token = authHeader.split(' ')[1];
+        
+        // 生成新的访问令牌作为测试响应
+        return res.status(200).json({
+          success: true,
+          accessToken: "new_test_access_token_for_testing_only",
+          message: "刷新令牌成功，这仅用于测试。"
+        });
+      } catch (error) {
+        return res.status(500).json({
+          error: `处理刷新令牌请求失败: ${error.message}`,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+  }
+  
+  // 验证令牌API
+  if (req.path === '/api/auth/validate' && req.method === 'GET') {
+    try {
+      Logger.info(`处理验证令牌请求: ${req.path}`);
+      
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ valid: false, error: '未提供令牌' });
+      }
+      
+      const token = authHeader.split(' ')[1];
+      
+      // 返回测试的验证成功响应
+      return res.status(200).json({
+        valid: true,
+        user: {
+          id: 12345,
+          username: "test_user",
+          email: "test@example.com",
+          role: "user",
+          authMethod: "jwt"
+        }
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: `处理验证令牌请求失败: ${error.message}`,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+  
+  // 获取当前用户信息API
+  if (req.path === '/api/users/me' && req.method === 'GET') {
+    try {
+      Logger.info(`处理获取用户信息请求: ${req.path}`);
+      
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: '未授权' });
+      }
+      
+      // 返回测试用户信息
+      return res.status(200).json({
+        id: 12345,
+        username: "test_user",
+        email: "test@example.com",
+        role: "user"
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: `处理获取用户信息请求失败: ${error.message}`,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+  
+  // 登出API
+  if (req.path === '/api/auth/logout' && req.method === 'POST') {
+    try {
+      Logger.info(`处理登出请求: ${req.path}`);
+      
+      return res.status(200).json({
+        success: true,
+        message: '登出成功'
+      });
+    } catch (error) {
+      return res.status(500).json({
+        error: `处理登出请求失败: ${error.message}`,
+        timestamp: new Date().toISOString()
+      });
+    }
+  }
+  
   // 处理其他API路径
   if (req.path.startsWith('/api/') && 
       !req.path.startsWith('/api/auth/') && 
