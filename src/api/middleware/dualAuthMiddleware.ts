@@ -47,6 +47,16 @@ export const dualAuthMiddleware = async (req: DualAuthRequest, res: Response, ne
       const token = authHeader.split(' ')[1];
       const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
       
+      // 检查令牌是否在黑名单中
+      const blacklistedToken = await prisma.blacklistedToken.findUnique({
+        where: { token }
+      });
+
+      if (blacklistedToken) {
+        logger.warn(`尝试使用已加入黑名单的令牌 [${req.method} ${req.path}]`);
+        return res.status(401).json({ error: '令牌已失效，请重新登录' });
+      }
+      
       // 验证JWT令牌
       const decoded = jwt.verify(token, JWT_SECRET) as any;
       
@@ -178,6 +188,16 @@ export const jwtAuthMiddleware = async (req: DualAuthRequest, res: Response, nex
   try {
     const token = authHeader.split(' ')[1];
     const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+    
+    // 检查令牌是否在黑名单中
+    const blacklistedToken = await prisma.blacklistedToken.findUnique({
+      where: { token }
+    });
+
+    if (blacklistedToken) {
+      logger.warn(`尝试使用已加入黑名单的令牌 [${req.method} ${req.path}]`);
+      return res.status(401).json({ error: '令牌已失效，请重新登录' });
+    }
     
     // 验证JWT令牌
     const decoded = jwt.verify(token, JWT_SECRET) as any;

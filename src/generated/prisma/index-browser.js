@@ -193,6 +193,13 @@ exports.Prisma.RefreshTokenScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BlacklistedTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -219,7 +226,8 @@ exports.Prisma.ModelName = {
   Admin: 'Admin',
   SystemConfig: 'SystemConfig',
   SystemPrompt: 'SystemPrompt',
-  RefreshToken: 'RefreshToken'
+  RefreshToken: 'RefreshToken',
+  BlacklistedToken: 'BlacklistedToken'
 };
 
 /**

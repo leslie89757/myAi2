@@ -42,8 +42,8 @@ const generateRefreshToken = (user: any) => {
  *   post:
  *     tags:
  *       - 认证
- *     summary: 用户登录
- *     description: 使用用户名/邮箱和密码登录，获取JWT访问令牌和刷新令牌
+ *     summary: 用户登录/注册
+ *     description: 使用用户名/邮箱和密码登录，如果用户不存在则自动注册新账号，获取JWT访问令牌和刷新令牌
  *     requestBody:
  *       required: true
  *       content:
@@ -62,7 +62,7 @@ const generateRefreshToken = (user: any) => {
  *                 format: password
  *     responses:
  *       200:
- *         description: 登录成功
+ *         description: 登录成功或注册并登录成功
  *         content:
  *           application/json:
  *             schema:
@@ -85,6 +85,9 @@ const generateRefreshToken = (user: any) => {
  *                       type: string
  *                     role:
  *                       type: string
+ *                 isNewUser:
+ *                   type: boolean
+ *                   description: 指示是否为新注册用户
  *       400:
  *         description: 请求参数错误
  *       401:
@@ -101,8 +104,9 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ error: '用户名/邮箱和密码为必填项' });
     }
 
-    // 查找用户
-    const user = await prisma.user.findFirst({
+    // 判断login是邮箱还是用户名
+    const isEmail = login.includes('@');
+    let user = await prisma.user.findFirst({
       where: {
         OR: [
           { username: login },
@@ -112,16 +116,53 @@ export const login = async (req: Request, res: Response) => {
       }
     });
 
+    // 用户不存在，自动创建账号
+    let isNewUser = false;
     if (!user) {
-      logger.warn(`登录失败：用户不存在 ${login}`);
-      return res.status(401).json({ error: '用户名/邮箱或密码错误' });
-    }
+      // 生成盐和哈希密码
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-    // 验证密码
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      logger.warn(`登录失败：密码错误 ${login}`);
-      return res.status(401).json({ error: '用户名/邮箱或密码错误' });
+      // 确定用户名和邮箱
+      let username, email;
+      if (isEmail) {
+        email = login.toLowerCase();
+        // 从邮箱生成一个用户名 (使用@前的部分)
+        username = login.split('@')[0];
+
+        // 检查用户名是否已存在，如果存在则添加随机数
+        const existingUsername = await prisma.user.findUnique({ where: { username } });
+        if (existingUsername) {
+          username = `${username}${Math.floor(Math.random() * 10000)}`;
+        }
+      } else {
+        username = login;
+        // 为用户名创建一个临时邮箱
+        email = `${login.toLowerCase()}${Math.floor(Math.random() * 10000)}@temp.com`;
+      }
+
+      // 创建新用户
+      user = await prisma.user.create({
+        data: {
+          username,
+          email,
+          password: hashedPassword,
+          role: 'user',
+          isActive: true,
+          lastLoginAt: new Date()
+          // createdAt 和 updatedAt 由 Prisma 自动设置
+        }
+      });
+
+      logger.info(`新用户自动注册成功: ${username}`);
+      isNewUser = true;
+    } else {
+      // 用户存在，验证密码
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        logger.warn(`登录失败：密码错误 ${login}`);
+        return res.status(401).json({ error: '用户名/邮箱或密码错误' });
+      }
     }
 
     // 生成访问令牌和刷新令牌
@@ -137,13 +178,15 @@ export const login = async (req: Request, res: Response) => {
       }
     });
 
-    // 更新最后登录时间
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { lastLoginAt: new Date() }
-    });
+    // 更新最后登录时间（如果不是新用户）
+    if (!isNewUser) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLoginAt: new Date() }
+      });
+      logger.info(`用户登录成功: ${user.username}`);
+    }
 
-    logger.info(`用户登录成功: ${user.username}`);
     res.json({
       success: true,
       accessToken,
@@ -153,11 +196,12 @@ export const login = async (req: Request, res: Response) => {
         username: user.username,
         email: user.email,
         role: user.role
-      }
+      },
+      isNewUser // 指示是否为新用户
     });
   } catch (error: any) {
-    logger.error(`登录错误: ${error.message}`);
-    res.status(500).json({ error: `登录失败: ${error.message}` });
+    logger.error(`登录/注册错误: ${error.message}`);
+    res.status(500).json({ error: `登录/注册失败: ${error.message}` });
   }
 };
 
@@ -256,7 +300,7 @@ export const refreshToken = async (req: Request, res: Response) => {
  *     tags:
  *       - 认证
  *     summary: 用户登出
- *     description: 使当前刷新令牌失效，需要提供刷新令牌
+ *     description: 使当前访问令牌和刷新令牌失效
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -282,25 +326,56 @@ export const logout = async (req: DualAuthRequest, res: Response) => {
       return res.status(401).json({ error: '未认证' });
     }
 
-    // 获取刷新令牌
+    // 获取令牌
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
       
-      // 检查是否是刷新令牌
       try {
-        const decoded = jwt.verify(token, REFRESH_SECRET) as any;
-        if (decoded.type === 'refresh') {
-          // 删除刷新令牌
-          await prisma.refreshToken.deleteMany({
-            where: {
-              token,
-              userId: req.user.id
-            }
-          });
+        // 尝试分别验证是访问令牌还是刷新令牌
+        try {
+          // 验证是否为访问令牌
+          const accessDecoded = jwt.verify(token, JWT_SECRET) as any;
+          
+          if (accessDecoded.type === 'access') {
+            // 将访问令牌加入黑名单
+            // 计算令牌过期时间
+            const expiresAt = new Date(accessDecoded.exp * 1000);
+            
+            // 将令牌加入黑名单
+            await prisma.blacklistedToken.create({
+              data: {
+                token,
+                expiresAt
+              }
+            });
+            
+            logger.info(`已将访问令牌加入黑名单: ${req.user.username || req.user.id}`);
+          }
+        } catch (accessError) {
+          // 不是有效的访问令牌，忽略错误
         }
-      } catch (error) {
-        // 令牌验证失败，可能不是刷新令牌，忽略错误
+        
+        // 检查是否是刷新令牌
+        try {
+          const refreshDecoded = jwt.verify(token, REFRESH_SECRET) as any;
+          if (refreshDecoded.type === 'refresh') {
+            // 删除刷新令牌
+            await prisma.refreshToken.deleteMany({
+              where: {
+                token,
+                userId: req.user.id
+              }
+            });
+            
+            logger.info(`已删除刷新令牌: ${req.user.username || req.user.id}`);
+          }
+        } catch (refreshError) {
+          // 不是有效的刷新令牌，忽略错误
+        }
+      } catch (error: any) {
+        // 令牌返回格式错误，忽略
+        logger.warn(`登出时令牌格式错误: ${error.message}`);
       }
     }
 

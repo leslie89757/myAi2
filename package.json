@@ -8,6 +8,7 @@
     "build": "tsc && npm run copy-files",
     "copy-files": "mkdir -p dist/public && cp -r src/public/* dist/public/ || true",
     "vercel-build": "node vercel-build.js",
+    "update-api-docs": "node export-swagger.js > swagger-specs.json && node -e \"const specs = require('./swagger-specs.json'); specs.servers[0].url = 'https://myai-backend.vercel.app'; specs.servers[0].description = '生产服务器'; console.log(JSON.stringify(specs, null, 2));\" > swagger-prod.json && node update-api-docs.js",
     "prestart": "npm run build",
     "dev": "nodemon --exec ts-node src/index.ts",
     "db:setup": "psql -f scripts/setup-db.sql",

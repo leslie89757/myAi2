@@ -108,3 +108,10 @@ model RefreshToken {
 
   @@index([userId])
 }
+
+model BlacklistedToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique @db.VarChar(512)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
