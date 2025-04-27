@@ -4,6 +4,7 @@ import chatRoutes from './routes/chatRoutes';
 import knowledgeBaseRoutes from './routes/knowledgeBaseRoutes';
 import sessionRoutes from '../routes/sessionRoutes';
 import authRoutes from './routes/authRoutes';
+import diagnosticRoutes from './routes/diagnosticRoutes';
 import { dualAuthMiddleware } from './middleware/dualAuthMiddleware';
 import logger from '../utils/logger';
 
@@ -42,5 +43,8 @@ apiRouter.use('/knowledge', knowledgeBaseRoutes);
 
 // 会话管理路由
 apiRouter.use('/sessions', sessionRoutes);
+
+// 诊断路由
+apiRouter.use('/diagnostic', diagnosticRoutes);
 
 export default apiRouter;

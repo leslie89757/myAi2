@@ -97,24 +97,49 @@ const generateRefreshToken = (user: any) => {
  */
 export const login = async (req: Request, res: Response) => {
   try {
+    const startTime = Date.now();
+    logger.info(`[LOGIN] 开始处理登录请求: ${req.method} ${req.path}`);
+    logger.info(`[LOGIN] 环境: ${process.env.NODE_ENV}, 平台: ${process.env.VERCEL ? 'Vercel' : '本地或其他'}`);
+    logger.info(`[LOGIN] 数据库URL配置状态: ${process.env.DATABASE_URL ? '已配置' : '未配置'}`);
+
     const { login, password } = req.body;
+    logger.info(`[LOGIN] 登录尝试: ${login}`);
 
     // 验证请求参数
     if (!login || !password) {
+      logger.warn(`[LOGIN] 参数验证失败: 缺少登录名或密码`);
       return res.status(400).json({ error: '用户名/邮箱和密码为必填项' });
     }
 
     // 判断login是邮箱还是用户名
     const isEmail = login.includes('@');
-    let user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { username: login },
-          { email: login.toLowerCase() }
-        ],
-        isActive: true
-      }
-    });
+    logger.info(`[LOGIN] 登录类型: ${isEmail ? '邮箱' : '用户名'}`);
+    
+    // 尝试连接数据库并查找用户
+    logger.info(`[LOGIN] 尝试连接数据库并查找用户...`);
+    let user;
+    try {
+      user = await prisma.user.findFirst({
+        where: {
+          OR: [
+            { username: login },
+            { email: login.toLowerCase() }
+          ],
+          isActive: true
+        }
+      });
+      logger.info(`[LOGIN] 数据库查询成功, 用户${user ? '存在' : '不存在'}`);
+    } catch (dbError: any) {
+      logger.error(`[LOGIN] 数据库查询错误: ${dbError.message}`);
+      logger.error(`[LOGIN] 错误详情: ${JSON.stringify(dbError)}`);
+      return res.status(500).json({ 
+        error: `数据库操作失败: ${dbError.message}`, 
+        dbErrorCode: dbError.code,
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV,
+        platform: process.env.VERCEL ? 'Vercel' : '其他'
+      });
+    }
 
     // 用户不存在，自动创建账号
     let isNewUser = false;
@@ -142,17 +167,29 @@ export const login = async (req: Request, res: Response) => {
       }
 
       // 创建新用户
-      user = await prisma.user.create({
-        data: {
-          username,
-          email,
-          password: hashedPassword,
-          role: 'user',
-          isActive: true,
-          lastLoginAt: new Date()
-          // createdAt 和 updatedAt 由 Prisma 自动设置
-        }
-      });
+      logger.info(`[LOGIN] 尝试创建新用户: ${username}, ${email}`);
+      try {
+        user = await prisma.user.create({
+          data: {
+            username,
+            email,
+            password: hashedPassword,
+            role: 'user',
+            isActive: true,
+            lastLoginAt: new Date()
+            // createdAt 和 updatedAt 由 Prisma 自动设置
+          }
+        });
+        logger.info(`[LOGIN] 新用户创建成功: ID=${user.id}, 用户名=${username}`);
+      } catch (createError: any) {
+        logger.error(`[LOGIN] 创建用户失败: ${createError.message}`);
+        logger.error(`[LOGIN] 创建用户错误详情: ${JSON.stringify(createError)}`);
+        return res.status(500).json({ 
+          error: `创建用户失败: ${createError.message}`,
+          dbErrorCode: createError.code,
+          timestamp: new Date().toISOString()
+        });
+      }
 
       logger.info(`新用户自动注册成功: ${username}`);
       isNewUser = true;
@@ -170,24 +207,37 @@ export const login = async (req: Request, res: Response) => {
     const refreshToken = generateRefreshToken(user);
 
     // 记录刷新令牌
-    await prisma.refreshToken.create({
-      data: {
-        userId: user.id,
-        token: refreshToken,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7天后过期
-      }
-    });
+    logger.info(`[LOGIN] 尝试创建刷新令牌: 用户ID=${user.id}`);
+    try {
+      await prisma.refreshToken.create({
+        data: {
+          userId: user.id,
+          token: refreshToken,
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7天后过期
+        }
+      });
+      logger.info(`[LOGIN] 刷新令牌创建成功`);
+    } catch (tokenError: any) {
+      logger.error(`[LOGIN] 刷新令牌创建失败: ${tokenError.message}`);
+      // 继续执行，不中断登录流程，只记录错误
+    }
 
     // 更新最后登录时间（如果不是新用户）
     if (!isNewUser) {
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { lastLoginAt: new Date() }
-      });
-      logger.info(`用户登录成功: ${user.username}`);
+      logger.info(`[LOGIN] 尝试更新用户最后登录时间: ID=${user.id}`);
+      try {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { lastLoginAt: new Date() }
+        });
+        logger.info(`[LOGIN] 用户登录时间更新成功: ${user.username}`);
+      } catch (updateError: any) {
+        logger.error(`[LOGIN] 更新登录时间失败: ${updateError.message}`);
+        // 继续执行，不中断登录流程，只记录错误
+      }
     }
 
-    res.json({
+    const responseData = {
       success: true,
       accessToken,
       refreshToken,
@@ -197,11 +247,33 @@ export const login = async (req: Request, res: Response) => {
         email: user.email,
         role: user.role
       },
-      isNewUser // 指示是否为新用户
-    });
+      isNewUser, // 指示是否为新用户
+      processTime: `${Date.now() - startTime}ms`,
+      timestamp: new Date().toISOString()
+    };
+    
+    logger.info(`[LOGIN] 登录流程完成，用时: ${Date.now() - startTime}ms`);
+    res.json(responseData);
   } catch (error: any) {
-    logger.error(`登录/注册错误: ${error.message}`);
-    res.status(500).json({ error: `登录/注册失败: ${error.message}` });
+    logger.error(`[LOGIN] 登录/注册错误: ${error.message}`);
+    logger.error(`[LOGIN] 错误类型: ${error.name}`);
+    logger.error(`[LOGIN] 错误堆栈: ${error.stack}`);
+    
+    // 检查是否是Prisma错误
+    const isPrismaError = error.name?.includes('Prisma') || error.code?.startsWith('P');
+    if (isPrismaError) {
+      logger.error(`[LOGIN] Prisma错误代码: ${error.code}`);
+      logger.error(`[LOGIN] 数据库连接状态: ${process.env.DATABASE_URL ? '已配置' : '未配置'}`);
+    }
+    
+    res.status(500).json({ 
+      error: `登录/注册失败: ${error.message}`,
+      errorType: error.name,
+      errorCode: error.code,
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      platform: process.env.VERCEL ? 'Vercel' : '其他'
+    });
   }
 };
 
