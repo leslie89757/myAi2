@@ -2160,16 +2160,25 @@ app.all('*', (req, res) => {
 });
   }
   
-  // 如果是API请求路径
-  if (req.path.startsWith('/api/')) {
-    return res.status(200).json({
-      message: '请求成功',
+  // 如果是API请求路径但非服务器端点
+  if (req.path.startsWith('/api/') && 
+      !req.path.startsWith('/api/auth/') && 
+      !req.path.startsWith('/api/users/') && 
+      !req.path.startsWith('/api/chat/') && 
+      !req.path.startsWith('/api/knowledge/') && 
+      !req.path.startsWith('/api/diagnostic/') && 
+      !req.path.startsWith('/api/sessions/')) {
+    // 仅对未实现的API返回默认响应
+    return res.status(404).json({
+      message: 'API端点不存在',
       path: req.path,
       method: req.method,
-      user: req.user,
       timestamp: new Date().toISOString()
     });
   }
+  
+  // 将API请求转发到编译后的服务器代码
+  // 不在这里拦截它们，而是让Vercel路由机制将其转发到dist/index.js
   
   // 返回API状态消息
   return res.status(200).json({

@@ -71,19 +71,46 @@ def check_server_running() -> bool:
     """检查服务器是否在运行"""
     Logger.info("检查服务器是否在运行...")
     try:
-        response = requests.get(f"{API_BASE_URL}/api/health", headers=get_headers())
+        # 尝试正确的健康检查端点 /health 而不是 /api/health
+        response = requests.get(f"{API_BASE_URL}/health", headers=get_headers())
         if response.status_code == 200:
             Logger.success("服务器已启动")
             return True
         else:
             Logger.warn(f"服务器返回非200状态码: {response.status_code}")
-            Logger.debug(response.json())
+            try:
+                Logger.debug(response.json())
+            except Exception:
+                Logger.warn(f"无法解析响应为JSON: {response.text}")
             return True  # 仍然继续测试，因为API可能仍然工作
     except requests.exceptions.ConnectionError as e:
         Logger.error(f"无法连接到服务器: {str(e)}")
+        # 尝试备用健康检查端点
+        try:
+            Logger.info("尝试备用健康检查端点(/api/health)...")
+            response = requests.get(f"{API_BASE_URL}/api/health", headers=get_headers())
+            if response.status_code == 200:
+                Logger.success("服务器已启动(备用端点)")
+                return True
+            else:
+                Logger.error(f"备用健康检查失败，状态码: {response.status_code}")
+        except Exception:
+            pass
         return False
+    except json.JSONDecodeError as e:
+        Logger.warn(f"JSON解析错误: {str(e)}，但服务器可能仍在运行")
+        return True  # 继续测试
     except Exception as e:
         Logger.error(f"检查服务器状态时发生错误: {str(e)}")
+        # 尝试最后一个备用方法 - 直接访问API登录端点
+        try:
+            Logger.info("尝试直接检查登录API端点...")
+            test_response = requests.get(f"{API_BASE_URL}/api/auth/login", headers=get_headers())
+            if test_response.status_code in [200, 401, 405]:  # 任何有效响应
+                Logger.success("API端点可访问，继续测试")
+                return True
+        except Exception:
+            pass
         return False
 
 def test_login_or_register() -> bool:
