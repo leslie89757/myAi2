@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/index.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     },
     {
@@ -14,16 +14,16 @@
     }
   ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/dist/index.js" },
-    { "src": "/health", "dest": "/dist/index.js" },
-    { "src": "/stream-test", "dest": "/dist/index.js" },
-    { "src": "/simple-test", "dest": "/dist/index.js" },
-    { "src": "/knowledge-chat", "dest": "/dist/index.js" },
-    { "src": "/test-upload", "dest": "/dist/index.js" }, 
-    { "src": "/api-docs", "dest": "/dist/index.js" },
-    { "src": "/api-docs/(.*)", "dest": "/dist/index.js" },
-    { "src": "/api-docs.json", "dest": "/dist/index.js" },
-    { "src": "/(.*)", "dest": "/dist/index.js" }
+    { "src": "/api/(.*)", "dest": "/api/index.js" },
+    { "src": "/health", "dest": "/api/index.js" },
+    { "src": "/stream-test", "dest": "/api/index.js" },
+    { "src": "/simple-test", "dest": "/api/index.js" },
+    { "src": "/knowledge-chat", "dest": "/api/index.js" },
+    { "src": "/test-upload", "dest": "/api/index.js" }, 
+    { "src": "/api-docs", "dest": "/api/index.js" },
+    { "src": "/api-docs/(.*)", "dest": "/api/index.js" },
+    { "src": "/api-docs.json", "dest": "/api/index.js" },
+    { "src": "/(.*)", "dest": "/api/index.js" }
   ],
   "env": {
     "NODE_ENV": "production",
