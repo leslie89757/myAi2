@@ -10,11 +10,12 @@ import requests
 import json
 import random
 import time
+import os
 from datetime import datetime
 from typing import Dict, Any, Optional, Tuple
 
-# 配置
-API_BASE_URL = "https://myai-backend.vercel.app"
+# 配置 - 优先使用环境变量中的API_BASE_URL
+API_BASE_URL = os.environ.get("API_BASE_URL", "https://myai-backend.vercel.app")
 API_KEY = "test_key"  # 全局API密钥
 TEST_USER = {
     "login": f"test{random.randint(1000, 9999)}@example.com",  # 随机邮箱确保每次测试都创建新用户
