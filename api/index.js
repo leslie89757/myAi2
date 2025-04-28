@@ -13,8 +13,11 @@ const Logger = {
   warn: (msg) => console.warn(`[WARN] ${msg}`)
 };
 
+// 引入JWT库
+const jwt = require('jsonwebtoken');
+
 // 获取环境变量
-const API_KEYS = process.env.API_KEYS || 'test_key:test_user';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 // 创建Express应用
 const app = express();
@@ -23,57 +26,63 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// API密钥验证中间件
-const apiKeyAuth = (req, res, next) => {
-  // 如果是健康检查、API文档或静态页面，跳过验证
+// JWT认证中间件
+const jwtAuth = (req, res, next) => {
+  // 如果是健康检查、API文档、静态页面或认证相关的路由，跳过验证
   if (req.path === '/health' || 
       req.path === '/api-docs' || 
       req.path === '/api-docs.json' || 
       req.path.startsWith('/api-docs/') || 
       req.path === '/knowledge-chat' || 
+      req.path === '/login' || 
       req.path.startsWith('/public/') || 
-      req.path === '/') {
+      req.path === '/' ||
+      req.path.startsWith('/api/auth/login') ||
+      req.path.startsWith('/api/auth/refresh')) {
     return next();
   }
   
-  // 检查API密钥
-  const apiKey = req.headers['x-api-key'];
-  if (!apiKey) {
+  // 检查JWT令牌
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({
-      error: '未授权',
-      message: '缺少API密钥'
+      error: '未授权访问', 
+      message: '请提供有效的JWT令牌',
+      details: { authHeader: authHeader ? '格式不正确' : '未提供' }
     });
   }
-  
-  // 验证API密钥
-  const keyPairs = API_KEYS.split(',');
-  let isValid = false;
-  
-  for (const pair of keyPairs) {
-    const [key, name] = pair.trim().split(':');
-    if (key && key === apiKey) {
-      req.user = {
-        id: 0,
-        username: name || 'system_user',
-        apiKeyId: key
-      };
-      isValid = true;
-      break;
+
+  try {
+    const token = authHeader.split(' ')[1];
+    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+    
+    // 验证JWT令牌
+    const decoded = jwt.verify(token, JWT_SECRET);
+    
+    // 设置用户信息
+    req.user = {
+      id: decoded.id,
+      username: decoded.username,
+      email: decoded.email,
+      role: decoded.role
+    };
+    req.token = token;
+    
+    next();
+  } catch (error) {
+    Logger.error(`JWT认证错误: ${error.message}`);
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        error: 'JWT令牌已过期',
+        message: '请使用刷新令牌获取新的访问令牌' 
+      });
     }
+    return res.status(401).json({ error: '认证失败', message: error.message });
   }
-  
-  if (!isValid) {
-    return res.status(401).json({
-      error: '未授权',
-      message: 'API密钥无效'
-    });
-  }
-  
-  next();
 };
 
-// 使用API密钥验证
-app.use(apiKeyAuth);
+// 应用JWT认证中间件
+app.use(jwtAuth);
 
 // 静态文件
 app.use('/public', express.static(path.join(__dirname, '../dist/public')));
