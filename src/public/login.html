@@ -161,10 +161,9 @@
         // 检查用户是否已登录
         function checkLoggedIn() {
             const accessToken = localStorage.getItem('accessToken');
-            const refreshToken = localStorage.getItem('refreshToken');
             
-            // 如果没有令牌，不需要进一步处理
-            if (!accessToken && !refreshToken) {
+            // 如果没有访问令牌，不需要进一步处理
+            if (!accessToken) {
                 return;
             }
             
@@ -177,11 +176,8 @@
             // 如果有访问令牌，尝试验证
             if (accessToken) {
                 validateAccessToken(accessToken, urlParams);
-            } 
-            // 如果只有刷新令牌，尝试刷新
-            else if (refreshToken) {
-                tryRefreshToken(refreshToken);
             }
+            // 注意：我们已经移除了自动刷新令牌的逻辑，只在验证失败时尝试刷新
         }
         
         // 验证访问令牌
@@ -193,17 +189,9 @@
             })
             .then(response => {
                 if (!response.ok) {
-                    // 如果响应不成功，尝试刷新令牌
-                    if (response.status === 401) {
-                        const refreshToken = localStorage.getItem('refreshToken');
-                        if (refreshToken) {
-                            return tryRefreshToken(refreshToken);
-                        } else {
-                            clearAuthStorage();
-                            return { valid: false };
-                        }
-                    }
-                    throw new Error(`验证失败: ${response.status}`);
+                    // 如果响应不成功，直接清除令牌，不尝试刷新
+                    clearAuthStorage();
+                    return { valid: false };
                 }
                 return response.json();
             })
@@ -238,58 +226,12 @@
             localStorage.removeItem('username');
         }
 
+        // 我们保留这个函数，但在当前实现中不会使用它
         // 尝试使用刷新令牌获取新的访问令牌
         function tryRefreshToken(refreshToken) {
-            // 如果没有传入刷新令牌，尝试从本地存储获取
-            if (!refreshToken) {
-                refreshToken = localStorage.getItem('refreshToken');
-            }
-            
-            if (!refreshToken) {
-                clearAuthStorage();
-                return Promise.reject(new Error('无法刷新令牌：刷新令牌不存在'));
-            }
-
-            console.log('尝试刷新令牌...');
-            return fetch(`${API_BASE_URL}/api/auth/refresh`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${refreshToken}`
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    console.error(`刷新令牌失败: HTTP ${response.status}`);
-                    throw new Error(`刷新令牌失败: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('刷新令牌成功，收到响应:', data);
-                if (data.accessToken) {
-                    // 更新本地存储中的访问令牌
-                    localStorage.setItem('accessToken', data.accessToken);
-                    if (data.refreshToken) {
-                        localStorage.setItem('refreshToken', data.refreshToken);
-                    }
-                    
-                    // 获取重定向参数
-                    const urlParams = new URLSearchParams(window.location.search);
-                    
-                    // 验证新的访问令牌
-                    validateAccessToken(data.accessToken, urlParams);
-                    return { valid: true };
-                } else {
-                    console.error('刷新令牌响应中缺少访问令牌:', data);
-                    throw new Error('刷新令牌响应中缺少访问令牌');
-                }
-            })
-            .catch(error => {
-                console.error('刷新令牌失败:', error);
-                clearAuthStorage();
-                return { valid: false };
-            });
+            // 直接清除所有令牌，让用户重新登录
+            clearAuthStorage();
+            return Promise.resolve({ valid: false });
         }
 
         // 登录/注册函数
@@ -382,8 +324,11 @@
             }
         });
 
-        // 页面加载时检查登录状态
-        document.addEventListener('DOMContentLoaded', checkLoggedIn);
+        // 登录页面加载时清除之前的令牌
+        window.addEventListener('DOMContentLoaded', () => {
+            // 清除之前的令牌，避免自动刷新失败
+            clearAuthStorage();
+        });
     </script>
 </body>
 </html>
