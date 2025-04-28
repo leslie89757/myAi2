@@ -161,6 +161,12 @@
         // 检查用户是否已登录
         function checkLoggedIn() {
             const accessToken = localStorage.getItem('accessToken');
+            const refreshToken = localStorage.getItem('refreshToken');
+            
+            // 如果没有令牌，不需要进一步处理
+            if (!accessToken && !refreshToken) {
+                return;
+            }
             
             // 如果有重定向参数，不要自动跳转（让用户登录后再跳转）
             const urlParams = new URLSearchParams(window.location.search);
@@ -168,45 +174,60 @@
                 return;
             }
             
+            // 如果有访问令牌，尝试验证
             if (accessToken) {
-                // 验证令牌是否有效
-                fetch(`${API_BASE_URL}/api/auth/validate`, {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        // 如果响应不成功，尝试刷新令牌
-                        if (response.status === 401) {
-                            return tryRefreshToken();
-                        }
-                        throw new Error(`验证失败: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && data.valid) {
-                        // 令牌有效，重定向到知识库页面
-                        showInfo('您已登录，正在跳转到知识库...');
-                        setTimeout(() => {
-                            // 如果有重定向参数，跳转到指定页面
-                            if (urlParams.has('redirect')) {
-                                window.location.href = urlParams.get('redirect');
-                            } else {
-                                window.location.href = '/knowledge-chat';
-                            }
-                        }, 1000);
-                    } else {
-                        // 令牌无效，清除本地存储
-                        clearAuthStorage();
-                    }
-                })
-                .catch(error => {
-                    console.error('验证令牌失败:', error);
-                    clearAuthStorage();
-                });
+                validateAccessToken(accessToken, urlParams);
+            } 
+            // 如果只有刷新令牌，尝试刷新
+            else if (refreshToken) {
+                tryRefreshToken(refreshToken);
             }
+        }
+        
+        // 验证访问令牌
+        function validateAccessToken(accessToken, urlParams) {
+            fetch(`${API_BASE_URL}/api/auth/validate`, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // 如果响应不成功，尝试刷新令牌
+                    if (response.status === 401) {
+                        const refreshToken = localStorage.getItem('refreshToken');
+                        if (refreshToken) {
+                            return tryRefreshToken(refreshToken);
+                        } else {
+                            clearAuthStorage();
+                            return { valid: false };
+                        }
+                    }
+                    throw new Error(`验证失败: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.valid) {
+                    // 令牌有效，重定向到知识库页面
+                    showInfo('您已登录，正在跳转到知识库...');
+                    setTimeout(() => {
+                        // 如果有重定向参数，跳转到指定页面
+                        if (urlParams && urlParams.has('redirect')) {
+                            window.location.href = urlParams.get('redirect');
+                        } else {
+                            window.location.href = '/knowledge-chat';
+                        }
+                    }, 1000);
+                } else {
+                    // 令牌无效，清除本地存储
+                    clearAuthStorage();
+                }
+            })
+            .catch(error => {
+                console.error('验证令牌失败:', error);
+                clearAuthStorage();
+            });
         }
 
         // 清除所有认证相关的本地存储
@@ -218,13 +239,18 @@
         }
 
         // 尝试使用刷新令牌获取新的访问令牌
-        function tryRefreshToken() {
-            const refreshToken = localStorage.getItem('refreshToken');
+        function tryRefreshToken(refreshToken) {
+            // 如果没有传入刷新令牌，尝试从本地存储获取
+            if (!refreshToken) {
+                refreshToken = localStorage.getItem('refreshToken');
+            }
+            
             if (!refreshToken) {
                 clearAuthStorage();
                 return Promise.reject(new Error('无法刷新令牌：刷新令牌不存在'));
             }
 
+            console.log('尝试刷新令牌...');
             return fetch(`${API_BASE_URL}/api/auth/refresh`, {
                 method: 'POST',
                 headers: {
@@ -234,21 +260,28 @@
             })
             .then(response => {
                 if (!response.ok) {
+                    console.error(`刷新令牌失败: HTTP ${response.status}`);
                     throw new Error(`刷新令牌失败: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
+                console.log('刷新令牌成功，收到响应:', data);
                 if (data.accessToken) {
                     // 更新本地存储中的访问令牌
                     localStorage.setItem('accessToken', data.accessToken);
                     if (data.refreshToken) {
                         localStorage.setItem('refreshToken', data.refreshToken);
                     }
-                    // 重新检查登录状态
-                    checkLoggedIn();
+                    
+                    // 获取重定向参数
+                    const urlParams = new URLSearchParams(window.location.search);
+                    
+                    // 验证新的访问令牌
+                    validateAccessToken(data.accessToken, urlParams);
                     return { valid: true };
                 } else {
+                    console.error('刷新令牌响应中缺少访问令牌:', data);
                     throw new Error('刷新令牌响应中缺少访问令牌');
                 }
             })
@@ -279,6 +312,9 @@
             // 禁用登录按钮
             loginButton.disabled = true;
             loginButton.textContent = '登录中...';
+
+            // 清除之前的令牌
+            clearAuthStorage();
 
             // 发送登录请求
             fetch(`${API_BASE_URL}/api/auth/login`, {
