@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>个人知识库聊天</title>
+  <!-- 添加FontAwesome图标库 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -441,14 +443,10 @@
   
   <div class="container">
     <div class="sidebar">
-      <div class="user-id-section">
-        <h2>用户</h2>
-        <select id="userId" class="user-id-input">
-          <option value="3">user1</option>
-          <option value="4">user2</option>
-          <option value="5">admin</option>
-        </select>
+      <div id="user-info" class="user-info">
+        <span>正在检查登录状态...</span>
       </div>
+      <input type="hidden" id="user-id" class="user-id-input" value="">
       
       <!-- 会话管理部分 -->
       <div class="sessions-section">
@@ -547,9 +545,17 @@
         const userIdValue = encodeURIComponent(userId.value);
         console.log(`开始上传文件: ${file.name}, 大小: ${formatFileSize(file.size)}, 用户ID: ${userIdValue}`);
         
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
+        
+        // 注意：在使用 FormData 时，不要设置 Content-Type，浏览器会自动设置正确的值
         const response = await fetch(`/api/knowledge/upload?userId=${userIdValue}`, {
           method: 'POST',
           headers: {
+            'Authorization': `Bearer ${accessToken}`,
             'X-API-Key': 'test_key' // 使用系统配置的 API 密钥
           },
           body: formData
@@ -596,7 +602,11 @@
     
     // 加载会话详情
     async function loadSession(sessionId) {
-      if (!sessionId) return;
+      console.log('尝试加载会话，会话ID:', sessionId);
+      if (!sessionId) {
+        console.error('会话ID为空，无法加载会话');
+        return;
+      }
       
       try {
         showLoading(true);
@@ -607,8 +617,15 @@
           return;
         }
         
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
+        
         const response = await fetch(`/api/sessions/${sessionId}?userId=${encodeURIComponent(userIdValue)}`, {
           headers: {
+            'Authorization': `Bearer ${accessToken}`,
             'X-API-Key': 'test_key'
           }
         });
@@ -618,7 +635,17 @@
         }
         
         const data = await response.json();
-        const session = data.session;
+        console.log('加载会话响应数据:', data);
+        
+        // 兼容不同的数据结构
+        const session = data.session || data;
+        
+        if (!session || !session.id) {
+          console.error('无法获取会话数据:', data);
+          throw new Error('服务器返回的会话数据结构不正确');
+        }
+        
+        console.log('处理后的会话数据:', session);
         
         // 更新当前会话ID和标题
         currentSessionId = session.id;
@@ -679,10 +706,26 @@
       
       try {
         showLoading(true);
-        const response = await fetch(`/api/sessions/${currentSessionId}`, {
+        const userIdValue = userId.value.trim();
+        if (!userIdValue) {
+          showStatus('用户未登录，请先登录', 'error');
+          showLoading(false);
+          return;
+        }
+        
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          showStatus('认证令牌不存在，请重新登录', 'error');
+          showLoading(false);
+          return;
+        }
+        
+        const response = await fetch(`/api/sessions/${currentSessionId}?userId=${encodeURIComponent(userIdValue)}`, {
           method: 'DELETE',
           headers: {
-            'X-API-Key': 'test_key'
+            'X-API-Key': 'test_key',
+            'Authorization': `Bearer ${accessToken}`
           }
         });
         
@@ -734,9 +777,16 @@
           return;
         }
         
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
+        
         const response = await fetch(`/api/sessions/${currentSessionId}/messages?userId=${encodeURIComponent(userIdValue)}`, {
           method: 'DELETE',
           headers: {
+            'Authorization': `Bearer ${accessToken}`,
             'X-API-Key': 'test_key'
           }
         });
@@ -780,10 +830,17 @@
           return;
         }
         
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
+        
         const saveMessageResponse = await fetch(`/api/sessions/${currentSessionId}/messages?userId=${encodeURIComponent(userIdValue)}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
             'X-API-Key': 'test_key'
           },
           body: JSON.stringify({
@@ -812,10 +869,16 @@
       
       try {
         // 使用流式API
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
+        
         const response = await fetch('/api/knowledge/stream-chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
             'X-API-Key': 'test_key' // 使用系统配置的 API 密钥
           },
           body: JSON.stringify({
@@ -866,6 +929,8 @@
               try {
                 const parsedData = JSON.parse(data);
                 
+                console.log('收到的数据:', parsedData);
+                
                 if (parsedData.type === 'sources') {
                   // 更新知识来源
                   currentSources = parsedData.sources;
@@ -877,6 +942,11 @@
                   chatMessages.scrollTop = chatMessages.scrollHeight;
                 } else if (parsedData.type === 'error') {
                   botContentElement.textContent = `错误: ${parsedData.error}`;
+                } else if (parsedData.content !== undefined) {
+                  // 直接包含content字段的响应
+                  botResponse += parsedData.content;
+                  botContentElement.innerHTML = formatMessage(botResponse);
+                  chatMessages.scrollTop = chatMessages.scrollHeight;
                 }
               } catch (e) {
                 console.error('解析SSE数据错误:', e);
@@ -893,20 +963,51 @@
             return;
           }
           
-          const saveResponseMessage = await fetch(`/api/sessions/${currentSessionId}/messages?userId=${encodeURIComponent(userIdValue)}`, {
+          // 获取认证令牌
+          const accessToken = localStorage.getItem('accessToken');
+          if (!accessToken) {
+            throw new Error('未登录或会话已过期，请重新登录');
+          }
+          
+          // 准备要发送的数据 - 使用标准对象字面量语法
+          const messageData = {
+            role: "assistant",
+            content: botResponse
+          };
+          
+          // 打印要发送的数据
+          console.log('发送助手回复数据:', messageData);
+          
+          // 构造请求URL
+          const url = `/api/sessions/${currentSessionId}/messages?userId=${encodeURIComponent(userIdValue)}`;
+          console.log('请求URL:', url);
+          
+          // 发送请求
+          const saveResponseMessage = await fetch(url, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`,
               'X-API-Key': 'test_key'
             },
-            body: JSON.stringify({
-              role: 'assistant',
-              content: botResponse
-            })
+            body: JSON.stringify(messageData)
           });
           
+          // 打印实际发送的请求体
+          console.log('实际发送的请求体:', JSON.stringify(messageData));
+          
+          // 检查响应
+          console.log('保存助手回复响应状态:', saveResponseMessage.status, saveResponseMessage.statusText);
+          
           if (!saveResponseMessage.ok) {
-            console.error('保存助手回复失败:', await saveResponseMessage.text());
+            const errorText = await saveResponseMessage.text();
+            console.error('保存助手回复失败:', errorText);
+            try {
+              const errorJson = JSON.parse(errorText);
+              console.error('错误详情:', errorJson);
+            } catch (e) {
+              // 如果不是JSON格式，忽略解析错误
+            }
           }
         } catch (error) {
           console.error('保存助手回复错误:', error);
@@ -1037,10 +1138,23 @@
       
       try {
         showLoading(true);
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
+        
+        console.log('发送创建会话请求:', {
+          title,
+          description,
+          userId: userIdValue
+        });
+        
         const response = await fetch('/api/sessions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
             'X-API-Key': 'test_key'
           },
           body: JSON.stringify({
@@ -1050,19 +1164,111 @@
           })
         });
         
+        console.log('创建会话响应状态:', response.status, response.statusText);
+        
         if (!response.ok) {
           throw new Error(`创建会话失败: ${response.status} ${response.statusText}`);
         }
         
-        const data = await response.json();
+        // 获取原始响应文本进行调试
+        const responseText = await response.text();
+        console.log('原始响应文本:', responseText);
+        
+        // 尝试解析JSON
+        let data;
+        try {
+          data = JSON.parse(responseText);
+          console.log('解析后的JSON数据:', data);
+        } catch (jsonError) {
+          console.error('解析JSON失败:', jsonError);
+          throw new Error(`服务器返回的数据不是有效的JSON: ${responseText}`);
+        }
         
         // 重置表单
         newSessionForm.style.display = 'none';
         sessionTitle.value = '';
         sessionDesc.value = '';
         
+        // 检查数据结构
+        if (!data) {
+          throw new Error('服务器返回空数据');
+        }
+        
+        // 详细检查数据结构
+        console.log('数据类型:', typeof data);
+        console.log('数据包含的字段:', Object.keys(data));
+        
+        if (data.id) {
+          console.log('data.id 存在:', data.id);
+        } else {
+          console.log('data.id 不存在');
+        }
+        
+        if (data.session) {
+          console.log('data.session 存在:', data.session);
+          if (data.session.id) {
+            console.log('data.session.id 存在:', data.session.id);
+          } else {
+            console.log('data.session.id 不存在');
+          }
+        } else {
+          console.log('data.session 不存在');
+        }
+        
+        // 确定会话ID
+        let sessionId;
+        
+        // 尝试所有可能的字段结构
+        if (data.id) {
+          sessionId = data.id;
+          console.log('使用 data.id 作为会话ID:', sessionId);
+        } else if (data.session && data.session.id) {
+          sessionId = data.session.id;
+          console.log('使用 data.session.id 作为会话ID:', sessionId);
+        } else if (data.sessionId) {
+          sessionId = data.sessionId;
+          console.log('使用 data.sessionId 作为会话ID:', sessionId);
+        } else if (typeof data === 'object' && Object.keys(data).length > 0) {
+          // 如果数据是对象且包含字段，尝试使用第一个字段的id
+          const firstKey = Object.keys(data)[0];
+          if (data[firstKey] && data[firstKey].id) {
+            sessionId = data[firstKey].id;
+            console.log(`使用 data[${firstKey}].id 作为会话ID:`, sessionId);
+          } else if (typeof data[firstKey] === 'string' && firstKey.toLowerCase().includes('id')) {
+            sessionId = data[firstKey];
+            console.log(`使用 data[${firstKey}] 作为会话ID:`, sessionId);
+          }
+        }
+        
+        // 如果仍然没有找到ID，尝试直接使用数据本身
+        if (!sessionId && typeof data === 'object') {
+          // 递归搜索对象中的id字段
+          const findId = (obj) => {
+            if (!obj || typeof obj !== 'object') return null;
+            if (obj.id) return obj.id;
+            
+            for (const key in obj) {
+              if (typeof obj[key] === 'object') {
+                const foundId = findId(obj[key]);
+                if (foundId) return foundId;
+              }
+            }
+            return null;
+          };
+          
+          sessionId = findId(data);
+          if (sessionId) {
+            console.log('通过递归搜索找到的ID:', sessionId);
+          }
+        }
+        
+        if (!sessionId) {
+          console.error('无法从响应数据中提取会话ID，原始数据:', data);
+          throw new Error('无法获取会话ID，服务器返回的数据结构不正确');
+        }
+        
         // 加载新创建的会话
-        await loadSession(data.session.id);
+        await loadSession(sessionId);
         
         // 刷新会话列表
         await loadUserSessions();
@@ -1076,19 +1282,34 @@
       }
     }
     
-    // 加载用户会话列表
+    // 加载用户的会话列表
     async function loadUserSessions() {
-      const userIdValue = userId.value.trim();
-      if (!userIdValue) {
-        showStatus('请输入用户ID', 'error');
-        return;
-      }
-      
       try {
         showLoading(true);
+        const userIdValue = userId.value.trim();
+        if (!userIdValue) {
+          showStatus('用户未登录，请先登录', 'error');
+          showLoading(false);
+          return;
+        }
+        
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          // 尝试重新验证用户
+          const isLoggedIn = await checkUserAuthentication();
+          if (!isLoggedIn) {
+            showStatus('认证令牌不存在，请重新登录', 'error');
+            showLoading(false);
+            return;
+          }
+        }
+        
+        // 请求API获取用户的所有会话
         const response = await fetch(`/api/sessions?userId=${encodeURIComponent(userIdValue)}`, {
           headers: {
-            'X-API-Key': 'test_key'
+            'X-API-Key': 'test_key',
+            'Authorization': `Bearer ${accessToken}`
           }
         });
         
@@ -1097,7 +1318,23 @@
         }
         
         const data = await response.json();
-        renderSessionsList(data.sessions || []);
+        console.log('会话列表响应数据:', data);
+        
+        // 兼容不同的数据结构
+        let sessions = [];
+        if (Array.isArray(data)) {
+          // 如果直接返回数组
+          sessions = data;
+          console.log('直接使用数组数据:', sessions.length, '个会话');
+        } else if (data.sessions && Array.isArray(data.sessions)) {
+          // 如果包装在sessions字段中
+          sessions = data.sessions;
+          console.log('使用data.sessions数据:', sessions.length, '个会话');
+        } else {
+          console.warn('无法识别的会话列表数据结构:', data);
+        }
+        
+        renderSessionsList(sessions);
       } catch (error) {
         console.error('加载会话列表错误:', error);
         showStatus(`加载会话列表失败: ${error.message}`, 'error');
@@ -1152,9 +1389,143 @@
     }
     
     // 初始化页面
-    document.addEventListener('DOMContentLoaded', () => {
-      // 获取所有DOM元素引用
-      userId = document.getElementById('userId');
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 检查用户是否已登录 - 使用 await 等待异步验证完成
+      const isLoggedIn = await checkUserAuthentication();
+      if (!isLoggedIn) {
+        console.warn('用户未登录，将被重定向到登录页面');
+        return;
+      }
+      
+      // 初始化事件监听器
+      initEventListeners();
+      
+      // 加载用户会话
+      await loadUserSessions();
+      
+      // 显示欢迎信息
+      addMessage('欢迎来到个人知识库聊天应用！请选择或创建一个会话来开始对话。', 'bot');
+      
+      // 加载登录增强脚本
+      loadAuthEnhancementScript();
+    });
+    
+    // 检查用户是否已登录
+    async function checkUserAuthentication() {
+      const accessToken = localStorage.getItem('accessToken');
+      const userId = localStorage.getItem('userId');
+      const username = localStorage.getItem('username');
+      const userInfoElement = document.getElementById('user-info');
+      
+      // 如果没有令牌，显示未登录状态
+      if (!accessToken) {
+        if (userInfoElement) {
+          userInfoElement.innerHTML = `
+            <span>未登录</span>
+            <button class="login-button" onclick="window.location.href='/login'">登录</button>
+          `;
+        }
+        return false;
+      }
+      
+      try {
+        // 从服务器验证令牌和获取用户信息
+        const response = await fetch(`${window.location.origin}/api/auth/validate`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`验证失败: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.valid || !data.user) {
+          throw new Error('无效的用户信息');
+        }
+        
+        // 更新本地存储中的用户信息
+        localStorage.setItem('userId', data.user.id);
+        localStorage.setItem('username', data.user.username || data.user.email);
+        
+        // 更新页面上的用户ID隐藏输入框
+        document.getElementById('user-id').value = data.user.id;
+        
+        // 更新用户信息展示
+        if (userInfoElement) {
+          userInfoElement.innerHTML = `
+            <span>当前用户: ${data.user.username || data.user.email}</span>
+            <button class="logout-button" onclick="logout()">退出登录</button>
+          `;
+        }
+        
+        console.log('用户验证成功:', data.user);
+        return true;
+      } catch (error) {
+        console.error('验证用户失败:', error);
+        
+        // 清除无效的令牌和用户信息
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('username');
+        
+        // 更新用户信息展示为未登录状态
+        if (userInfoElement) {
+          userInfoElement.innerHTML = `
+            <span>登录已过期，请重新登录</span>
+            <button class="login-button" onclick="window.location.href='/login'">登录</button>
+          `;
+        }
+        
+        return false;
+      }
+    }
+    
+    // 登出函数
+    function logout() {
+      const accessToken = localStorage.getItem('accessToken');
+      
+      if (accessToken) {
+        // 调用登出 API
+        fetch(`${window.location.origin}/api/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          }
+        })
+        .catch(error => console.error('登出失败:', error))
+        .finally(() => {
+          // 无论成功与否，清除本地存储并跳转到登录页面
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('userId');
+          localStorage.removeItem('username');
+          window.location.href = '/login';
+        });
+      } else {
+        window.location.href = '/login';
+      }
+    }
+    
+    // 加载认证增强脚本
+    function loadAuthEnhancementScript() {
+      const script = document.createElement('script');
+      script.src = '/knowledge-chat-improved.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+    
+    // 初始化事件监听器
+    function initEventListeners() {
+      // 初始化DOM元素引用
+      userId = document.getElementById('user-id');
       fileInput = document.getElementById('fileInput');
       selectedFile = document.getElementById('selectedFile');
       documentName = document.getElementById('documentName');
@@ -1175,9 +1546,6 @@
       currentSessionTitle = document.getElementById('currentSessionTitle');
       clearMessagesBtn = document.getElementById('clearMessagesBtn');
       deleteSessionBtn = document.getElementById('deleteSessionBtn');
-      
-      // 添加欢迎消息
-      addMessage('欢迎使用个人知识库聊天！请创建或选择一个会话开始聊天。', 'bot');
       
       // 绑定文件选择事件
       fileInput.addEventListener('change', () => {
@@ -1231,7 +1599,7 @@
       if (userId.value.trim()) {
         loadUserSessions();
       }
-    });
+    }
   </script>
 </body>
 </html>

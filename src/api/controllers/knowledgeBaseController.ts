@@ -7,7 +7,7 @@ import { VectorStore } from '../../utils/vectorStore';
 import logger from '../../utils/logger';
 import { OpenAI } from 'openai';
 import https from 'https';
-import { AuthRequest } from '../middleware/authMiddleware';
+import { AuthRequest } from '../middleware/jwtAuthMiddleware';
 
 // 定义向量搜索结果类型
 interface SearchResult {
@@ -75,6 +75,8 @@ async function withRetry<T>(apiCall: () => Promise<T>, maxRetries = 3): Promise<
  *       - 知识库
  *     summary: 上传并向量化文档
  *     description: 上传PDF、TXT、DOC或DOCX文件，解析内容并添加到用户的知识库中
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -207,6 +209,8 @@ export const uploadDocument = async (req: FileRequest, res: Response) => {
  *       - 知识库
  *     summary: 查询知识库
  *     description: 使用自然语言查询用户的知识库
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -233,15 +237,48 @@ export const uploadDocument = async (req: FileRequest, res: Response) => {
  *               properties:
  *                 results:
  *                   type: array
+ *                   description: 查询结果数组
  *                   items:
  *                     type: object
  *                     properties:
  *                       content:
  *                         type: string
+ *                         description: 文档片段内容
  *                       metadata:
  *                         type: object
+ *                         description: 文档元数据
+ *                         properties:
+ *                           chunkIndex:
+ *                             type: integer
+ *                             description: 片段索引
+ *                           totalChunks:
+ *                             type: integer
+ *                             description: 总片段数
+ *                           userId:
+ *                             type: string
+ *                             description: 用户ID
+ *                           timestamp:
+ *                             type: string
+ *                             format: date-time
+ *                             description: 创建时间
  *                       score:
  *                         type: number
+ *                         format: float
+ *                         description: 相似度分数，范围从0到1，越高表示越相关
+ *             example:
+ *               results: [
+ *                 {
+ *                   "content": "这是一段文档内容...",
+ *                   "metadata": {
+ *                     "chunkIndex": 0,
+ *                     "totalChunks": 5,
+ *                     "userId": "11",
+ *                     "timestamp": "2025-04-28T12:00:00.000Z"
+ *                   },
+ *                   "score": 0.92
+ *                 }
+ *               ]
+
  *       400:
  *         description: 请求参数错误
  *       500:
@@ -287,6 +324,8 @@ export const queryKnowledgeBase = async (req: Request, res: Response) => {
  *       - 知识库
  *     summary: 与知识库聊天
  *     description: 使用用户的知识库进行聊天，返回非流式响应
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -313,15 +352,32 @@ export const queryKnowledgeBase = async (req: Request, res: Response) => {
  *               properties:
  *                 reply:
  *                   type: string
+ *                   description: AI助手的回复内容
  *                 sources:
  *                   type: array
+ *                   description: 相关知识来源
  *                   items:
  *                     type: object
  *                     properties:
  *                       content:
  *                         type: string
+ *                         description: 知识来源的文本内容摘要
  *                       metadata:
  *                         type: object
+ *                         description: 知识来源的元数据
+ *             example:
+ *               reply: "根据您的知识库，我发现..."
+ *               sources: [
+ *                 {
+ *                   "content": "这是一段相关的文档内容...",
+ *                   "metadata": {
+ *                     "chunkIndex": 0,
+ *                     "totalChunks": 5,
+ *                     "userId": "11"
+ *                   }
+ *                 }
+ *               ]
+
  *       400:
  *         description: 请求参数错误
  *       500:
@@ -374,7 +430,7 @@ ${context}`;
     
     // 调用OpenAI API
     const completion = await withRetry(() => openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'moonshot-v1-128k',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: message }
@@ -408,6 +464,8 @@ ${context}`;
  *       - 知识库
  *     summary: 与知识库流式聊天
  *     description: 使用用户的知识库进行聊天，返回流式响应
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -426,11 +484,26 @@ ${context}`;
  *                 description: 用户ID
  *     responses:
  *       200:
- *         description: 返回 SSE 流
+ *         description: |
+ *           返回 SSE 流。
+ *           
+ *           SSE流中的数据格式如下：
+ *           1. 知识来源：{"type":"sources","sources":[...]}，sources是一个包含相关文档片段的数组
+ *           2. 内容片段：{"content":"..."}，这是AI助手的回复内容，可能分多个片段发送
+ *           3. 错误信息：{"error":"..."}，当处理请求时出错
+ *           4. 结束标记：[DONE]，表示流结束
  *         content:
  *           text/event-stream:
  *             schema:
  *               type: string
+ *             example: |
+ *               data: {"type":"sources","sources":[{"content":"...","metadata":{...}}]}
+ *               
+ *               data: {"content":"AI助手回复的一部分"}
+ *               
+ *               data: {"content":"继续的回复内容"}
+ *               
+ *               data: [DONE]
  *       400:
  *         description: 请求参数错误
  *       500:
@@ -496,7 +569,7 @@ ${context}`;
       
       // 调用OpenAI API
       const stream = await withRetry(() => openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: 'moonshot-v1-128k',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: message }

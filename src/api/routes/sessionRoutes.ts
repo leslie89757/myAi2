@@ -4,7 +4,9 @@ import {
   getSessionById, 
   createSession, 
   updateSession, 
-  deleteSession 
+  deleteSession,
+  addSessionMessage,
+  clearSessionMessages
 } from '../controllers/sessionController';
 import { authenticate } from '../middleware/authMiddleware';
 
@@ -24,5 +26,11 @@ router.put('/:id', authenticate, updateSession);
 
 // 删除会话
 router.delete('/:id', authenticate, deleteSession);
+
+// 添加消息到会话
+router.post('/:id/messages', authenticate, addSessionMessage);
+
+// 清空会话消息
+router.delete('/:id/messages', authenticate, clearSessionMessages);
 
 export default router;

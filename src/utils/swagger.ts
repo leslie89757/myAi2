@@ -26,9 +26,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'ChatGPT API',
-      version: '1.0.0',
-      description: 'ChatGPT API文档，包含流式和非流式接口',
+      title: '知识库聊天 API',
+      version: '2.0.0',
+      description: '知识库聊天 API文档。所有API都使用JWT认证。注意：简单聊天和流式聊天接口已被弃用。',
       contact: {
         name: '开发团队'
       }
@@ -41,18 +41,11 @@ const options = {
           scheme: 'bearer',
           bearerFormat: 'JWT',
           description: 'JWT认证，在请求头中添加：Authorization: Bearer {token}'
-        },
-        apiKeyAuth: {
-          type: 'apiKey',
-          in: 'header',
-          name: 'X-API-Key',
-          description: 'API密钥认证，在请求头中添加：X-API-Key: {apiKey}'
         }
       }
     },
     security: [
-      { bearerAuth: [] },
-      { apiKeyAuth: [] }
+      { bearerAuth: [] }
     ]
   },
   // 使用绝对路径指定API文件

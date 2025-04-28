@@ -5,9 +5,9 @@ import {
   chatWithKnowledgeBase, 
   streamChatWithKnowledgeBase,
   deleteUserKnowledgeBase
-} from '../../controllers/knowledgeBaseController';
+} from '../controllers/knowledgeBaseController';
 import { upload, handleFileUploadErrors } from '../../middleware/fileUpload';
-import { authenticate } from '../middleware/authMiddleware';
+import { authMiddleware } from '../middleware/jwtAuthMiddleware';
 
 const router = express.Router();
 
@@ -16,6 +16,6 @@ router.post('/upload', upload, handleFileUploadErrors, uploadDocument);
 router.post('/query', queryKnowledgeBase);
 router.post('/chat', chatWithKnowledgeBase);
 router.post('/stream-chat', streamChatWithKnowledgeBase);
-router.delete('/delete', authenticate, deleteUserKnowledgeBase);
+router.delete('/delete', authMiddleware, deleteUserKnowledgeBase);
 
 export default router;

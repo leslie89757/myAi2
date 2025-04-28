@@ -118,20 +118,32 @@ export class VectorStore {
       logger.info(`生成嵌入向量，文本长度: ${text.length}`);
       
       try {
+        // 打印请求参数
+        logger.info(`发送嵌入向量请求: model=${this.embeddingModel}, 文本长度=${text.length}`);
+        
         // 使用 OpenAI API 生成真正的嵌入向量
         const response = await this.openai.embeddings.create({
           model: this.embeddingModel,
           input: text
         });
         
-        // 根据 OpenAI API 的最新响应结构获取嵌入向量
-        if (response && response.data && response.data.length > 0) {
-          const embedding = response.data[0].embedding;
-          if (embedding && Array.isArray(embedding)) {
-            logger.info(`成功生成 OpenAI 嵌入向量，维度: ${embedding.length}`);
-            return embedding;
+        // 打印响应结构以进行调试
+        logger.info(`OpenAI 嵌入响应结构: ${JSON.stringify(Object.keys(response))}`);
+        
+        // 处理 OpenAI API 响应结构
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+          // 检查嵌入向量是否存在
+          if (response.data[0].embedding) {
+            const embedding = response.data[0].embedding;
+            if (Array.isArray(embedding)) {
+              logger.info(`成功生成 OpenAI 嵌入向量，维度: ${embedding.length}`);
+              return embedding;
+            }
           }
         }
+        
+        // 如果找不到嵌入向量，记录详细的响应结构
+        logger.warn(`无法从响应中提取嵌入向量，完整响应: ${JSON.stringify(response)}`);
         
         // 如果响应结构不符合预期，抛出错误
         throw new Error('无法从 OpenAI API 响应中提取嵌入向量');

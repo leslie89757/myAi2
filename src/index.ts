@@ -8,8 +8,10 @@ import logger from './utils/logger';
 import { setupSwagger } from './utils/swagger';
 import { initializeOpenAI } from './utils/openai';
 import apiRouter from './api';
-import { loadApiKeys } from './api/middleware/auth';
+// 移除API密钥加载导入
 import adminRoutes from './admin/routes/adminRoutes';
+import { pageAuthMiddleware } from './middleware/pageAuthMiddleware';
+import cookieParser from 'cookie-parser';
 
 // 加载环境变量
 dotenv.config();
@@ -23,6 +25,7 @@ app.use(helmet({
   contentSecurityPolicy: false // 禁用CSP以允许内联脚本
 }));
 app.use(express.json());
+app.use(cookieParser()); // 添加cookie解析器，用于读取认证令牌
 
 // 静态文件服务
 app.use(express.static(path.join(__dirname, 'public')));
@@ -68,15 +71,11 @@ app.post('/api/test-upload', (req: any, res: any) => {
 });
 
 // 页面路由
-app.get('/stream-test', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'stream-test.html'));
-});
+// 注意：简单聊天和流式聊天页面已移除
+// 请使用知识库聊天功能
 
-app.get('/simple-test', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'simple-test.html'));
-});
-
-app.get('/knowledge-chat', (req, res) => {
+// 知识库聊天页面 - 需要登录才能访问
+app.get('/knowledge-chat', pageAuthMiddleware, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'knowledge-chat.html'));
 });
 
@@ -94,9 +93,14 @@ app.get('/health', (req, res) => {
 // Swagger UI 可以在 /api-docs 访问
 // OpenAPI JSON 规范可以在 /api-docs.json 访问
 
+// 登录页面路由
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 // 默认路由
 app.get('/', (req, res) => {
-  res.redirect('/stream-test');
+  res.redirect('/knowledge-chat');
 });
 
 // 404处理
@@ -120,8 +124,7 @@ const startServer = async () => {
     await prisma.$connect();
     logger.info('成功连接到 PostgreSQL 数据库');
     
-    // 加载 API 密钥
-    loadApiKeys();
+    // API密钥加载已移除，仅使用JWT认证
     
     // 初始化OpenAI客户端并验证连接
     await initializeOpenAI();

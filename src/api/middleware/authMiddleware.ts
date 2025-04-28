@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User, UserRole } from '../../generated/prisma';
-import { UserService } from '../../services/userService';
 import logger from '../../utils/logger';
 import { PrismaClient } from '../../generated/prisma';
 
@@ -41,8 +40,11 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     // 验证 token
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
     
-    // 查找用户
-    const user = await UserService.findById(decoded.id);
+    // 直接从数据库查找用户
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id }
+    });
+    
     if (!user || !user.isActive) {
       return res.status(401).json({ error: '用户不存在或已被禁用' });
     }
@@ -75,33 +77,5 @@ export const authorize = (roles: UserRole[]) => {
   };
 };
 
-// API 密钥认证中间件
-export const authenticateApiKey = async (req: AuthRequest, res: Response, next: NextFunction) => {
-  try {
-    const apiKey = req.headers['x-api-key'] as string;
-    if (!apiKey) {
-      return res.status(401).json({ error: '未提供 API 密钥' });
-    }
-
-    // 查找拥有该 API 密钥的用户
-    const user = await UserService.findByApiKey(apiKey);
-    if (!user) {
-      return res.status(401).json({ error: '无效的 API 密钥' });
-    }
-
-    // 检查 API 使用限制
-    if (user.apiKeyUsage && user.apiKeyLimit && user.apiKeyUsage >= user.apiKeyLimit) {
-      return res.status(429).json({ error: 'API 使用次数已达上限' });
-    }
-
-    // 增加 API 使用次数
-    await UserService.incrementApiUsage(user.id);
-
-    // 将用户信息附加到请求对象
-    req.user = user;
-    next();
-  } catch (error: any) {
-    logger.error(`API 密钥认证错误: ${error.message}`);
-    return res.status(401).json({ error: 'API 密钥认证失败' });
-  }
-};
+// JWT 认证中间件别名
+export const authMiddleware = authenticate;

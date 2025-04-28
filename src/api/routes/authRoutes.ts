@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as authController from '../controllers/authController';
-import { dualAuthMiddleware, jwtAuthMiddleware } from '../middleware/dualAuthMiddleware';
+import { authMiddleware } from '../middleware/jwtAuthMiddleware';
 
 const router = Router();
 
@@ -11,9 +11,9 @@ router.post('/login', authController.login);
 router.post('/refresh', authController.refreshToken);
 
 // 用户登出 - 需要认证
-router.post('/logout', jwtAuthMiddleware, authController.logout);
+router.post('/logout', authMiddleware, authController.logout);
 
-// 验证令牌 - 使用双路径认证（JWT或API密钥都可以）
-router.get('/validate', dualAuthMiddleware, authController.validateToken);
+// 验证令牌 - 使用JWT认证
+router.get('/validate', authMiddleware, authController.validateToken);
 
 export default router;

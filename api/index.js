@@ -85,8 +85,25 @@ app.all('*', (req, res) => {
     return res.status(200).json({ status: 'ok' });
   }
   
-  // 知识库聊天页面
+  // 登录页面
+  if (req.path === '/login') {
+    return res.sendFile(path.join(__dirname, '../dist/public/login.html'));
+  }
+  
+  // 知识库聊天页面 - 添加用户登录检查
   if (req.path === '/knowledge-chat') {
+    // 在开发/测试环境下只使用cookie检查
+    if (process.env.NODE_ENV === 'development' || process.env.DEMO_MODE === 'true') {
+      return res.sendFile(path.join(__dirname, '../dist/public/knowledge-chat.html'));
+    }
+    
+    // 生产环境检查登录状态
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      // 还没有登录，重定向到登录页面
+      return res.redirect('/login');
+    }
+    
     return res.sendFile(path.join(__dirname, '../dist/public/knowledge-chat.html'));
   }
   
@@ -2400,11 +2417,70 @@ app.all('*', (req, res) => {
       
       // 删除会话 /api/sessions/:id
       if (req.path.match(/^\/api\/sessions\/[\w-]+$/) && req.method === 'DELETE') {
-        const sessionId = req.path.split('/').pop();
+        try {
+          const sessionId = req.path.split('/').pop();
+          
+          // 查询参数中提取userId - 这是前端需要提供的
+          const userId = req.query.userId || (req.user && req.user.id ? req.user.id : null);
+          
+          // 记录详细日志以便调试
+          Logger.info(`处理删除会话请求，会话ID: ${sessionId}, 用户ID: ${userId}`);
+          
+          // 验证userId是否存在
+          if (!userId) {
+            const body = req.body || {};
+            // 尝试从请求体获取userId
+            const bodyUserId = body.userId || null;
+            
+            if (bodyUserId) {
+              Logger.info(`从请求体中获取到userId: ${bodyUserId}`);
+              return handleSessionDeletion(res, sessionId, bodyUserId);
+            }
+            
+            // 含义处理 - 如果使用的是测试环境或演示模式，使用默认值
+            if (process.env.NODE_ENV === 'development' || process.env.DEMO_MODE === 'true') {
+              Logger.warn(`处于开发/演示模式，忽略userId检查，使用默认值3`);
+              return handleSessionDeletion(res, sessionId, 3); // 默认的测试用户ID
+            }
+            
+            // 正式环境严格要求userId
+            return res.status(400).json({
+              error: '缺少必要的 userId 参数',
+              timestamp: new Date().toISOString()
+            });
+          }
+          
+          return handleSessionDeletion(res, sessionId, userId);
+          
+        } catch (err) {
+          Logger.error(`删除会话时发生错误: ${err.message}`);
+          return res.status(500).json({
+            error: `删除会话失败: ${err.message}`,
+            timestamp: new Date().toISOString()
+          });
+        }
+      }
+      
+      // 处理会话删除的内部函数
+      function handleSessionDeletion(res, sessionId, userId) {
+        // 验证会话ID是否有效 - 通常应该是UUID格式
+        if (!sessionId || !/^[\w-]+$/.test(sessionId)) {
+          return res.status(400).json({
+            error: '无效的会话ID格式',
+            sessionId,
+            timestamp: new Date().toISOString()
+          });
+        }
         
-        return res.json({
+        // 这里应该有与数据库互动的代码
+        // 在我们的网关模拟版本中，简单返回成功
+        Logger.info(`成功删除会话: ${sessionId}, 用户ID: ${userId}`);
+        
+        return res.status(200).json({
           success: true,
-          message: `会话 ${sessionId} 已成功删除`
+          message: `会话 ${sessionId} 已成功删除`,
+          userId: userId,
+          timestamp: new Date().toISOString()
         });
       }
     } catch (error) {

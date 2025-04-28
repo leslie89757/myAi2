@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '../../generated/prisma';
 import logger from '../../utils/logger';
-import { DualAuthRequest } from '../middleware/dualAuthMiddleware';
+import { AuthRequest } from '../middleware/jwtAuthMiddleware';
 
 const prisma = new PrismaClient();
 
@@ -42,7 +42,7 @@ const prisma = new PrismaClient();
  *       500:
  *         description: 服务器错误
  */
-export const getUserSessions = async (req: DualAuthRequest, res: Response) => {
+export const getUserSessions = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -156,7 +156,7 @@ export const getUserSessions = async (req: DualAuthRequest, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const getSessionById = async (req: DualAuthRequest, res: Response) => {
+export const getSessionById = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -267,7 +267,7 @@ export const getSessionById = async (req: DualAuthRequest, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const createSession = async (req: DualAuthRequest, res: Response) => {
+export const createSession = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -291,7 +291,11 @@ export const createSession = async (req: DualAuthRequest, res: Response) => {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      return res.json(newSession);
+      // 确保返回的数据结构与非Vercel环境一致
+      return res.json({
+        id: newSession.id,
+        session: newSession
+      });
     }
 
     const newSession = await prisma.session.create({
@@ -303,7 +307,11 @@ export const createSession = async (req: DualAuthRequest, res: Response) => {
       }
     });
 
-    return res.json(newSession);
+    // 确保返回的数据结构包含一个明确的id字段
+    return res.json({
+      id: newSession.id,
+      session: newSession
+    });
   } catch (error: any) {
     logger.error(`创建会话错误: ${error.message}`);
     return res.status(500).json({ error: `创建会话失败: ${error.message}` });
@@ -371,7 +379,7 @@ export const createSession = async (req: DualAuthRequest, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const updateSession = async (req: DualAuthRequest, res: Response) => {
+export const updateSession = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -460,7 +468,7 @@ export const updateSession = async (req: DualAuthRequest, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const deleteSession = async (req: DualAuthRequest, res: Response) => {
+export const deleteSession = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -502,5 +510,244 @@ export const deleteSession = async (req: DualAuthRequest, res: Response) => {
   } catch (error: any) {
     logger.error(`删除会话错误: ${error.message}`);
     return res.status(500).json({ error: `删除会话失败: ${error.message}` });
+  }
+};
+
+/**
+ * @openapi
+ * /api/sessions/{id}/messages:
+ *   post:
+ *     tags:
+ *       - 会话
+ *     summary: 添加消息到会话
+ *     description: 将新消息添加到指定会话
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 会话ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - role
+ *               - content
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 description: 消息角色 (user 或 assistant)
+ *               content:
+ *                 type: string
+ *                 description: 消息内容
+ *               tokens:
+ *                 type: integer
+ *                 description: 消息使用的令牌数
+ *     responses:
+ *       201:
+ *         description: 消息添加成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 chatMessage:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *       401:
+ *         description: 未认证
+ *       404:
+ *         description: 会话不存在
+ *       500:
+ *         description: 服务器错误
+ */
+export const addSessionMessage = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: '未认证' });
+    }
+
+    const { id } = req.params;
+    
+    // 打印原始请求体
+    logger.info(`添加消息请求体: ${JSON.stringify(req.body)}`);
+    
+    // 检查请求体是否为空
+    if (!req.body || Object.keys(req.body).length === 0) {
+      logger.error(`请求体为空或无效: ${JSON.stringify(req.body)}`);
+      return res.status(400).json({ error: '请求体为空或无效' });
+    }
+    
+    const { role, content, tokens = 0 } = req.body;
+    
+    // 检查必要参数
+    if (!role || content === undefined) {
+      logger.error(`缺少必要参数: role=${role}, content=${content === undefined ? '不存在' : '存在'}`);
+      return res.status(400).json({ error: '缺少必要的参数: role 和 content' });
+    }
+    
+    // 记录消息内容
+    logger.info(`添加消息到会话: ${id}, 角色: ${role}, 内容长度: ${content.length}`);
+    if (content === '') {
+      logger.warn(`消息内容为空字符串，但仍然允许保存`);
+    }
+    
+    // 在Vercel环境中模拟添加消息
+    if (process.env.VERCEL) {
+      logger.info(`[SESSIONS] 在Vercel环境中模拟添加消息到会话: ${id}`);
+      const chatMessage = {
+        id: `msg-${Date.now()}`,
+        sessionId: id,
+        role,
+        content,
+        tokens,
+        createdAt: new Date().toISOString()
+      };
+      return res.status(201).json({
+        success: true,
+        message: '消息添加成功',
+        chatMessage
+      });
+    }
+    
+    // 验证会话存在并属于该用户
+    const session = await prisma.session.findUnique({
+      where: {
+        id,
+        userId: req.user.id
+      }
+    });
+    
+    if (!session) {
+      logger.warn(`会话不存在或无权访问: ${id}, 用户ID: ${req.user.id}`);
+      return res.status(404).json({ error: '会话不存在或无权访问' });
+    }
+    
+    logger.info(`添加消息到会话: ${id}, 角色: ${role}`);
+    const chatMessage = await prisma.chatMessage.create({
+      data: {
+        sessionId: id,
+        role,
+        content,
+        tokens
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: '消息添加成功',
+      chatMessage
+    });
+  } catch (error: any) {
+    logger.error(`添加消息错误: ${error.message}`);
+    res.status(500).json({ error: `添加消息失败: ${error.message}` });
+  }
+};
+
+/**
+ * @openapi
+ * /api/sessions/{id}/messages:
+ *   delete:
+ *     tags:
+ *       - 会话
+ *     summary: 清空会话消息
+ *     description: 删除指定会话的所有消息
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: 会话ID
+ *     responses:
+ *       200:
+ *         description: 消息清空成功
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: 未认证
+ *       403:
+ *         description: 无权访问该会话
+ *       404:
+ *         description: 会话不存在
+ *       500:
+ *         description: 服务器错误
+ */
+export const clearSessionMessages = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ error: '未认证' });
+    }
+
+    const { id } = req.params;
+    logger.info(`清空会话消息: ${id}, 用户ID: ${req.user.id}`);
+    
+    // 在Vercel环境中模拟清空消息
+    if (process.env.VERCEL) {
+      logger.info(`[SESSIONS] 在Vercel环境中模拟清空会话消息: ${id}`);
+      return res.json({
+        success: true,
+        message: '会话消息已清空'
+      });
+    }
+    
+    // 验证会话存在并属于该用户
+    const session = await prisma.session.findUnique({
+      where: {
+        id,
+        userId: req.user.id
+      }
+    });
+    
+    if (!session) {
+      logger.warn(`会话不存在或无权访问: ${id}, 用户ID: ${req.user.id}`);
+      return res.status(404).json({ error: '会话不存在或无权访问' });
+    }
+    
+    // 删除会话的所有消息
+    const deleteResult = await prisma.chatMessage.deleteMany({
+      where: {
+        sessionId: id
+      }
+    });
+    
+    logger.info(`已删除会话 ${id} 的 ${deleteResult.count} 条消息`);
+    
+    res.json({
+      success: true,
+      message: `已清空会话消息，共删除 ${deleteResult.count} 条消息`,
+      deletedCount: deleteResult.count
+    });
+  } catch (error: any) {
+    logger.error(`清空会话消息错误: ${error.message}`);
+    res.status(500).json({ error: `清空会话消息失败: ${error.message}` });
   }
 };

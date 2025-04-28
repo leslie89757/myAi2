@@ -1,11 +1,9 @@
 import express, { Router } from 'express';
-import userRoutes from './routes/userRoutes';
-import chatRoutes from './routes/chatRoutes';
 import knowledgeBaseRoutes from './routes/knowledgeBaseRoutes';
-import sessionRoutes from '../routes/sessionRoutes';
+import sessionRoutes from './routes/sessionRoutes';
 import authRoutes from './routes/authRoutes';
 import diagnosticRoutes from './routes/diagnosticRoutes';
-import { dualAuthMiddleware } from './middleware/dualAuthMiddleware';
+import { authMiddleware } from './middleware/jwtAuthMiddleware';
 import logger from '../utils/logger';
 
 /**
@@ -29,14 +27,10 @@ apiRouter.use((req, res, next) => {
   if (req.path.startsWith('/auth/')) {
     return next();
   }
-  dualAuthMiddleware(req, res, next);
+  authMiddleware(req, res, next);
 });
 
-// 用户相关路由
-apiRouter.use('/users', userRoutes);
-
-// 聊天相关路由
-apiRouter.use('/chat', chatRoutes);
+// 用户相关路由和聊天相关路由已完全移除
 
 // 知识库相关路由
 apiRouter.use('/knowledge', knowledgeBaseRoutes);

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { PrismaClient } from '../../generated/prisma';
 import logger from '../../utils/logger';
-import { DualAuthRequest } from '../middleware/dualAuthMiddleware';
+import { AuthRequest } from '../middleware/jwtAuthMiddleware';
 
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -43,7 +43,13 @@ const generateRefreshToken = (user: any) => {
  *     tags:
  *       - 认证
  *     summary: 用户登录/注册
- *     description: 使用用户名/邮箱和密码登录，如果用户不存在则自动注册新账号，获取JWT访问令牌和刷新令牌
+ *     description: |
+ *       使用用户名/邮箱和密码登录，如果用户不存在则自动注册新账号，获取JWT访问令牌和刷新令牌。
+ *       
+ *       注意：
+ *       - 此端点不需要认证
+ *       - 此端点替代了原来的 /api/users/register 和 /api/users/login 端点
+ *       - 当用户不存在时，会自动创建新账号
  *     requestBody:
  *       required: true
  *       content:
@@ -392,7 +398,7 @@ export const refreshToken = async (req: Request, res: Response) => {
  *       500:
  *         description: 服务器错误
  */
-export const logout = async (req: DualAuthRequest, res: Response) => {
+export const logout = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ error: '未认证' });
@@ -496,7 +502,7 @@ export const logout = async (req: DualAuthRequest, res: Response) => {
  *       401:
  *         description: 令牌无效
  */
-export const validateToken = async (req: DualAuthRequest, res: Response) => {
+export const validateToken = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
       return res.status(401).json({ valid: false });
@@ -508,8 +514,7 @@ export const validateToken = async (req: DualAuthRequest, res: Response) => {
         id: req.user.id,
         username: req.user.username,
         email: req.user.email,
-        role: req.user.role,
-        authMethod: req.authMethod
+        role: req.user.role
       }
     });
   } catch (error: any) {
