@@ -2241,14 +2241,43 @@ app.all('*', (req, res) => {
           return res.status(401).json({ error: '未提供刷新令牌' });
         }
         
-        const token = authHeader.split(' ')[1];
+        const refreshToken = authHeader.split(' ')[1];
+        const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
         
-        // 生成新的访问令牌作为测试响应
-        return res.status(200).json({
-          success: true,
-          accessToken: "new_test_access_token_for_testing_only",
-          message: "刷新令牌成功，这仅用于测试。"
-        });
+        try {
+          // 尝试验证刷新令牌
+          const decoded = jwt.verify(refreshToken, JWT_SECRET);
+          
+          // 检查是否是刷新令牌
+          if (decoded.type !== 'refresh') {
+            return res.status(401).json({ error: '无效的刷新令牌类型' });
+          }
+          
+          // 生成新的访问令牌
+          const newAccessToken = jwt.sign(
+            { 
+              id: decoded.id || 12345,
+              username: decoded.username || 'test_user',
+              email: decoded.email || 'test@example.com',
+              role: decoded.role || 'user',
+              type: 'access'
+            },
+            JWT_SECRET,
+            { expiresIn: '30m' }
+          );
+          
+          return res.status(200).json({
+            success: true,
+            accessToken: newAccessToken,
+            message: "刷新令牌成功"
+          });
+        } catch (jwtError) {
+          Logger.error(`刷新令牌验证失败: ${jwtError.message}`);
+          return res.status(401).json({ 
+            error: '无效的刷新令牌', 
+            message: jwtError.message 
+          });
+        }
       } catch (error) {
         return res.status(500).json({
           error: `处理刷新令牌请求失败: ${error.message}`,
@@ -2269,18 +2298,30 @@ app.all('*', (req, res) => {
       }
       
       const token = authHeader.split(' ')[1];
+      const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
       
-      // 返回测试的验证成功响应
-      return res.status(200).json({
-        valid: true,
-        user: {
-          id: 12345,
-          username: "test_user",
-          email: "test@example.com",
-          role: "user",
-          authMethod: "jwt"
-        }
-      });
+      try {
+        // 实际验证JWT令牌
+        const decoded = jwt.verify(token, JWT_SECRET);
+        
+        // 返回验证成功响应
+        return res.status(200).json({
+          valid: true,
+          user: {
+            id: decoded.id || 12345,
+            username: decoded.username || "test_user",
+            email: decoded.email || "test@example.com",
+            role: decoded.role || "user"
+          }
+        });
+      } catch (jwtError) {
+        Logger.error(`JWT验证失败: ${jwtError.message}`);
+        return res.status(401).json({ 
+          valid: false, 
+          error: '无效的令牌',
+          message: jwtError.message 
+        });
+      }
     } catch (error) {
       return res.status(500).json({
         error: `处理验证令牌请求失败: ${error.message}`,
