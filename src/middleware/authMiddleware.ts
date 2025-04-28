@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { User, UserRole } from '../generated/prisma';
-import { UserService } from '../services/userService';
+import { User, UserRole, PrismaClient } from '../generated/prisma';
 import logger from '../utils/logger';
+
+const prisma = new PrismaClient();
 
 // 扩展 Request 接口以包含用户信息
 export interface AuthRequest extends Request {
@@ -28,7 +29,9 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key') as any;
     
     // 查找用户
-    const user = await UserService.findById(decoded.id);
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.id }
+    });
     if (!user || !user.isActive) {
       return res.status(401).json({ error: '用户不存在或已被禁用' });
     }
