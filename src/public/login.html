@@ -130,7 +130,6 @@
     <script>
         // API基础URL
         const API_BASE_URL = window.location.origin;
-        const API_KEY = 'test_key';
 
         // DOM元素
         const loginButton = document.getElementById('login-button');
@@ -173,34 +172,93 @@
                 // 验证令牌是否有效
                 fetch(`${API_BASE_URL}/api/auth/validate`, {
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'X-API-Key': API_KEY
+                        'Authorization': `Bearer ${accessToken}`
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        // 如果响应不成功，尝试刷新令牌
+                        if (response.status === 401) {
+                            return tryRefreshToken();
+                        }
+                        throw new Error(`验证失败: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    if (data.valid) {
+                    if (data && data.valid) {
                         // 令牌有效，重定向到知识库页面
                         showInfo('您已登录，正在跳转到知识库...');
                         setTimeout(() => {
-                            window.location.href = '/knowledge-chat';
+                            // 如果有重定向参数，跳转到指定页面
+                            if (urlParams.has('redirect')) {
+                                window.location.href = urlParams.get('redirect');
+                            } else {
+                                window.location.href = '/knowledge-chat';
+                            }
                         }, 1000);
                     } else {
                         // 令牌无效，清除本地存储
-                        localStorage.removeItem('accessToken');
-                        localStorage.removeItem('refreshToken');
-                        localStorage.removeItem('userId');
-                        localStorage.removeItem('username');
+                        clearAuthStorage();
                     }
                 })
                 .catch(error => {
                     console.error('验证令牌失败:', error);
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
-                    localStorage.removeItem('userId');
-                    localStorage.removeItem('username');
+                    clearAuthStorage();
                 });
             }
+        }
+
+        // 清除所有认证相关的本地存储
+        function clearAuthStorage() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
+        }
+
+        // 尝试使用刷新令牌获取新的访问令牌
+        function tryRefreshToken() {
+            const refreshToken = localStorage.getItem('refreshToken');
+            if (!refreshToken) {
+                clearAuthStorage();
+                return Promise.reject(new Error('无法刷新令牌：刷新令牌不存在'));
+            }
+
+            return fetch(`${API_BASE_URL}/api/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    refreshToken: refreshToken
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`刷新令牌失败: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.accessToken) {
+                    // 更新本地存储中的访问令牌
+                    localStorage.setItem('accessToken', data.accessToken);
+                    if (data.refreshToken) {
+                        localStorage.setItem('refreshToken', data.refreshToken);
+                    }
+                    // 重新检查登录状态
+                    checkLoggedIn();
+                    return { valid: true };
+                } else {
+                    throw new Error('刷新令牌响应中缺少访问令牌');
+                }
+            })
+            .catch(error => {
+                console.error('刷新令牌失败:', error);
+                clearAuthStorage();
+                return { valid: false };
+            });
         }
 
         // 登录/注册函数
@@ -228,8 +286,7 @@
             fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': API_KEY
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     login: email,
