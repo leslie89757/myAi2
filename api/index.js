@@ -2166,6 +2166,15 @@ const swaggerDocument = {
 // 引入JWT库和cookie解析器
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const fs = require('fs');
+
+// 简单的日志工具
+const Logger = {
+  info: (message) => console.log(`[INFO] ${message}`),
+  warn: (message) => console.warn(`[WARN] ${message}`),
+  error: (message) => console.error(`[ERROR] ${message}`),
+  debug: (message) => console.debug(`[DEBUG] ${message}`)
+};
 
 // 获取环境变量
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
