@@ -3,7 +3,10 @@
 // Express应用实例
 const express = require('express');
 const path = require('path');
-const cors = require('cors'){
+const cors = require('cors');
+
+// Swagger API文档
+const swaggerDocument = {
   "openapi": "3.0.0",
   "info": {
     "title": "ChatGPT API",
