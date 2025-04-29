@@ -8,6 +8,14 @@ const path = require('path');
 // 导入主要API逻辑
 const mainApiHandler = require('./index');
 
+// 日志工具
+const Logger = {
+  info: (msg) => console.log(`[INFO] ${msg}`),
+  error: (msg) => console.error(`[ERROR] ${msg}`),
+  debug: (msg) => console.log(`[DEBUG] ${msg}`),
+  warn: (msg) => console.warn(`[WARN] ${msg}`)
+};
+
 // 创建Express应用
 const app = express();
 
@@ -351,10 +359,62 @@ const jwtAuth = (req, res, next) => {
   }
 };
 
-// 对于所有API请求，使用主要API逻辑处理
+// 登录API处理
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const { username, password } = req.body;
+    
+    // 记录请求详情
+    Logger.info(`处理登录请求: ${username}`);
+    
+    // 模拟用户验证
+    if (!username || !password) {
+      return res.status(400).json({
+        error: '缺少用户名或密码',
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    // 生成JWT令牌
+    const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+    const userId = '123456';
+    const expiresIn = '2h';
+    
+    const payload = {
+      id: userId,
+      username,
+      email: username,
+      role: 'user'
+    };
+    
+    // 生成访问令牌
+    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn });
+    
+    // 生成刷新令牌
+    const refreshToken = jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: '7d' });
+    
+    // 返回令牌
+    return res.status(200).json({
+      accessToken,
+      refreshToken,
+      userId,
+      expiresIn,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    Logger.error(`登录失败: ${error.message}`);
+    return res.status(500).json({
+      error: '登录失败',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
+// 对于所有其他API请求，使用主要API逻辑处理
 app.use('/api', (req, res, next) => {
   // 如果是已处理的特定路由，直接返回
-  if (req.path === '/health' || req.path === '/version') {
+  if (req.path === '/health' || req.path === '/version' || req.path === '/auth/login') {
     return next();
   }
   
