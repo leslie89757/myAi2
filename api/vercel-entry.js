@@ -44,12 +44,346 @@ app.get('/api/version', (req, res) => {
 
 // 根路径
 app.get('/', (req, res) => {
+  // 检查用户是否已登录
+  const authHeader = req.headers.authorization;
+  const accessTokenCookie = req.cookies && req.cookies.accessToken;
+  
+  // 如果没有登录，重定向到登录页面
+  if ((!authHeader || !authHeader.startsWith('Bearer ')) && !accessTokenCookie) {
+    return res.redirect('/login');
+  }
+  
   return res.status(200).json({
     message: 'MyAI Backend API is running',
     documentation: '/api-docs',
     healthCheck: '/health',
     version: '/api/version'
   });
+});
+
+// 登录页面
+app.get('/login', (req, res) => {
+  // 返回简单的登录页面HTML
+  const loginHtml = `
+  <!DOCTYPE html>
+  <html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAI - 登录</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .login-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        width: 350px;
+        max-width: 100%;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 24px;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+      }
+      input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+        box-sizing: border-box;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #3367d6;
+      }
+      .error-message {
+        color: #d93025;
+        font-size: 14px;
+        margin-top: 20px;
+        text-align: center;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>MyAI 登录</h1>
+      <div id="error-message" class="error-message"></div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="username">用户名</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">密码</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">登录</button>
+      </form>
+    </div>
+
+    <script>
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('error-message');
+        
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok && data.accessToken) {
+            // 存储令牌到cookie
+            document.cookie = `accessToken=${data.accessToken}; path=/; max-age=7200`;
+            // 重定向到知识库聊天页面
+            window.location.href = '/knowledge-chat';
+          } else {
+            errorMessage.textContent = data.error || '登录失败，请检查用户名和密码';
+            errorMessage.style.display = 'block';
+          }
+        } catch (error) {
+          errorMessage.textContent = '登录请求失败，请稍后再试';
+          errorMessage.style.display = 'block';
+          console.error('Login error:', error);
+        }
+      });
+    </script>
+  </body>
+  </html>
+  `;
+  
+  return res.status(200).send(loginHtml);
+});
+
+// 知识库聊天页面
+app.get('/knowledge-chat', (req, res) => {
+  // 返回简单的知识库聊天页面HTML
+  const chatHtml = `
+  <!DOCTYPE html>
+  <html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyAI - 知识库聊天</title>
+    <style>
+      body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f5f5f5;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+      }
+      .header {
+        background-color: #4285f4;
+        color: white;
+        padding: 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+      .logout-btn {
+        background-color: transparent;
+        color: white;
+        border: 1px solid white;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .chat-container {
+        display: flex;
+        flex: 1;
+        overflow: hidden;
+      }
+      .sidebar {
+        width: 250px;
+        background-color: white;
+        border-right: 1px solid #ddd;
+        padding: 16px;
+        overflow-y: auto;
+      }
+      .chat-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+      }
+      .messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 16px;
+        background-color: white;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .message {
+        margin-bottom: 16px;
+        padding: 12px;
+        border-radius: 8px;
+        max-width: 80%;
+      }
+      .user-message {
+        background-color: #e3f2fd;
+        margin-left: auto;
+        color: #333;
+      }
+      .ai-message {
+        background-color: #f1f1f1;
+        margin-right: auto;
+        color: #333;
+      }
+      .input-area {
+        display: flex;
+        gap: 8px;
+      }
+      .message-input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 16px;
+      }
+      .send-btn {
+        padding: 12px 24px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      .placeholder-text {
+        text-align: center;
+        color: #888;
+        margin-top: 40%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>MyAI 知识库聊天</h1>
+      <button class="logout-btn" id="logout-btn">退出登录</button>
+    </div>
+    
+    <div class="chat-container">
+      <div class="sidebar">
+        <h3>聊天历史</h3>
+        <p>暂无聊天历史</p>
+      </div>
+      
+      <div class="chat-area">
+        <div class="messages" id="messages">
+          <div class="ai-message message">您好！我是MyAI知识库助手。请问有什么可以帮助您的？</div>
+        </div>
+        
+        <div class="input-area">
+          <input type="text" class="message-input" id="message-input" placeholder="输入您的问题...">
+          <button class="send-btn" id="send-btn">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const messagesContainer = document.getElementById('messages');
+      const messageInput = document.getElementById('message-input');
+      const sendButton = document.getElementById('send-btn');
+      const logoutButton = document.getElementById('logout-btn');
+      
+      // 发送消息
+      function sendMessage() {
+        const message = messageInput.value.trim();
+        if (!message) return;
+        
+        // 添加用户消息到聊天区域
+        const userMessageElement = document.createElement('div');
+        userMessageElement.classList.add('message', 'user-message');
+        userMessageElement.textContent = message;
+        messagesContainer.appendChild(userMessageElement);
+        
+        // 清空输入框
+        messageInput.value = '';
+        
+        // 滚动到最新消息
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        // 模拟发送到服务器并获取回复
+        setTimeout(() => {
+          const aiMessageElement = document.createElement('div');
+          aiMessageElement.classList.add('message', 'ai-message');
+          aiMessageElement.textContent = '这是一个演示版本，实际API调用需要有效的JWT认证。在完整版本中，我会连接到知识库并回答您的问题。';
+          messagesContainer.appendChild(aiMessageElement);
+          
+          // 滚动到最新消息
+          messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }, 1000);
+      }
+      
+      // 绑定发送按钮事件
+      sendButton.addEventListener('click', sendMessage);
+      
+      // 绑定回车键发送
+      messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+      
+      // 退出登录
+      logoutButton.addEventListener('click', () => {
+        // 清除cookie
+        document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        // 重定向到登录页面
+        window.location.href = '/login';
+      });
+    </script>
+  </body>
+  </html>
+  `;
+  
+  return res.status(200).send(chatHtml);
 });
 
 // API文档路径
