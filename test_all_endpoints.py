@@ -133,14 +133,18 @@ class TestResults:
 
 # 获取HTTP请求头
 def get_headers(with_token: bool = False) -> Dict[str, str]:
-    """获取HTTP请求头, 始终包含API密钥头"""
+    """获取HTTP请求头，优先使用JWT认证，不再依赖X-API-Key"""
     headers = {
-        "Content-Type": "application/json", 
-        "X-API-Key": API_KEY  # 重要: 此项目需要API密钥认证
+        "Content-Type": "application/json"
     }
     
+    # 优先使用JWT令牌认证
     if with_token and session.access_token:
         headers["Authorization"] = f"Bearer {session.access_token}"
+    
+    # 仅在没有JWT令牌时才尝试使用API密钥（向后兼容）
+    if not with_token and not session.access_token:
+        headers["X-API-Key"] = API_KEY
     
     return headers
 
