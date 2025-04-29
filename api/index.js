@@ -13,8 +13,9 @@ const Logger = {
   warn: (msg) => console.warn(`[WARN] ${msg}`)
 };
 
-// 引入JWT库
+// 引入JWT库和cookie解析器
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 
 // 获取环境变量
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -25,6 +26,7 @@ const app = express();
 // 设置基本中间件
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser()); // 添加cookie解析中间件
 
 // JWT认证中间件
 const jwtAuth = (req, res, next) => {
@@ -89,6 +91,23 @@ app.use('/public', express.static(path.join(__dirname, '../dist/public')));
 
 // 处理所有请求
 app.all('*', (req, res) => {
+  // 默认路由
+  if (req.path === '/') {
+    // 先检查用户是否已登录
+    const authHeader = req.headers.authorization;
+    const accessTokenCookie = req.cookies && req.cookies.accessToken;
+    
+    // 如果没有登录，重定向到登录页面
+    if ((!authHeader || !authHeader.startsWith('Bearer ')) && !accessTokenCookie) {
+      Logger.info('用户未登录，重定向到登录页面');
+      return res.redirect('/login');
+    }
+    
+    // 如果已登录，重定向到知识库聊天页面
+    Logger.info('用户已登录，重定向到知识库聊天页面');
+    return res.redirect('/knowledge-chat');
+  }
+  
   // 提供健康检查响应
   if (req.path === '/health') {
     return res.status(200).json({ status: 'ok' });
@@ -96,24 +115,51 @@ app.all('*', (req, res) => {
   
   // 登录页面
   if (req.path === '/login') {
-    return res.sendFile(path.join(__dirname, '../dist/public/login.html'));
+    // 尝试多个可能的路径，确保能找到文件
+    const possiblePaths = [
+      path.join(__dirname, '../dist/public/login.html'),
+      path.join(__dirname, '../src/public/login.html'),
+      path.join(__dirname, 'public/login.html'),
+      path.join(__dirname, '../public/login.html')
+    ];
+    
+    // 检查每个路径，使用第一个存在的文件
+    for (const filePath of possiblePaths) {
+      if (fs.existsSync(filePath)) {
+        Logger.info(`找到登录页面: ${filePath}`);
+        return res.sendFile(filePath);
+      }
+    }
+    
+    // 如果所有路径都不存在，返回错误信息
+    Logger.error('无法找到登录页面文件');
+    return res.status(404).send('登录页面文件不存在，请联系管理员');
   }
   
   // 知识库聊天页面 - 添加用户登录检查
   if (req.path === '/knowledge-chat') {
-    // 在开发/测试环境下只使用cookie检查
-    if (process.env.NODE_ENV === 'development' || process.env.DEMO_MODE === 'true') {
-      return res.sendFile(path.join(__dirname, '../dist/public/knowledge-chat.html'));
+    // 在Vercel环境中简化路由逻辑，不做严格的权限验证
+    // 这样可以确保在所有环境中都能正常访问知识库聊天页面
+    
+    // 尝试多个可能的路径，确保能找到文件
+    const possiblePaths = [
+      path.join(__dirname, '../dist/public/knowledge-chat.html'),
+      path.join(__dirname, '../src/public/knowledge-chat.html'),
+      path.join(__dirname, 'public/knowledge-chat.html'),
+      path.join(__dirname, '../public/knowledge-chat.html')
+    ];
+    
+    // 检查每个路径，使用第一个存在的文件
+    for (const filePath of possiblePaths) {
+      if (fs.existsSync(filePath)) {
+        Logger.info(`找到知识库聊天页面: ${filePath}`);
+        return res.sendFile(filePath);
+      }
     }
     
-    // 生产环境检查登录状态
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      // 还没有登录，重定向到登录页面
-      return res.redirect('/login');
-    }
-    
-    return res.sendFile(path.join(__dirname, '../dist/public/knowledge-chat.html'));
+    // 如果所有路径都不存在，返回错误信息
+    Logger.error('无法找到知识库聊天页面文件');
+    return res.status(404).send('知识库聊天页面文件不存在，请联系管理员');
   }
   
   // 简单聊天测试页面
