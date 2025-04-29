@@ -26,9 +26,9 @@ const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: '知识库聊天 API',
-      version: '2.0.0',
-      description: '知识库聊天 API文档。所有API都使用JWT认证。注意：简单聊天和流式聊天接口已被弃用。',
+      title: 'ChatGPT API',
+      version: '1.0.0',
+      description: 'ChatGPT API文档，包含流式和非流式接口',
       contact: {
         name: '开发团队'
       }
