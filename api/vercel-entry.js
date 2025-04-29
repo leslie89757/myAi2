@@ -63,55 +63,123 @@ app.get('/', (req, res) => {
 
 // 登录页面
 app.get('/login', (req, res) => {
-  // 返回简单的登录页面HTML
+  // 返回原始的登录页面HTML
   const loginHtml = `<!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <title>MyAI - 登录</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyAI - 登录</title>
   <style>
-    body { font-family: Arial; margin: 0; padding: 20px; text-align: center; }
-    .login-form { max-width: 400px; margin: 40px auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-    input { display: block; width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; }
-    button { background: #4285f4; color: white; border: none; padding: 10px; width: 100%; cursor: pointer; margin-top: 20px; }
-    h1 { color: #333; }
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      width: 350px;
+      max-width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 24px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #555;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    .error-message {
+      color: #d93025;
+      font-size: 14px;
+      margin-top: 20px;
+      text-align: center;
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div class="login-form">
+  <div class="login-container">
     <h1>MyAI 登录</h1>
-    <form id="loginForm">
-      <input type="text" id="username" placeholder="用户名" required>
-      <input type="password" id="password" placeholder="密码" required>
+    <div id="error-message" class="error-message"></div>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="username">用户名</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input type="password" id="password" name="password" required>
+      </div>
       <button type="submit">登录</button>
     </form>
-    <p id="message"></p>
   </div>
+
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('login-form').addEventListener('submit', function(e) {
       e.preventDefault();
-      var username = document.getElementById('username').value;
-      var password = document.getElementById('password').value;
-      document.getElementById('message').textContent = '登录中...';
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorMessage = document.getElementById('error-message');
       
       fetch('/api/auth/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ username, password })
       })
       .then(response => response.json())
       .then(data => {
         if (data.accessToken) {
-          document.getElementById('message').textContent = '登录成功!';
+          // 存储令牌到cookie
           document.cookie = 'accessToken=' + data.accessToken + '; path=/; max-age=7200';
+          // 重定向到知识库聊天页面
           window.location.href = '/knowledge-chat';
         } else {
-          document.getElementById('message').textContent = '登录失败: ' + (data.error || '请检查用户名和密码');
+          errorMessage.textContent = data.error || '登录失败，请检查用户名和密码';
+          errorMessage.style.display = 'block';
         }
       })
       .catch(error => {
-        document.getElementById('message').textContent = '登录请求失败: ' + error.message;
+        errorMessage.textContent = '登录请求失败，请稍后再试';
+        errorMessage.style.display = 'block';
+        console.error('Login error:', error);
       });
     });
   </script>
