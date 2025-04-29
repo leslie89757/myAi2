@@ -2331,21 +2331,66 @@ app.all('*', (req, res) => {
   
   // 如果是API JSON规格请求
   if (req.path === '/api-docs.json') {
+    // 首先定义一个默认的API文档对象，确保即使所有加载方式失败也能返回有效响应
+    const defaultApiDocs = {
+      "openapi": "3.0.0",
+      "info": {
+        "title": "ChatGPT API",
+        "version": "1.0.0",
+        "description": "ChatGPT API文档，包含流式和非流式接口",
+        "contact": {
+          "name": "开发团队"
+        }
+      },
+      "servers": [
+        {
+          "url": "https://myai-backend.vercel.app",
+          "description": "生产服务器"
+        }
+      ],
+      "paths": {}
+    };
+    
     try {
       // 尝试从外部JSON文件加载API文档
       Logger.info('尝试从外部JSON文件加载API文档');
-      const apiDocsPath = path.join(__dirname, 'swagger-prod.json');
       
-      if (fs.existsSync(apiDocsPath)) {
-        const apiDocs = JSON.parse(fs.readFileSync(apiDocsPath, 'utf8'));
-        Logger.info('成功从外部JSON文件加载API文档');
+      // 尝试多个可能的路径
+      const possiblePaths = [
+        path.join(__dirname, 'swagger-prod.json'),
+        path.join(__dirname, '../swagger-prod.json'),
+        path.join(process.cwd(), 'api/swagger-prod.json'),
+        path.join(process.cwd(), 'swagger-prod.json')
+      ];
+      
+      let apiDocs = null;
+      let foundPath = null;
+      
+      // 尝试每个路径
+      for (const apiDocsPath of possiblePaths) {
+        try {
+          if (fs.existsSync(apiDocsPath)) {
+            apiDocs = JSON.parse(fs.readFileSync(apiDocsPath, 'utf8'));
+            foundPath = apiDocsPath;
+            break;
+          }
+        } catch (e) {
+          Logger.warn(`尝试路径 ${apiDocsPath} 失败: ${e.message}`);
+          continue;
+        }
+      }
+      
+      if (apiDocs) {
+        Logger.info(`成功从文件加载API文档: ${foundPath}`);
         return res.status(200).json(apiDocs);
       } else {
-        Logger.warn('外部API文档文件不存在，使用硬编码的API文档');
+        Logger.warn('所有外部API文档文件路径均不存在，使用默认API文档');
+        return res.status(200).json(defaultApiDocs);
       }
     } catch (error) {
       Logger.error(`加载API文档时发生错误: ${error.message}`);
-      Logger.warn('使用硬编码的API文档作为备选');
+      Logger.warn('使用默认API文档作为备选');
+      return res.status(200).json(defaultApiDocs);
     }
     
     // 如果外部文件加载失败，使用硬编码的API文档作为备选
