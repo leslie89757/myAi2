@@ -543,10 +543,10 @@ app.all('*', (req, res) => {
     "/api/sessions": {
       "post": {
         "tags": [
-          "会话管理"
+          "会话"
         ],
         "summary": "创建新会话",
-        "description": "为指定用户创建一个新的会话",
+        "description": "为当前认证用户创建新的聊天会话",
         "security": [
           {
             "bearerAuth": []
@@ -590,6 +590,31 @@ app.all('*', (req, res) => {
           }
         },
         "responses": {
+          "200": {
+            "description": "成功创建会话",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "201": {
             "description": "会话创建成功",
             "content": {
@@ -639,10 +664,10 @@ app.all('*', (req, res) => {
       },
       "get": {
         "tags": [
-          "会话管理"
+          "会话"
         ],
         "summary": "获取用户会话列表",
-        "description": "获取指定用户的所有会话",
+        "description": "获取当前认证用户的所有聊天会话",
         "security": [
           {
             "bearerAuth": []
@@ -668,7 +693,7 @@ app.all('*', (req, res) => {
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
+                  "type": "array",
                   "properties": {
                     "sessions": {
                       "type": "array",
@@ -695,6 +720,28 @@ app.all('*', (req, res) => {
                         }
                       }
                     }
+                  },
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
                   }
                 }
               }
@@ -712,10 +759,10 @@ app.all('*', (req, res) => {
     "/api/sessions/{id}": {
       "get": {
         "tags": [
-          "会话管理"
+          "会话"
         ],
-        "summary": "获取会话详情",
-        "description": "获取指定用户的指定会话的详细信息，包括消息历史",
+        "summary": "获取单个会话详情",
+        "description": "获取指定ID的会话详情，包括消息历史",
         "security": [
           {
             "bearerAuth": []
@@ -788,6 +835,44 @@ app.all('*', (req, res) => {
                           }
                         }
                       }
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "role": {
+                            "type": "string"
+                          },
+                          "content": {
+                            "type": "string"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -798,7 +883,7 @@ app.all('*', (req, res) => {
             "description": "未认证"
           },
           "403": {
-            "description": "无权访问"
+            "description": "无权访问该会话"
           },
           "404": {
             "description": "会话不存在"
@@ -810,10 +895,10 @@ app.all('*', (req, res) => {
       },
       "put": {
         "tags": [
-          "会话管理"
+          "会话"
         ],
         "summary": "更新会话信息",
-        "description": "更新指定用户的指定会话的标题、描述或状态",
+        "description": "更新指定ID的会话信息",
         "security": [
           {
             "bearerAuth": []
@@ -859,7 +944,7 @@ app.all('*', (req, res) => {
         },
         "responses": {
           "200": {
-            "description": "会话更新成功",
+            "description": "成功更新会话",
             "content": {
               "application/json": {
                 "schema": {
@@ -891,6 +976,22 @@ app.all('*', (req, res) => {
                           "format": "date-time"
                         }
                       }
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "isActive": {
+                      "type": "boolean"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time"
                     }
                   }
                 }
@@ -904,7 +1005,7 @@ app.all('*', (req, res) => {
             "description": "未认证"
           },
           "403": {
-            "description": "无权访问"
+            "description": "无权更新该会话"
           },
           "404": {
             "description": "会话不存在"
@@ -916,10 +1017,10 @@ app.all('*', (req, res) => {
       },
       "delete": {
         "tags": [
-          "会话管理"
+          "会话"
         ],
         "summary": "删除会话",
-        "description": "删除指定用户的指定会话及其所有消息",
+        "description": "删除指定ID的会话（逻辑删除，将isActive设为false）",
         "security": [
           {
             "bearerAuth": []
@@ -941,7 +1042,7 @@ app.all('*', (req, res) => {
         ],
         "responses": {
           "200": {
-            "description": "会话删除成功",
+            "description": "成功删除会话",
             "content": {
               "application/json": {
                 "schema": {
@@ -962,7 +1063,7 @@ app.all('*', (req, res) => {
             "description": "未认证"
           },
           "403": {
-            "description": "无权访问"
+            "description": "无权删除该会话"
           },
           "404": {
             "description": "会话不存在"
@@ -1839,8 +1940,8 @@ app.all('*', (req, res) => {
         "tags": [
           "认证"
         ],
-        "summary": "用户登录",
-        "description": "使用用户名/邮箱和密码登录，获取JWT访问令牌和刷新令牌",
+        "summary": "用户登录/注册",
+        "description": "使用用户名/邮箱和密码登录，如果用户不存在则自动注册新账号，获取JWT访问令牌和刷新令牌",
         "requestBody": {
           "required": true,
           "content": {
@@ -1867,7 +1968,7 @@ app.all('*', (req, res) => {
         },
         "responses": {
           "200": {
-            "description": "登录成功",
+            "description": "登录成功或注册并登录成功",
             "content": {
               "application/json": {
                 "schema": {
@@ -1898,6 +1999,10 @@ app.all('*', (req, res) => {
                           "type": "string"
                         }
                       }
+                    },
+                    "isNewUser": {
+                      "type": "boolean",
+                      "description": "指示是否为新注册用户"
                     }
                   }
                 }
@@ -1962,7 +2067,7 @@ app.all('*', (req, res) => {
           "认证"
         ],
         "summary": "用户登出",
-        "description": "使当前刷新令牌失效，需要提供刷新令牌",
+        "description": "使当前访问令牌和刷新令牌失效",
         "security": [
           {
             "bearerAuth": []
@@ -2092,7 +2197,7 @@ app.all('*', (req, res) => {
                     },
                     "model": {
                       "type": "string",
-                      "example": "gpt-4o"
+                      "example": "moonshot-v1-128k"
                     },
                     "usage": {
                       "type": "object",
