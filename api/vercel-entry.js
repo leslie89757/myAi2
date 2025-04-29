@@ -1,8 +1,12 @@
-// 简化版Vercel入口点 - 用于排查部署问题
+// Vercel部署入口点 - 连接到主要API逻辑
 const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
+const path = require('path');
+
+// 导入主要API逻辑
+const mainApiHandler = require('./index');
 
 // 创建Express应用
 const app = express();
@@ -347,32 +351,36 @@ const jwtAuth = (req, res, next) => {
   }
 };
 
-// 捕获所有其他路由
+// 对于所有API请求，使用主要API逻辑处理
+app.use('/api', (req, res, next) => {
+  // 如果是已处理的特定路由，直接返回
+  if (req.path === '/health' || req.path === '/version') {
+    return next();
+  }
+  
+  // 使用主要API逻辑处理请求
+  return mainApiHandler(req, res, next);
+});
+
+// 捕获所有其他未处理的路由
 app.all('*', (req, res) => {
-  // 如果是需要认证的API路由，先进行认证
-  if (req.path.startsWith('/api/') && 
-      req.path !== '/api/health' && 
-      req.path !== '/api/version' && 
-      !req.path.startsWith('/api/auth/')) {
-    jwtAuth(req, res, () => {
-      return res.status(200).json({
-        message: `接收到已认证的请求: ${req.method} ${req.path}`,
-        user: req.user,
-        query: req.query,
-        body: req.body,
-        timestamp: new Date().toISOString()
-      });
-    });
-  } else {
-    // 其他路由不需要认证
-    return res.status(200).json({
-      message: `接收到请求: ${req.method} ${req.path}`,
-      headers: req.headers,
-      query: req.query,
-      body: req.body,
+  // 如果是API路由但未被处理，返回404
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({
+      error: 'API端点不存在',
+      path: req.path,
+      method: req.method,
       timestamp: new Date().toISOString()
     });
   }
+  
+  // 其他路由返回到首页或登录页
+  if (req.path !== '/' && req.path !== '/login' && req.path !== '/knowledge-chat' && 
+      req.path !== '/health' && req.path !== '/api-docs') {
+    return res.redirect('/login');
+  }
+  
+  next();
 });
 
 // 错误处理中间件
