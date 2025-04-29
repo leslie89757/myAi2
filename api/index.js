@@ -185,33 +185,23 @@ app.all('*', (req, res) => {
   // 如果是API JSON规格请求
   if (req.path === '/api-docs.json') {
     try {
-      // 尝试加载生产环境的API文档
-      const swaggerProdPath = path.join(__dirname, '../swagger-prod.json');
-      if (fs.existsSync(swaggerProdPath)) {
-        // 使用fs.readFileSync而不是require，避免缓存问题
-        const swaggerContent = fs.readFileSync(swaggerProdPath, 'utf8');
-        const swaggerSpec = JSON.parse(swaggerContent);
-        Logger.info('从 swagger-prod.json 加载API文档');
-        return res.status(200).json(swaggerSpec);
-      }
+      // 尝试从外部JSON文件加载API文档
+      Logger.info('尝试从外部JSON文件加载API文档');
+      const apiDocsPath = path.join(__dirname, 'swagger-prod.json');
       
-      // 如果生产环境文件不存在，尝试加载开发环境的API文档
-      const swaggerSpecsPath = path.join(__dirname, '../swagger-specs.json');
-      if (fs.existsSync(swaggerSpecsPath)) {
-        const swaggerContent = fs.readFileSync(swaggerSpecsPath, 'utf8');
-        const swaggerSpec = JSON.parse(swaggerContent);
-        Logger.info('从 swagger-specs.json 加载API文档');
-        return res.status(200).json(swaggerSpec);
+      if (fs.existsSync(apiDocsPath)) {
+        const apiDocs = JSON.parse(fs.readFileSync(apiDocsPath, 'utf8'));
+        Logger.info('成功从外部JSON文件加载API文档');
+        return res.status(200).json(apiDocs);
+      } else {
+        Logger.warn('外部API文档文件不存在，使用硬编码的API文档');
       }
-      
-      // 如果外部文件都不存在，则返回硬编码的API文档
-      Logger.warn('外部API文档文件不存在，使用硬编码的API文档');
     } catch (error) {
-      // 如果加载外部文件时出错，记录错误并使用硬编码的API文档
-      Logger.error(`加载API文档失败: ${error.message}`);
+      Logger.error(`加载API文档时发生错误: ${error.message}`);
+      Logger.warn('使用硬编码的API文档作为备选');
     }
     
-    // 如果外部文件加载失败，使用硬编码的API文档
+    // 如果外部文件加载失败，使用硬编码的API文档作为备选
     return res.status(200).json({
   "openapi": "3.0.0",
   "info": {
