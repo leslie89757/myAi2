@@ -76,8 +76,7 @@ function logout() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${accessToken}`,
-                'X-API-Key': 'test_key'
+                'Authorization': `Bearer ${accessToken}`
             }
         })
         .then(response => response.json())
@@ -101,8 +100,7 @@ function getAuthHeaders() {
     const accessToken = localStorage.getItem('accessToken');
     return {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-        'X-API-Key': 'test_key'
+        'Authorization': `Bearer ${accessToken}`
     };
 }
 

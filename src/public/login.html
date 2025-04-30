@@ -238,8 +238,37 @@
         function login() {
             clearMessages();
             
+            // 添加调试信息区域
+            const debugInfo = document.createElement('div');
+            debugInfo.id = 'debug-info';
+            debugInfo.style.position = 'fixed';
+            debugInfo.style.bottom = '10px';
+            debugInfo.style.right = '10px';
+            debugInfo.style.background = '#f8f9fa';
+            debugInfo.style.padding = '10px';
+            debugInfo.style.border = '1px solid #ddd';
+            debugInfo.style.borderRadius = '5px';
+            debugInfo.style.zIndex = '9999';
+            debugInfo.style.maxWidth = '80%';
+            debugInfo.style.maxHeight = '200px';
+            debugInfo.style.overflow = 'auto';
+            debugInfo.style.fontSize = '12px';
+            debugInfo.style.fontFamily = 'monospace';
+            debugInfo.innerHTML = '<strong>登录调试日志</strong><br>';
+            document.body.appendChild(debugInfo);
+            
+            function logDebug(message) {
+                console.log(message);
+                const logLine = document.createElement('div');
+                logLine.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+                debugInfo.appendChild(logLine);
+                debugInfo.scrollTop = debugInfo.scrollHeight;
+            }
+            
             const email = emailInput.value.trim();
             const password = passwordInput.value;
+
+            logDebug(`尝试登录用户: ${email}`);
 
             if (!email) {
                 showError('请输入邮箱地址');
@@ -257,40 +286,99 @@
 
             // 清除之前的令牌
             clearAuthStorage();
+            logDebug('已清除之前的认证信息');
 
             // 发送登录请求
+            logDebug('发送登录请求到: ' + `${API_BASE_URL}/api/auth/login`);
+            
             fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    login: email,
+                    username: email,
                     password: password
                 })
             })
             .then(response => {
+                logDebug(`收到响应: 状态码 ${response.status}`);
                 if (!response.ok) {
                     throw new Error(`登录失败: ${response.status} ${response.statusText}`);
                 }
                 return response.json();
             })
             .then(data => {
+                logDebug('登录成功，收到数据:');
+                logDebug(JSON.stringify(data, null, 2));
+                
                 if (!data.accessToken) {
                     throw new Error('服务器响应中缺少访问令牌');
                 }
 
                 // 登录成功
-                const isNewUser = data.isNewUser;
+                const isNewUser = false; // Vercel模式下不返回isNewUser字段
                 
-                // 保存令牌和用户信息到本地存储
-                localStorage.setItem('accessToken', data.accessToken);
-                localStorage.setItem('refreshToken', data.refreshToken);
-                localStorage.setItem('userId', data.user.id);
-                localStorage.setItem('username', data.user.username || data.user.email);
-                
-                // 同时将访问令牌保存到 cookie 中，用于服务器端验证
-                document.cookie = `accessToken=${data.accessToken}; path=/; max-age=${60*60*24*7}; SameSite=Strict`;
+                // 保存用户信息到本地存储
+                try {
+                    // 先检查响应中的用户信息格式
+                    let userId = '123456';
+                    let username = email;
+                    
+                    // 处理不同的响应格式
+                    if (data.user && data.user.id) {
+                        // 标准格式：{ user: { id, username, email } }
+                        userId = data.user.id;
+                        username = data.user.username || data.user.email || email;
+                        logDebug('使用标准用户对象格式');
+                    } else if (data.userId) {
+                        // 兼容格式：{ userId }
+                        userId = data.userId;
+                        logDebug('使用兼容用户ID格式');
+                    } else {
+                        logDebug('未找到用户ID，使用默认值');
+                    }
+                    
+                    // 打印详细的用户信息
+                    logDebug(`保存用户信息: userId=${userId}, username=${username}`);
+                    
+                    // 清除之前的所有认证信息
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    localStorage.removeItem('userId');
+                    localStorage.removeItem('username');
+                    
+                    // 设置新的认证信息
+                    localStorage.setItem('accessToken', data.accessToken);
+                    localStorage.setItem('refreshToken', data.refreshToken || '');
+                    localStorage.setItem('userId', userId);
+                    localStorage.setItem('username', username);
+                    
+                    logDebug(`已保存用户信息到本地存储: 
+                      - userId: ${userId}
+                      - username: ${username}
+                      - accessToken: 已设置
+                      - refreshToken: 已设置`);
+                    
+                    // 同时将访问令牌保存到 cookie 中，用于服务器端验证
+                    // 清除之前的 cookie
+                    document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                    
+                    // 设置新的 cookie
+                    const maxAge = 60*60*24*7; // 7天
+                    document.cookie = `accessToken=${data.accessToken}; path=/; max-age=${maxAge}; SameSite=Strict`;
+                    logDebug(`已将访问令牌保存到cookie中，过期时间为 ${maxAge} 秒`);
+                    
+                    // 显示当前本地存储状态
+                    logDebug('当前本地存储状态:');
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        const value = key.includes('Token') ? '已设置' : localStorage.getItem(key);
+                        logDebug(`- ${key}: ${value}`);
+                    }
+                } catch (storageError) {
+                    logDebug(`保存用户信息到本地存储时出错: ${storageError.message}`);
+                }
 
                 // 显示成功消息
                 showInfo(isNewUser ? '注册成功，正在跳转...' : '登录成功，正在跳转...');
@@ -298,9 +386,11 @@
                 // 获取重定向URL（如果有）
                 const urlParams = new URLSearchParams(window.location.search);
                 const redirectUrl = urlParams.get('redirect') || '/knowledge-chat';
+                logDebug(`将在 1.5 秒后重定向到: ${redirectUrl}`);
                 
                 // 跳转到目标页面
                 setTimeout(() => {
+                    logDebug(`正在重定向到: ${redirectUrl}`);
                     window.location.href = redirectUrl;
                 }, 1500);
             })

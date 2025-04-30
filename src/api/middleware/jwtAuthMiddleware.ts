@@ -47,9 +47,11 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
     const token = authHeader.split(' ')[1];
     const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
     
-    // 检查令牌是否在黑名单中
-    const blacklistedToken = await prisma.blacklistedToken.findUnique({
-      where: { token }
+    // 检查令牌是否在黑名单中 - 改进查询逻辑
+    const blacklistedToken = await prisma.blacklistedToken.findFirst({
+      where: {
+        token: token
+      }
     });
 
     if (blacklistedToken) {
@@ -90,7 +92,7 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
     };
     req.token = token;
     
-    logger.info(`JWT认证成功: ${user.username} [${req.method} ${req.path}]`);
+    logger.info(`JWT认证成功: ${user.username || user.email || user.id} [${req.method} ${req.path}]`);
     next();
   } catch (error: any) {
     logger.error(`JWT认证错误: ${error.message}`);
@@ -100,7 +102,7 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
         message: '请使用刷新令牌获取新的访问令牌' 
       });
     }
-    return res.status(401).json({ error: 'JWT认证失败' });
+    return res.status(401).json({ error: 'JWT认证失败', message: error.message });
   }
 };
 

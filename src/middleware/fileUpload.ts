@@ -64,7 +64,7 @@ export const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 限制文件大小为10MB
+    fileSize: 50 * 1024 * 1024, // 限制文件大小为50MB
   }
 }).single('file'); // 使用single中间件处理单个文件上传，字段名为'file'
 
@@ -73,7 +73,7 @@ export const handleFileUploadErrors = (err: any, req: Request, res: Response, ne
   if (err instanceof multer.MulterError) {
     // Multer错误
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: '文件大小超过限制（最大10MB）' });
+      return res.status(400).json({ error: '文件大小超过限制（最大50MB）' });
     }
     return res.status(400).json({ error: `文件上传错误: ${err.message}` });
   } else if (err) {

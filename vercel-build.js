@@ -31,12 +31,12 @@ try {
   }
   console.log(`编译成功: ${indexPath} 文件已创建`);
   
-  // 验证API路由文件存在
-  const apiIndexPath = path.join(__dirname, 'dist', 'api', 'index.js');
-  if (!fs.existsSync(apiIndexPath)) {
-    console.warn('警告: dist/api/index.js 不存在，这可能会导致API路由问题');
+  // 验证src/api是否成功编译
+  const apiDirPath = path.join(__dirname, 'dist', 'api');
+  if (!fs.existsSync(apiDirPath)) {
+    console.warn('警告: dist/api 目录不存在，这可能会导致API路由问题');
   } else {
-    console.log(`API路由编译成功: ${apiIndexPath} 文件已创建`);
+    console.log(`API路由目录编译成功: ${apiDirPath}`);
   }
   
   console.log('Build completed successfully.');

@@ -8,29 +8,29 @@ import {
   addSessionMessage,
   clearSessionMessages
 } from '../controllers/sessionController';
-import { authenticate } from '../middleware/authMiddleware';
+import { authMiddleware } from '../middleware/jwtAuthMiddleware';
 
 const router = Router();
 
 // 获取用户会话列表
-router.get('/', authenticate, getUserSessions);
+router.get('/', authMiddleware, getUserSessions);
 
 // 获取单个会话详情
-router.get('/:id', authenticate, getSessionById);
+router.get('/:id', authMiddleware, getSessionById);
 
 // 创建新会话
-router.post('/', authenticate, createSession);
+router.post('/', authMiddleware, createSession);
 
 // 更新会话信息
-router.put('/:id', authenticate, updateSession);
+router.put('/:id', authMiddleware, updateSession);
 
 // 删除会话
-router.delete('/:id', authenticate, deleteSession);
+router.delete('/:id', authMiddleware, deleteSession);
 
 // 添加消息到会话
-router.post('/:id/messages', authenticate, addSessionMessage);
+router.post('/:id/messages', authMiddleware, addSessionMessage);
 
 // 清空会话消息
-router.delete('/:id/messages', authenticate, clearSessionMessages);
+router.delete('/:id/messages', authMiddleware, clearSessionMessages);
 
 export default router;

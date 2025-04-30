@@ -21,14 +21,22 @@ if (fs.existsSync(envPath)) {
 
 // 获取API密钥
 const getApiKey = () => {
-  const apiKey = process.env.OPENAI_API_KEY;
-  
-  if (!apiKey || apiKey.trim() === '') {
-    logger.warn('环境变量中未设置OPENAI_API_KEY，请确保设置有效的API密钥');
-    return '';
+  // 先检查Moonshot专用的环境变量
+  const moonshotApiKey = process.env.MOONSHOT_API_KEY;
+  if (moonshotApiKey && moonshotApiKey.trim() !== '') {
+    logger.info('使用MOONSHOT_API_KEY环境变量');
+    return moonshotApiKey;
   }
   
-  return apiKey;
+  // 然后检查通用OPENAI_API_KEY环境变量
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+  if (openaiApiKey && openaiApiKey.trim() !== '') {
+    logger.info('使用OPENAI_API_KEY环境变量');
+    return openaiApiKey;
+  }
+  
+  logger.warn('环境变量中未设置MOONSHOT_API_KEY或OPENAI_API_KEY，请确保设置有效的API密钥');
+  return '';
 };
 
 // 检查API密钥是否有效
@@ -40,16 +48,30 @@ export const validateApiKey = () => {
     return false;
   }
   
-  // 支持多种OpenAI密钥格式
+  // 支持OpenAI和Moonshot的API密钥格式
+  // 生成安全的日志输出
+  const safeLogKey = apiKey.length > 12 ? 
+    `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` : 
+    '********';
+
+  // 字符串长度检查 - Moonshot密钥通常很长
+  if (apiKey.length > 40) {
+    logger.info(`检测到Moonshot长密钥格式: ${safeLogKey}`);
+    return true;
+  }
+  
+  // 标准前缀检查
   if (apiKey.startsWith('sk-')) {
+    // OpenAI标准格式
     if (apiKey.startsWith('sk-org-')) {
-      logger.info('检测到组织密钥格式');
+      logger.info('检测到OpenAI组织密钥格式');
     } else if (apiKey.startsWith('sk-proj-')) {
-      logger.info('检测到项目密钥格式');
+      logger.info('检测到OpenAI项目密钥格式');
+    } else if (apiKey.startsWith('sk-ant-')) {
+      logger.info('检测到Moonshot旧格式密钥');
     } else {
-      logger.info('检测到标准密钥格式');
+      logger.info(`检测到标准密钥格式: ${safeLogKey}`);
     }
-    logger.info(`使用API密钥: ${apiKey.substring(0, 8)}...${apiKey.substring(apiKey.length - 4)}`);
     return true;
   }
   
@@ -67,10 +89,11 @@ const createHttpsAgent = () => {
   });
 };
 
-// 创建OpenAI客户端
+// 创建AI客户端 (支持OpenAI和Moonshot)
 export const openai = new OpenAI({
   apiKey: getApiKey(),
-  baseURL: process.env.OPENAI_BASE_URL || 'https://api.openai.com/v1',
+  baseURL: process.env.OPENAI_BASE_URL || 
+    (process.env.MOONSHOT_API_KEY ? 'https://api.moonshot.cn/v1' : 'https://api.openai.com/v1'),
   httpAgent: createHttpsAgent(),
   maxRetries: 5,
   timeout: 60000,
@@ -79,9 +102,9 @@ export const openai = new OpenAI({
   }
 });
 
-// 确保openai实例已正确初始化
+// 确保AI客户端实例已正确初始化
 if (!openai || !openai.chat) {
-  logger.error('OpenAI客户端初始化失败，chat属性不存在');
+  logger.error('AI客户端初始化失败，chat属性不存在');
 }
 
 // 获取 OpenAI 客户端实例
@@ -189,9 +212,31 @@ export const initializeOpenAI = async () => {
     
     try {
       // 使用简单的聊天完成请求测试API连接
+      // 根据API密钥和环境变量选择模型
+      const apiKey = getApiKey();
+      let model = 'gpt-3.5-turbo'; // 默认OpenAI模型
+      let usesMoonshot = false;
+      
+      // 判断Moonshot API的多种情况
+      // 1. 环境变量中显式设置MOONSHOT_API_KEY
+      // 2. 密钥很长 (大于40个字符)
+      // 3. 密钥以sk-ant-开头
+      // 4. 配置文件指定使用Moonshot API
+      if (process.env.MOONSHOT_API_KEY || 
+          apiKey.length > 40 || 
+          apiKey.startsWith('sk-ant-') ||
+          process.env.OPENAI_BASE_URL?.includes('moonshot')) {
+        // Moonshot支持的多种模型
+        usesMoonshot = true;
+        model = process.env.MOONSHOT_MODEL || 'moonshot-v1-8k';
+        logger.info(`使用Moonshot模型: ${model}`);
+      } else {
+        logger.info(`使用OpenAI模型: ${model}`);
+      }
+      
       const completionTest = await withRetry(() => 
         openai.chat.completions.create({
-          model: 'gpt-3.5-turbo',
+          model: model,
           messages: [{ role: 'user', content: 'Test connection' }],
           max_tokens: 5
         }), 

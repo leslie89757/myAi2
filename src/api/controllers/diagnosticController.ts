@@ -1,20 +1,20 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '../../generated/prisma';
 import logger from '../../utils/logger';
-import { DualAuthRequest } from '../middleware/dualAuthMiddleware';
+import { AuthRequest } from '../middleware/jwtAuthMiddleware';
 
 const prisma = new PrismaClient();
 
 /**
  * 环境变量诊断 - 检查关键环境变量是否配置（不返回敏感值）
  */
-export const checkEnvironment = async (req: DualAuthRequest, res: Response) => {
+export const checkEnvironment = async (req: AuthRequest, res: Response) => {
   try {
     // 检查用户认证信息
     const userInfo = req.user ? {
       id: req.user.id,
       username: req.user.username,
-      authMethod: req.authMethod
+      authMethod: 'jwt' // 现在只使用JWT认证
     } : 'Not authenticated';
 
     // 检查环境变量（只显示是否存在，不显示值）
@@ -45,7 +45,7 @@ export const checkEnvironment = async (req: DualAuthRequest, res: Response) => {
 /**
  * 数据库诊断 - 测试数据库连接并返回基本统计信息
  */
-export const checkDatabase = async (req: DualAuthRequest, res: Response) => {
+export const checkDatabase = async (req: AuthRequest, res: Response) => {
   try {
     logger.info('开始数据库诊断...');
     const startTime = Date.now();

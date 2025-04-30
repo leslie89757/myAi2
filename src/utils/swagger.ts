@@ -1,7 +1,8 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
-import { Express } from 'express';
+import express, { Express } from 'express';
 import path from 'path';
+import fs from 'fs';
 
 // 检测是否在 Vercel 环境中运行
 const isVercelEnvironment = process.env.VERCEL || process.env.NOW_REGION;
@@ -48,34 +49,43 @@ const options = {
       { bearerAuth: [] }
     ]
   },
-  // 使用绝对路径指定API文件
+  // 使用简化的方式指定所有API文件
   apis: [
-    path.resolve(__dirname, '../controllers/*.js'),
-    path.resolve(__dirname, '../controllers/*.ts'),
-    path.resolve(__dirname, '../api/controllers/*.js'),
-    path.resolve(__dirname, '../api/controllers/*.ts'),
-    path.resolve(__dirname, '../api/routes/*.js'),
-    path.resolve(__dirname, '../api/routes/*.ts')
+    // 优先使用源代码路径，因为注释更回空格更清晰
+    path.resolve(process.cwd(), 'src/api/**/*.ts'),
+    path.resolve(process.cwd(), 'src/admin/**/*.ts'),
+    
+    // 编译后的路径作为备用
+    path.resolve(process.cwd(), 'dist/api/**/*.js'),
+    path.resolve(process.cwd(), 'dist/admin/**/*.js')
   ]
 };
 
-// 初始化swagger-jsdoc
-const specs = swaggerJsdoc(options);
+// 初始化swagger-jsdoc - 不再静态生成
+// 改用函数在请求时生成最新文档
+function generateSwaggerSpecs() {
+  // 确保每次都构建新的Swagger规范
+  return swaggerJsdoc(options);
+}
 
-// 导出Swagger规格
-export const getSwaggerSpecs = () => specs;
+// 导出Swagger规格生成器
+export const getSwaggerSpecs = generateSwaggerSpecs;
 
-// 设置Swagger UI
+// 在每次请求时动态生成最新的API文档
 export function setupSwagger(app: Express) {
   // 提供OpenAPI规范JSON
-  app.get('/api-docs.json', (req, res) => {
+  app.get('/api-docs.json', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    // 在每次请求时重新生成API文档
+    // 这确保了文档始终是最新的
+    const latestSpecs = generateSwaggerSpecs();
+    
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.send(specs);
+    res.send(latestSpecs);
   });
 
   // 设置Swagger UI
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+  const swaggerSetup = swaggerUi.setup(generateSwaggerSpecs(), {
     explorer: true,
     customCss: '.swagger-ui .topbar { display: none }',
     swaggerOptions: {
@@ -84,14 +94,33 @@ export function setupSwagger(app: Express) {
       showRequestDuration: true,
       persistAuthorization: true
     }
-  }));
+  });
+  
+  // 采用推荐的模式，避免类型问题
+  app.use('/api-docs', swaggerUi.serve);
+  app.get('/api-docs', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    // 每次动态生成新文档
+    const latestSpecs = generateSwaggerSpecs();
+    // 使用一个新的swagger setup实例，确保文档为最新
+    const updatedSetup = swaggerUi.setup(latestSpecs, {
+      explorer: true,
+      customCss: '.swagger-ui .topbar { display: none }',
+      swaggerOptions: {
+        docExpansion: 'list',
+        filter: true,
+        showRequestDuration: true,
+        persistAuthorization: true
+      }
+    });
+    return updatedSetup(req, res, next);
+  });
 
   // 防止404错误
-  app.get('/api-docs/', (req, res) => {
+  app.get('/api-docs/', (req: express.Request, res: express.Response, next: express.NextFunction) => {
     res.redirect('/api-docs');
   });
 
-  app.get('/api-docs/index.html', (req, res) => {
+  app.get('/api-docs/index.html', (req: express.Request, res: express.Response, next: express.NextFunction) => {
     res.redirect('/api-docs');
   });
 }

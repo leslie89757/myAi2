@@ -505,9 +505,6 @@
   </div>
 
   <script>
-    // 定义API基础URL
-    const API_BASE_URL = window.location.origin;
-    
     // 全局变量
     let currentSources = []; // 当前知识来源
     let currentSessionId = null; // 当前会话ID
@@ -521,8 +518,13 @@
     
     // 上传文档
     async function uploadDocument() {
-      if (!fileInput.files[0]) {
-        alert('请选择文件');
+      if (!userId.value) {
+        showStatus('请输入用户ID', 'error');
+        return;
+      }
+      
+      if (!fileInput.files.length) {
+        showStatus('请选择文件', 'error');
         return;
       }
       
@@ -530,52 +532,31 @@
       const formData = new FormData();
       formData.append('file', file);
       
-      // 添加浏览器控制台调试日志
-      console.log('上传文件信息:', {
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type
-      });
-      
-      // 添加文档名称
-      const docName = documentName.value.trim() || file.name;
-      formData.append('documentName', docName);
-      
-      // 添加用户ID
-      const userIdValue = userId.value.trim();
-      if (!userIdValue) {
-        uploadStatus.textContent = '错误: 用户ID不能为空';
-        uploadStatus.style.color = 'red';
-        uploadBtn.disabled = false;
-        return;
-      }
-      formData.append('userId', userIdValue);
-      
-      // 检查FormData内容
-      console.log('检查FormData内的字段:');
-      for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + (pair[0] === 'file' ? '文件对象' : pair[1]));
+      if (documentName.value) {
+        formData.append('documentName', documentName.value);
       }
       
-      // 显示加载状态
-      uploadStatus.textContent = '正在上传...';
-      uploadStatus.style.color = 'blue';
-      
-      // 禁用上传按钮
-      uploadBtn.disabled = true;
+      showLoading(true);
+      uploadStatus.className = 'status info';
+      uploadStatus.textContent = '上传中...';
       
       try {
-        // 对于文件上传，只设置Authorization头，不设置Content-Type
+        // 将userId作为URL查询参数传递
+        const userIdValue = encodeURIComponent(userId.value);
+        console.log(`开始上传文件: ${file.name}, 大小: ${formatFileSize(file.size)}, 用户ID: ${userIdValue}`);
+        
+        // 获取认证令牌
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
           throw new Error('未登录或会话已过期，请重新登录');
         }
         
         // 注意：在使用 FormData 时，不要设置 Content-Type，浏览器会自动设置正确的值
-        const response = await fetch(`${API_BASE_URL}/api/knowledge/upload`, {
+        const response = await fetch(`/api/knowledge/upload?userId=${userIdValue}`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${accessToken}`
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key' // 使用系统配置的 API 密钥
           },
           body: formData
         });
@@ -636,11 +617,17 @@
           return;
         }
         
-        // 获取认证头
-        const authHeaders = await getAuthHeaders();
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
         
-        const response = await fetch(`${API_BASE_URL}/api/sessions/${sessionId}`, {
-          headers: authHeaders
+        const response = await fetch(`/api/sessions/${sessionId}?userId=${encodeURIComponent(userIdValue)}`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          }
         });
         
         if (!response.ok) {
@@ -734,13 +721,12 @@
           return;
         }
         
-        // 获取认证头
-        const authHeaders = await getAuthHeaders();
-        
-        // 发送删除请求
-        const response = await fetch(`${API_BASE_URL}/api/sessions/${currentSessionId}`, {
+        const response = await fetch(`/api/sessions/${currentSessionId}?userId=${encodeURIComponent(userIdValue)}`, {
           method: 'DELETE',
-          headers: authHeaders
+          headers: {
+            'X-API-Key': 'test_key',
+            'Authorization': `Bearer ${accessToken}`
+          }
         });
         
         if (!response.ok) {
@@ -791,12 +777,18 @@
           return;
         }
         
-        // 获取认证头
-        const authHeaders = await getAuthHeaders();
+        // 获取认证令牌
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
         
-        const response = await fetch(`${API_BASE_URL}/api/sessions/${currentSessionId}/messages`, {
+        const response = await fetch(`/api/sessions/${currentSessionId}/messages?userId=${encodeURIComponent(userIdValue)}`, {
           method: 'DELETE',
-          headers: authHeaders
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          }
         });
         
         if (!response.ok) {
@@ -839,12 +831,18 @@
         }
         
         // 获取认证令牌
-        // 获取认证头
-        const authHeaders = await getAuthHeaders();
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
         
-        const saveMessageResponse = await fetch(`${API_BASE_URL}/api/sessions/${currentSessionId}/messages`, {
+        const saveMessageResponse = await fetch(`/api/sessions/${currentSessionId}/messages?userId=${encodeURIComponent(userIdValue)}`, {
           method: 'POST',
-          headers: authHeaders,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          },
           body: JSON.stringify({
             role: 'user',
             content: message
@@ -871,12 +869,18 @@
       
       try {
         // 使用流式API
-        // 获取认证头
-        const authHeaders = await getAuthHeaders();
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+          throw new Error('未登录或会话已过期，请重新登录');
+        }
         
-        const response = await fetch(`${API_BASE_URL}/api/knowledge/stream-chat`, {
+        const response = await fetch('/api/knowledge/stream-chat', {
           method: 'POST',
-          headers: authHeaders,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key' // 使用系统配置的 API 密钥
+          },
           body: JSON.stringify({
             message,
             userId: userId.value.trim()
@@ -978,15 +982,13 @@
           const url = `/api/sessions/${currentSessionId}/messages?userId=${encodeURIComponent(userIdValue)}`;
           console.log('请求URL:', url);
           
-          // 获取授权头
-          const authHeaders = await getAuthHeaders();
-          
           // 发送请求
           const saveResponseMessage = await fetch(url, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': authHeaders.Authorization
+              'Authorization': `Bearer ${accessToken}`,
+              'X-API-Key': 'test_key'
             },
             body: JSON.stringify(messageData)
           });
@@ -1019,15 +1021,6 @@
         
         addMessage(`发生错误: ${error.message}`, 'bot');
       }
-    }
-    
-    // 获取认证头的通用函数
-    function getAuthHeaders() {
-      const accessToken = localStorage.getItem('accessToken');
-      return {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
-      };
     }
     
     // 添加消息到聊天界面
@@ -1157,15 +1150,17 @@
           userId: userIdValue
         });
         
-        // 获取认证头
-        const authHeaders = await getAuthHeaders();
-        
-        const response = await fetch(`${API_BASE_URL}/api/sessions`, {
+        const response = await fetch('/api/sessions', {
           method: 'POST',
-          headers: authHeaders,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          },
           body: JSON.stringify({
             title,
-            description
+            description,
+            userId: userIdValue
           })
         });
         
@@ -1310,12 +1305,12 @@
           }
         }
         
-        // 获取认证头
-        const authHeaders = await getAuthHeaders();
-        
         // 请求API获取用户的所有会话
-        const response = await fetch(`${API_BASE_URL}/api/sessions`, {
-          headers: authHeaders
+        const response = await fetch(`/api/sessions?userId=${encodeURIComponent(userIdValue)}`, {
+          headers: {
+            'X-API-Key': 'test_key',
+            'Authorization': `Bearer ${accessToken}`
+          }
         });
         
         if (!response.ok) {
@@ -1393,78 +1388,127 @@
       });
     }
     
-    // 初始化
-    document.addEventListener('DOMContentLoaded', function() {
-      // 检查用户认证状态
-      if (!checkAuthentication()) {
-        return; // 未通过认证，不继续执行
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 检查用户是否已登录 - 使用 await 等待异步验证完成
+      const isLoggedIn = await checkUserAuthentication();
+      if (!isLoggedIn) {
+        console.warn('用户未登录，将被重定向到登录页面');
+        return;
       }
       
       // 初始化事件监听器
       initEventListeners();
       
-      // 设置消息输入框回车发送
-      messageInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendMessage();
-        }
-      });
+      // 加载用户会话
+      await loadUserSessions();
+      
       // 显示欢迎信息
       addMessage('欢迎来到个人知识库聊天应用！请选择或创建一个会话来开始对话。', 'bot');
       
-      // 加载用户会话
-      loadUserSessions();
+      // 加载登录增强脚本
+      loadAuthEnhancementScript();
     });
     
-    // 退出登录函数
-    function logout() {
-      // 清除所有认证信息
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      localStorage.removeItem('userId');
-      localStorage.removeItem('username');
+    // 检查用户是否已登录
+    async function checkUserAuthentication() {
+      const accessToken = localStorage.getItem('accessToken');
+      const userId = localStorage.getItem('userId');
+      const username = localStorage.getItem('username');
+      const userInfoElement = document.getElementById('user-info');
       
-      // 清除cookie
-      document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      // 如果没有令牌，显示未登录状态
+      if (!accessToken) {
+        if (userInfoElement) {
+          userInfoElement.innerHTML = `
+            <span>未登录</span>
+            <button class="login-button" onclick="window.location.href='/login'">登录</button>
+          `;
+        }
+        return false;
+      }
       
-      // 重定向到登录页面
-      window.location.href = '/login';
+      try {
+        // 从服务器验证令牌和获取用户信息
+        const response = await fetch(`${window.location.origin}/api/auth/validate`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error(`验证失败: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (!data.valid || !data.user) {
+          throw new Error('无效的用户信息');
+        }
+        
+        // 更新本地存储中的用户信息
+        localStorage.setItem('userId', data.user.id);
+        localStorage.setItem('username', data.user.username || data.user.email);
+        
+        // 更新页面上的用户ID隐藏输入框
+        document.getElementById('user-id').value = data.user.id;
+        
+        // 更新用户信息展示
+        if (userInfoElement) {
+          userInfoElement.innerHTML = `
+            <span>当前用户: ${data.user.username || data.user.email}</span>
+            <button class="logout-button" onclick="logout()">退出登录</button>
+          `;
+        }
+        
+        console.log('用户验证成功:', data.user);
+        return true;
+      } catch (error) {
+        console.error('验证用户失败:', error);
+        
+        // 清除无效的令牌和用户信息
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('username');
+        
+        // 更新用户信息展示为未登录状态
+        if (userInfoElement) {
+          userInfoElement.innerHTML = `
+            <span>登录已过期，请重新登录</span>
+            <button class="login-button" onclick="window.location.href='/login'">登录</button>
+          `;
+        }
+        
+        return false;
+      }
     }
     
     // 登出函数
-    async function logout() {
+    function logout() {
       const accessToken = localStorage.getItem('accessToken');
       
       if (accessToken) {
-        try {
-          // 获取认证头
-          const authHeaders = await getAuthHeaders();
-          
-          // 调用登出 API
-          await fetch(`${API_BASE_URL}/api/auth/logout`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...authHeaders
-            }
-          });
-          
-          console.log('登出成功');
-        } catch (error) {
-          console.error('登出失败:', error);
-        } finally {
+        // 调用登出 API
+        fetch(`${window.location.origin}/api/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            'X-API-Key': 'test_key'
+          }
+        })
+        .catch(error => console.error('登出失败:', error))
+        .finally(() => {
           // 无论成功与否，清除本地存储并跳转到登录页面
           localStorage.removeItem('accessToken');
           localStorage.removeItem('refreshToken');
           localStorage.removeItem('userId');
           localStorage.removeItem('username');
-          
-          // 清除cookie
-          document.cookie = 'accessToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-          
           window.location.href = '/login';
-        }
+        });
       } else {
         window.location.href = '/login';
       }
@@ -1472,186 +1516,22 @@
     
     // 检查用户是否已登录，如果没有则重定向到登录页面
     function checkAuthentication() {
-      console.log('=== 检查用户认证状态 ===');
-      
-      // 从多个来源获取认证信息
       const accessToken = localStorage.getItem('accessToken');
       const userId = localStorage.getItem('userId');
-      const username = localStorage.getItem('username');
       
-      // 从 cookie 中获取访问令牌（如果有）
-      const cookieAccessToken = getCookie('accessToken');
-      
-      console.log('本地存储信息:', { 
-        accessToken: accessToken ? '存在' : '不存在', 
-        userId, 
-        username,
-        cookieAccessToken: cookieAccessToken ? '存在' : '不存在'
-      });
-      
-      // 如果 cookie 中有访问令牌但本地存储中没有，将其同步到本地存储
-      if (cookieAccessToken && !accessToken) {
-        console.log('从 cookie 同步访问令牌到本地存储');
-        localStorage.setItem('accessToken', cookieAccessToken);
-        // 设置默认用户信息，如果没有
-        if (!userId) localStorage.setItem('userId', '123456');
-        if (!username) localStorage.setItem('username', 'default_user');
+      if (!accessToken || !userId) {
+        console.log('用户未登录，重定向到登录页面');
+        window.location.href = '/login';
+        return false;
       }
       
-      // 如果有访问令牌但没有用户ID，设置默认用户ID
-      if (accessToken && !userId) {
-        localStorage.setItem('userId', '123456');
+      // 在页面顶部显示用户信息
+      const username = localStorage.getItem('username') || '用户';
+      if (document.getElementById('user-info')) {
+        document.getElementById('user-info').textContent = `当前用户: ${username}`;
       }
       
-      // 如果有访问令牌但没有用户名，设置默认用户名
-      if (accessToken && !username) {
-        localStorage.setItem('username', 'default_user');
-      }
-      
-      // 再次检查认证信息（可能已经更新）
-      const finalAccessToken = localStorage.getItem('accessToken');
-      const finalUserId = localStorage.getItem('userId');
-      const finalUsername = localStorage.getItem('username');
-      
-      // 显示认证状态到页面上，方便调试
-      const authStatus = document.createElement('div');
-      authStatus.style.position = 'fixed';
-      authStatus.style.top = '10px';
-      authStatus.style.right = '10px';
-      authStatus.style.background = '#f8f9fa';
-      authStatus.style.padding = '10px';
-      authStatus.style.border = '1px solid #ddd';
-      authStatus.style.borderRadius = '5px';
-      authStatus.style.zIndex = '9999';
-      authStatus.innerHTML = `
-        <strong>认证状态</strong><br>
-        访问令牌 (localStorage): ${finalAccessToken ? '<span style="color:green">存在</span>' : '<span style="color:red">不存在</span>'}<br>
-        访问令牌 (cookie): ${cookieAccessToken ? '<span style="color:green">存在</span>' : '<span style="color:red">不存在</span>'}<br>
-        用户ID: ${finalUserId || '<span style="color:red">不存在</span>'}<br>
-        用户名: ${finalUsername || '<span style="color:red">不存在</span>'}
-      `;
-      document.body.appendChild(authStatus);
-      
-      // 如果有访问令牌和用户ID，则认为认证成功
-      if (finalAccessToken && finalUserId) {
-        console.log('用户认证成功，继续加载页面');
-        
-        // 在页面顶部显示用户信息
-        const username_display = finalUsername || '用户';
-        if (document.getElementById('user-info')) {
-          document.getElementById('user-info').textContent = `当前用户: ${username_display}`;
-        }
-        
-        // 更新页面上的用户ID隐藏输入框
-        if (document.getElementById('user-id')) {
-          document.getElementById('user-id').value = finalUserId;
-        }
-        
-        return true;
-      }
-      
-      // 如果没有访问令牌或用户ID，重定向到登录页面
-      console.log('用户未登录，重定向到登录页面');
-      
-      // 显示错误信息，但不立即重定向，方便查看调试信息
-      const errorMsg = document.createElement('div');
-      errorMsg.style.position = 'fixed';
-      errorMsg.style.top = '50%';
-      errorMsg.style.left = '50%';
-      errorMsg.style.transform = 'translate(-50%, -50%)';
-      errorMsg.style.background = '#f8d7da';
-      errorMsg.style.color = '#721c24';
-      errorMsg.style.padding = '20px';
-      errorMsg.style.borderRadius = '5px';
-      errorMsg.style.zIndex = '10000';
-      errorMsg.innerHTML = `
-        <h3>用户未登录，请先登录</h3>
-        <p>将在2秒后重定向到登录页面...</p>
-      `;
-      document.body.appendChild(errorMsg);
-      
-      // 延迟2秒后重定向，给用户时间查看调试信息
-      setTimeout(() => {
-        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-      }, 2000);
-      
-      return false;
-    }
-    
-    // 从 cookie 中获取值的辅助函数
-    function getCookie(name) {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop().split(';').shift();
-      return null;
-    }
-    
-    // 获取标准的认证头
-    async function getAuthHeaders(includeContentType = true) {
-      let accessToken = localStorage.getItem('accessToken');
-      const refreshToken = localStorage.getItem('refreshToken');
-      
-      // 如果没有访问令牌但有刷新令牌，尝试刷新
-      if (!accessToken && refreshToken) {
-        console.log('访问令牌不存在，尝试使用刷新令牌获取新的访问令牌');
-        try {
-          accessToken = await refreshAccessToken(refreshToken);
-        } catch (error) {
-          console.error('刷新令牌失败:', error);
-          // 刷新失败，清除所有认证信息
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
-          throw new Error('会话已过期，请重新登录');
-        }
-      }
-      
-      if (!accessToken) {
-        throw new Error('未登录或会话已过期，请重新登录');
-      }
-      
-      const headers = {
-        'Authorization': `Bearer ${accessToken}`
-      };
-      
-      // 对于文件上传请求，不要设置Content-Type，让浏览器自动处理
-      if (includeContentType) {
-        headers['Content-Type'] = 'application/json';
-      }
-      
-      return headers;
-    }
-    
-    // 刷新访问令牌
-    async function refreshAccessToken(refreshToken) {
-      console.log('正在刷新访问令牌...');
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ refreshToken })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`刷新令牌失败: ${response.status} ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        console.log('刷新令牌成功，获取新的访问令牌');
-        
-        // 保存新的访问令牌
-        localStorage.setItem('accessToken', data.accessToken);
-        
-        // 更新cookie
-        const maxAge = 60*60*24*7; // 7天
-        document.cookie = `accessToken=${data.accessToken}; path=/; max-age=${maxAge}; SameSite=Strict`;
-        
-        return data.accessToken;
-      } catch (error) {
-        console.error('刷新访问令牌失败:', error);
-        throw error;
-      }
+      return true;
     }
     
     // 初始化事件监听器

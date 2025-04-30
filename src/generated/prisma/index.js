@@ -241,11 +241,12 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "postgresql://myai:tUkkid-9pafme-mettom@pgm-bp150nm5m2hlgtk9yo.pg.rds.aliyuncs.com:5432/myai"
+        "value": null
       }
     }
   },

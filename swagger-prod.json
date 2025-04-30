@@ -21,21 +21,12 @@
         "scheme": "bearer",
         "bearerFormat": "JWT",
         "description": "JWT认证，在请求头中添加：Authorization: Bearer {token}"
-      },
-      "apiKeyAuth": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "X-API-Key",
-        "description": "API密钥认证，在请求头中添加：X-API-Key: {apiKey}"
       }
     }
   },
   "security": [
     {
       "bearerAuth": []
-    },
-    {
-      "apiKeyAuth": []
     }
   ],
   "paths": {

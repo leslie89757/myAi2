@@ -24,11 +24,15 @@ app.use(cors());
 app.use(helmet({
   contentSecurityPolicy: false // 禁用CSP以允许内联脚本
 }));
-app.use(express.json());
+// 仅对非文件上传路由使用JSON解析器
+app.use(/^\/(?!api\/knowledge\/upload).*/i, express.json({ limit: '50mb' }));
 app.use(cookieParser()); // 添加cookie解析器，用于读取认证令牌
 
 // 静态文件服务
 app.use(express.static(path.join(__dirname, 'public')));
+
+// 增加URL编码的请求体大小限制
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // 请求日志中间件
 app.use((req, res, next) => {

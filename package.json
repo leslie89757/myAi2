@@ -10,7 +10,9 @@
     "vercel-build": "node vercel-build.js",
     "update-api-docs": "node export-swagger.js > swagger-specs.json && node -e \"const specs = require('./swagger-specs.json'); specs.servers[0].url = 'https://myai-backend.vercel.app'; specs.servers[0].description = '生产服务器'; console.log(JSON.stringify(specs, null, 2));\" > swagger-prod.json && node update-api-docs.js",
     "prestart": "npm run build",
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev": "VERCEL=1 VERCEL_ENV=development nodemon --exec ts-node src/index.ts",
+    "dev:prod": "VERCEL=1 VERCEL_ENV=production nodemon --exec ts-node src/index.ts",
+    "start:vercel": "VERCEL=1 VERCEL_ENV=production npm start",
     "db:setup": "psql -f scripts/setup-db.sql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -56,7 +58,8 @@
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
     "nodemon": "^3.1.10",
-    "prisma": "^6.6.0"
+    "prisma": "^6.6.0",
+    "vercel": "^41.6.2"
   },
   "engines": {
     "node": ">=18.x"
